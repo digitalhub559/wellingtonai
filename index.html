@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wellington Marketers | AI-Driven Digital Marketing Agency</title>
+    <meta name="description" content="Wellington Marketers is an AI-driven digital marketing agency offering self-service tools and full-service solutions. SEO audits, landing page optimization, ad copy generation, and more.">
+    <meta name="keywords" content="digital marketing agency, AI marketing, SEO audit, landing page optimization, ad copy, Wellington Marketers, India">
+    <link rel="canonical" href="https://wellingtonai.in/">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "Wellington Marketers",
+        "url": "https://wellingtonai.in",
+        "description": "AI-driven digital marketing agency offering self-service tools and full-service solutions.",
+        "foundingDate": "2025",
+        "contactPoint": {
+            "@type": "ContactPoint",
+            "contactType": "customer support",
+            "email": "wellingtonmarketers2017@gmail.com"
+        }
+    }
+    </script>
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --navy: #0a0f1e;
+            --dark: #111827;
+            --blue: #2563eb;
+            --blue-light: #3b82f6;
+            --purple: #7c3aed;
+            --teal: #06b6d4;
+            --gold: #f59e0b;
+            --white: #ffffff;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-400: #9ca3af;
+            --gray-500: #6b7280;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-900: #111827;
+            --gradient-main: linear-gradient(135deg, #2563eb, #7c3aed);
+            --gradient-dark: linear-gradient(135deg, #0a0f1e 0%, #1e1b4b 50%, #1e3a5f 100%);
+        }
+
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            color: var(--gray-900); line-height: 1.6; overflow-x: hidden;
+        }
+
+        /* ---- NAVIGATION ---- */
+        nav {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+            background: rgba(10, 15, 30, 0.95); backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            transition: all 0.3s;
+        }
+        .nav-inner {
+            max-width: 1200px; margin: 0 auto; padding: 0.9rem 2rem;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .nav-logo {
+            font-size: 1.3rem; font-weight: 700; color: var(--white); text-decoration: none; letter-spacing: -0.5px;
+        }
+        .nav-logo span { background: var(--gradient-main); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .nav-links { display: flex; gap: 2rem; align-items: center; list-style: none; }
+        .nav-links a {
+            color: var(--gray-400); text-decoration: none; font-size: 0.9rem; font-weight: 500;
+            transition: color 0.2s;
+        }
+        .nav-links a:hover { color: var(--white); }
+        .nav-cta {
+            padding: 0.55rem 1.3rem; background: var(--gradient-main); color: var(--white) !important;
+            border-radius: 6px; font-weight: 600; font-size: 0.85rem !important;
+        }
+        .nav-cta:hover { opacity: 0.9; }
+        .mobile-toggle { display: none; background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; }
+
+        /* ---- HERO ---- */
+        .hero {
+            background: var(--gradient-dark); color: var(--white);
+            padding: 160px 2rem 100px; text-align: center; position: relative; overflow: hidden;
+        }
+        .hero::before {
+            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+            background: radial-gradient(circle at 30% 40%, rgba(37,99,235,0.08) 0%, transparent 50%),
+                        radial-gradient(circle at 70% 60%, rgba(124,58,237,0.06) 0%, transparent 50%);
+            animation: drift 20s ease-in-out infinite alternate;
+        }
+        @keyframes drift { 0% { transform: translate(0,0); } 100% { transform: translate(-3%, 2%); } }
+        .hero-content { position: relative; max-width: 800px; margin: 0 auto; }
+        .hero-label {
+            display: inline-block; padding: 6px 16px; border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 100px; font-size: 0.8rem; font-weight: 500; color: var(--gray-400);
+            margin-bottom: 1.5rem; letter-spacing: 0.5px;
+        }
+        .hero h1 { font-size: 3.2rem; font-weight: 800; line-height: 1.15; margin-bottom: 1.25rem; letter-spacing: -1px; }
+        .hero h1 .gradient-text { background: var(--gradient-main); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .hero p { font-size: 1.2rem; color: rgba(255,255,255,0.7); max-width: 600px; margin: 0 auto 2.5rem; line-height: 1.7; }
+        .hero-buttons { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+        .btn {
+            padding: 0.85rem 2rem; border-radius: 8px; font-weight: 600; font-size: 1rem;
+            text-decoration: none; transition: all 0.3s; display: inline-flex; align-items: center; gap: 8px;
+            cursor: pointer; border: none;
+        }
+        .btn-primary { background: var(--gradient-main); color: white; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(37,99,235,0.35); }
+        .btn-outline { background: transparent; color: white; border: 2px solid rgba(255,255,255,0.2); }
+        .btn-outline:hover { border-color: rgba(255,255,255,0.5); background: rgba(255,255,255,0.05); }
+        .hero-stats {
+            display: flex; justify-content: center; gap: 3rem; margin-top: 4rem; padding-top: 2.5rem;
+            border-top: 1px solid rgba(255,255,255,0.08);
+        }
+        .hero-stat h3 { font-size: 2rem; font-weight: 700; background: var(--gradient-main); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .hero-stat p { font-size: 0.85rem; color: var(--gray-400); margin-top: 2px; }
+
+        /* ---- SECTIONS ---- */
+        section { padding: 100px 2rem; }
+        .section-inner { max-width: 1100px; margin: 0 auto; }
+        .section-label {
+            display: inline-block; font-size: 0.75rem; font-weight: 700; color: var(--blue);
+            text-transform: uppercase; letter-spacing: 2px; margin-bottom: 0.75rem;
+        }
+        .section-title { font-size: 2.2rem; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 1rem; }
+        .section-subtitle { font-size: 1.1rem; color: var(--gray-500); max-width: 600px; line-height: 1.7; }
+
+        /* ---- ABOUT ---- */
+        #about { background: var(--white); }
+        .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; margin-top: 3rem; }
+        .about-visual {
+            background: var(--gradient-dark); border-radius: 16px; padding: 3rem; color: white;
+            position: relative; overflow: hidden;
+        }
+        .about-visual::after {
+            content: ''; position: absolute; top: -30px; right: -30px; width: 120px; height: 120px;
+            background: rgba(37,99,235,0.15); border-radius: 50%;
+        }
+        .about-visual h3 { font-size: 1.4rem; margin-bottom: 1.5rem; position: relative; }
+        .about-pill {
+            display: inline-block; padding: 8px 16px; background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 8px;
+            font-size: 0.9rem; color: rgba(255,255,255,0.85); margin: 4px;
+        }
+        .about-text h3 { font-size: 1.3rem; color: var(--gray-900); margin-bottom: 1rem; }
+        .about-text p { color: var(--gray-600); margin-bottom: 1rem; line-height: 1.8; }
+
+        /* ---- SERVICES ---- */
+        #services { background: var(--gray-50); }
+        .services-tabs { display: flex; gap: 0; margin: 2.5rem 0 2rem; border-bottom: 2px solid var(--gray-200); }
+        .services-tab {
+            padding: 0.75rem 1.5rem; font-size: 1rem; font-weight: 600; cursor: pointer;
+            color: var(--gray-500); border-bottom: 3px solid transparent; margin-bottom: -2px;
+            transition: all 0.2s; background: none; border-top: none; border-left: none; border-right: none;
+        }
+        .services-tab.active { color: var(--blue); border-bottom-color: var(--blue); }
+        .services-tab:hover { color: var(--gray-700); }
+        .services-panel { display: none; }
+        .services-panel.active { display: block; }
+        .services-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+        .service-card {
+            background: var(--white); border-radius: 12px; padding: 2rem;
+            border: 1px solid var(--gray-200); transition: all 0.3s;
+        }
+        .service-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,0.08); border-color: var(--blue); }
+        .service-icon {
+            width: 48px; height: 48px; border-radius: 10px; display: flex; align-items: center;
+            justify-content: center; font-size: 1.4rem; margin-bottom: 1rem;
+        }
+        .service-icon.blue { background: #eff6ff; }
+        .service-icon.purple { background: #f5f3ff; }
+        .service-icon.teal { background: #ecfeff; }
+        .service-icon.gold { background: #fffbeb; }
+        .service-card h3 { font-size: 1.1rem; margin-bottom: 0.5rem; }
+        .service-card p { font-size: 0.9rem; color: var(--gray-500); line-height: 1.6; }
+        .service-card .service-link {
+            display: inline-block; margin-top: 1rem; font-size: 0.85rem; font-weight: 600;
+            color: var(--blue); text-decoration: none;
+        }
+        .service-card .service-link:hover { text-decoration: underline; }
+
+        /* ---- PRODUCTS ---- */
+        #products { background: var(--white); }
+        .product-hero {
+            background: var(--gradient-dark); border-radius: 20px; padding: 3rem; color: white;
+            display: grid; grid-template-columns: 1.2fr 1fr; gap: 3rem; align-items: center; margin-top: 3rem;
+        }
+        .product-hero h3 { font-size: 1.8rem; font-weight: 700; margin-bottom: 1rem; }
+        .product-hero p { color: rgba(255,255,255,0.75); font-size: 1rem; line-height: 1.7; margin-bottom: 1.5rem; }
+        .product-features { list-style: none; margin-bottom: 2rem; }
+        .product-features li {
+            padding: 6px 0; color: rgba(255,255,255,0.85); font-size: 0.95rem;
+            padding-left: 1.5rem; position: relative;
+        }
+        .product-features li::before {
+            content: "\2713"; position: absolute; left: 0; color: var(--teal); font-weight: 700;
+        }
+        .product-visual {
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px; padding: 2rem; text-align: center;
+        }
+        .product-visual .soar-logo { font-size: 2.5rem; font-weight: 800; letter-spacing: -1px; margin-bottom: 0.5rem; }
+        .product-visual .soar-logo span { color: var(--teal); }
+        .product-visual p { color: rgba(255,255,255,0.6); font-size: 0.9rem; }
+        .product-tools {
+            display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.75rem; margin-top: 1.5rem;
+        }
+        .product-tool {
+            background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 8px; padding: 0.75rem; font-size: 0.8rem; color: rgba(255,255,255,0.75);
+        }
+        .product-tool strong { display: block; color: white; font-size: 0.85rem; margin-bottom: 2px; }
+
+        /* ---- CEO ---- */
+        #leadership { background: var(--gray-50); }
+        .ceo-card {
+            display: grid; grid-template-columns: auto 1fr; gap: 3rem; align-items: center;
+            margin-top: 3rem; background: white; border-radius: 16px; padding: 3rem;
+            border: 1px solid var(--gray-200);
+        }
+        .ceo-photo {
+            width: 200px; height: 200px; border-radius: 16px; overflow: hidden;
+            background: var(--gradient-main); display: flex; align-items: center; justify-content: center;
+        }
+        .ceo-initials { font-size: 4rem; font-weight: 800; color: white; letter-spacing: -2px; }
+        .ceo-info h3 { font-size: 1.5rem; font-weight: 700; margin-bottom: 4px; }
+        .ceo-info .ceo-title { font-size: 1rem; color: var(--blue); font-weight: 600; margin-bottom: 1rem; }
+        .ceo-info p { color: var(--gray-600); line-height: 1.8; margin-bottom: 1rem; }
+        .ceo-socials { display: flex; gap: 0.75rem; margin-top: 1rem; }
+        .ceo-socials a {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 36px; height: 36px; border-radius: 8px; background: var(--gray-100);
+            color: var(--gray-600); text-decoration: none; font-size: 0.85rem; font-weight: 700;
+            transition: all 0.2s;
+        }
+        .ceo-socials a:hover { background: var(--blue); color: white; }
+
+        /* ---- CONTACT ---- */
+        #contact { background: var(--navy); color: white; text-align: center; }
+        #contact .section-label { color: var(--teal); }
+        #contact .section-title { color: white; }
+        #contact .section-subtitle { color: rgba(255,255,255,0.6); margin: 0 auto 2.5rem; }
+        .contact-grid { display: flex; gap: 2rem; justify-content: center; flex-wrap: wrap; margin-top: 2rem; }
+        .contact-item {
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px; padding: 1.5rem 2rem; min-width: 200px; text-align: center;
+        }
+        .contact-item .ci-icon { font-size: 1.5rem; margin-bottom: 0.5rem; }
+        .contact-item h4 { font-size: 0.9rem; color: rgba(255,255,255,0.5); margin-bottom: 4px; }
+        .contact-item p { font-size: 1rem; color: white; }
+        .contact-item a { color: var(--teal); text-decoration: none; }
+        .contact-item a:hover { text-decoration: underline; }
+
+        /* ---- FOOTER ---- */
+        footer {
+            background: #060a14; padding: 3rem 2rem 1.5rem; color: var(--gray-400);
+        }
+        .footer-inner {
+            max-width: 1100px; margin: 0 auto;
+            display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 2rem;
+        }
+        .footer-brand p { font-size: 0.85rem; margin-top: 0.75rem; line-height: 1.6; color: var(--gray-500); }
+        .footer-col h4 { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--gray-400); margin-bottom: 1rem; }
+        .footer-col a { display: block; color: var(--gray-500); text-decoration: none; font-size: 0.9rem; padding: 3px 0; }
+        .footer-col a:hover { color: white; }
+        .footer-bottom {
+            max-width: 1100px; margin: 2rem auto 0; padding-top: 1.5rem;
+            border-top: 1px solid rgba(255,255,255,0.06);
+            display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--gray-500);
+        }
+
+        /* ---- RESPONSIVE ---- */
+        @media (max-width: 900px) {
+            .hero h1 { font-size: 2.2rem; }
+            .hero-stats { flex-wrap: wrap; gap: 1.5rem; }
+            .about-grid { grid-template-columns: 1fr; gap: 2rem; }
+            .services-grid { grid-template-columns: 1fr; }
+            .product-hero { grid-template-columns: 1fr; }
+            .ceo-card { grid-template-columns: 1fr; text-align: center; }
+            .ceo-photo { margin: 0 auto; }
+            .ceo-socials { justify-content: center; }
+            .footer-inner { grid-template-columns: 1fr 1fr; }
+            .footer-bottom { flex-direction: column; gap: 0.5rem; text-align: center; }
+            .nav-links { display: none; }
+            .mobile-toggle { display: block; }
+        }
+        @media (max-width: 600px) {
+            .hero { padding: 130px 1.5rem 70px; }
+            .hero h1 { font-size: 1.8rem; }
+            section { padding: 60px 1.5rem; }
+            .product-tools { grid-template-columns: 1fr; }
+            .footer-inner { grid-template-columns: 1fr; }
+            .services-tabs { flex-wrap: wrap; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ====== NAVIGATION ====== -->
+<nav>
+    <div class="nav-inner">
+        <a href="#" class="nav-logo">Wellington <span>Marketers</span></a>
+        <ul class="nav-links">
+            <li><a href="#about">About</a></li>
+            <li><a href="#services">Services</a></li>
+            <li><a href="#products">Products</a></li>
+            <li><a href="#leadership">Leadership</a></li>
+            <li><a href="#contact">Contact</a></li>
+            <li><a href="https://soarai.in" target="_blank" class="nav-cta">Try SoarAI Free</a></li>
+        </ul>
+        <button class="mobile-toggle" onclick="document.querySelector('.nav-links').style.display = document.querySelector('.nav-links').style.display === 'flex' ? 'none' : 'flex'">&#9776;</button>
+    </div>
+</nav>
+
+<!-- ====== HERO ====== -->
+<section class="hero">
+    <div class="hero-content">
+        <div class="hero-label">AI-Powered Digital Marketing Agency</div>
+        <h1>Marketing That <span class="gradient-text">Thinks</span>, Executes, and <span class="gradient-text">Scales</span></h1>
+        <p>Wellington Marketers combines self-service AI tools with full-service strategy to help businesses across India grow faster, convert better, and spend smarter.</p>
+        <div class="hero-buttons">
+            <a href="https://soarai.in" target="_blank" class="btn btn-primary">Explore SoarAI Tools &#8594;</a>
+            <a href="#contact" class="btn btn-outline">Talk to Our Team</a>
+        </div>
+        <div class="hero-stats">
+            <div class="hero-stat">
+                <h3>3</h3>
+                <p>AI-Powered Tools</p>
+            </div>
+            <div class="hero-stat">
+                <h3>50+</h3>
+                <p>SEO Factors Analyzed</p>
+            </div>
+            <div class="hero-stat">
+                <h3>4</h3>
+                <p>Ad Platforms Covered</p>
+            </div>
+            <div class="hero-stat">
+                <h3>24hr</h3>
+                <p>Report Delivery</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ====== ABOUT ====== -->
+<section id="about">
+    <div class="section-inner">
+        <span class="section-label">Who We Are</span>
+        <h2 class="section-title">Self-Service Tools. Full-Service Expertise.</h2>
+        <p class="section-subtitle">We built Wellington Marketers around one idea: businesses deserve enterprise-grade marketing intelligence, whether they want to do it themselves or have us do it for them.</p>
+
+        <div class="about-grid">
+            <div class="about-visual">
+                <h3>Two ways to work with us</h3>
+                <div style="margin-bottom:1.5rem;">
+                    <div class="about-pill">&#9889; Self-Service AI Tools</div>
+                    <div class="about-pill">&#128202; Free SEO Audits</div>
+                    <div class="about-pill">&#128196; Landing Page Scores</div>
+                    <div class="about-pill">&#9997; AI Ad Copy</div>
+                </div>
+                <div>
+                    <div class="about-pill">&#127919; Full-Service Strategy</div>
+                    <div class="about-pill">&#128640; Campaign Management</div>
+                    <div class="about-pill">&#128170; CRO Consulting</div>
+                    <div class="about-pill">&#128200; Performance Marketing</div>
+                </div>
+            </div>
+            <div class="about-text">
+                <h3>AI at the core, humans at the helm</h3>
+                <p>Our self-service platform, SoarAI, gives you instant access to SEO audits, landing page scorecards, and ad copy generation powered by advanced AI. Start free, upgrade when you're ready.</p>
+                <p>For businesses that want hands-on support, our full-service team handles everything from strategy to execution - SEO, paid media, conversion optimization, and content marketing - all driven by the same AI intelligence that powers our tools.</p>
+                <p>Whether you're a startup running your first campaign or an enterprise scaling across channels, we meet you where you are.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ====== SERVICES ====== -->
+<section id="services">
+    <div class="section-inner">
+        <span class="section-label">What We Offer</span>
+        <h2 class="section-title">Full-Service AI-Driven Marketing Agency</h2>
+        <p class="section-subtitle">From strategy to execution, we handle every aspect of your digital marketing so you can focus on running your business.</p>
+
+        <div class="services-grid" style="margin-top: 2.5rem;">
+            <div class="service-card">
+                <div class="service-icon blue">&#127919;</div>
+                <h3>SEO & Content Strategy</h3>
+                <p>End-to-end SEO management including technical audits, keyword research, content creation, link building, and monthly reporting. Our AI-powered tools surface insights; our experts execute the plan.</p>
+            </div>
+            <div class="service-card">
+                <div class="service-icon gold">&#128640;</div>
+                <h3>Performance Marketing</h3>
+                <p>Paid media management across Google Ads, Meta, LinkedIn, and TikTok. Campaign strategy, creative development, bid optimization, and continuous testing to maximize your ROAS.</p>
+            </div>
+            <div class="service-card">
+                <div class="service-icon purple">&#128202;</div>
+                <h3>CRO & Landing Pages</h3>
+                <p>Conversion rate optimization backed by data. We design, test, and iterate landing pages, sales funnels, and checkout flows to turn more visitors into customers.</p>
+            </div>
+            <div class="service-card">
+                <div class="service-icon blue">&#128269;</div>
+                <h3>AI-Powered Audits & Reports</h3>
+                <p>Comprehensive SEO audits, landing page scorecards, and ad copy generation powered by our SoarAI platform. Free self-service tools available, or let us run Pro-level analysis for you.</p>
+                <a href="https://soarai.in" target="_blank" class="service-link">Try SoarAI Free &#8594;</a>
+            </div>
+            <div class="service-card">
+                <div class="service-icon teal">&#128172;</div>
+                <h3>Social Media Management</h3>
+                <p>Strategic content planning, community management, and social advertising. We build your brand presence across platforms with data-driven content that engages and converts.</p>
+            </div>
+            <div class="service-card">
+                <div class="service-icon gold">&#128200;</div>
+                <h3>Analytics & Reporting</h3>
+                <p>Clear, actionable reporting that ties marketing activity to business outcomes. Monthly dashboards, attribution modelling, and strategic recommendations included.</p>
+            </div>
+        </div>
+
+        <!-- Call CTA -->
+        <div style="text-align:center; margin-top:3rem;">
+            <p style="font-size:1.15rem; color:var(--gray-600); margin-bottom:1.25rem;">Ready to see what a full-service AI marketing partner can do for your business?</p>
+            <a href="https://wa.me/919043180195" target="_blank" class="btn btn-primary" style="font-size:1.1rem; padding:1rem 2.5rem;">
+                &#128172; Chat on WhatsApp
+            </a>
+            <a href="tel:+919043180195" class="btn btn-outline" style="font-size:1.1rem; padding:1rem 2.5rem; margin-left:1rem; color:var(--gray-700); border-color:var(--gray-300);">
+                &#128222; Call Us Now
+            </a>
+            <p style="font-size:0.85rem; color:var(--gray-400); margin-top:0.75rem;">Or email us at <a href="mailto:wellingtonmarketers2017@gmail.com" style="color:var(--blue); text-decoration:none;">wellingtonmarketers2017@gmail.com</a></p>
+        </div>
+    </div>
+</section>
+
+<!-- ====== PRODUCTS ====== -->
+<section id="products">
+    <div class="section-inner">
+        <span class="section-label">Our Platform</span>
+        <h2 class="section-title">Powered by SoarAI</h2>
+        <p class="section-subtitle">Our flagship AI platform that puts enterprise marketing intelligence in your hands.</p>
+
+        <div class="product-hero">
+            <div>
+                <h3>SoarAI - AI Marketing Intelligence</h3>
+                <p>SoarAI is our self-service platform that gives businesses instant access to the same AI-powered analysis our full-service team uses internally. Start free, upgrade to Pro for deeper insights.</p>
+                <ul class="product-features">
+                    <li>Free SEO audits with instant scoring</li>
+                    <li>Landing page optimization scorecards</li>
+                    <li>AI-generated ad copy for Google, Meta, LinkedIn, TikTok</li>
+                    <li>Pro reports with implementation roadmaps</li>
+                    <li>PDF delivery via email within 24 hours</li>
+                </ul>
+                <a href="https://soarai.in" target="_blank" class="btn btn-primary">Visit SoarAI &#8594;</a>
+            </div>
+            <div class="product-visual">
+                <div class="soar-logo">Soar<span>AI</span></div>
+                <p>by Wellington Marketers</p>
+                <div class="product-tools">
+                    <div class="product-tool"><strong>SEO Audit</strong>50-page crawl</div>
+                    <div class="product-tool"><strong>LPO Score</strong>10 dimensions</div>
+                    <div class="product-tool"><strong>Ad Copy</strong>4 platforms</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ====== CEO / LEADERSHIP ====== -->
+<section id="leadership">
+    <div class="section-inner">
+        <span class="section-label">Leadership</span>
+        <h2 class="section-title">Meet Our Founder</h2>
+
+        <div class="ceo-card">
+            <div class="ceo-photo">
+                <div class="ceo-initials">RV</div>
+            </div>
+            <div class="ceo-info">
+                <h3>Raja Vasu</h3>
+                <div class="ceo-title">Founder & CEO</div>
+                <p>Raja founded Wellington Marketers with a vision to democratize marketing intelligence for businesses across India. With a background in marketing technology and digital strategy, he saw an opportunity to combine AI capabilities with practical marketing expertise to help businesses of all sizes compete effectively in the digital landscape.</p>
+                <p>Under his leadership, the team built SoarAI - an AI-powered platform that puts enterprise-grade SEO auditing, landing page analysis, and ad copy generation into the hands of every business owner and marketer.</p>
+                <div class="ceo-socials">
+                    <a href="https://linkedin.com/in/raja-rajan-vasu-56026312" target="_blank" title="LinkedIn">in</a>
+                    <a href="#" title="Twitter">X</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ====== CONTACT ====== -->
+<section id="contact">
+    <div class="section-inner">
+        <span class="section-label">Get In Touch</span>
+        <h2 class="section-title">Ready to Grow?</h2>
+        <p class="section-subtitle">Whether you want to try our AI tools or need full-service support, we'd love to hear from you.</p>
+
+        <div class="contact-grid">
+            <div class="contact-item">
+                <div class="ci-icon">&#128205;</div>
+                <h4>Office Address</h4>
+                <p>336/2, G5 Ground Floor,<br>Mayflower Valencia, Avinashi Road,<br>Near Nava India,<br>Coimbatore - 641006,<br>Tamil Nadu, India</p>
+            </div>
+            <div class="contact-item">
+                <div class="ci-icon">&#9993;</div>
+                <h4>Email</h4>
+                <p><a href="mailto:wellingtonmarketers2017@gmail.com">wellingtonmarketers2017@gmail.com</a></p>
+            </div>
+            <div class="contact-item">
+                <div class="ci-icon">&#128172;</div>
+                <h4>WhatsApp</h4>
+                <p><a href="https://wa.me/919043180195" target="_blank">+91 9043180195</a></p>
+            </div>
+            <div class="contact-item">
+                <div class="ci-icon">&#127760;</div>
+                <h4>Self-Service Tools</h4>
+                <p><a href="https://soarai.in" target="_blank">soarai.in</a></p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ====== FOOTER ====== -->
+<footer>
+    <div class="footer-inner">
+        <div class="footer-brand">
+            <a href="#" class="nav-logo" style="font-size:1.2rem;">Wellington <span style="background:var(--gradient-main);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Marketers</span></a>
+            <p>AI-driven digital marketing agency offering self-service tools and full-service solutions for businesses across India.</p>
+        </div>
+        <div class="footer-col">
+            <h4>Company</h4>
+            <a href="#about">About</a>
+            <a href="#leadership">Leadership</a>
+            <a href="#contact">Contact</a>
+        </div>
+        <div class="footer-col">
+            <h4>Services</h4>
+            <a href="#services">Full-Service Marketing</a>
+            <a href="https://soarai.in" target="_blank">SoarAI Platform</a>
+        </div>
+        <div class="footer-col">
+            <h4>Legal</h4>
+            <a href="https://soarai.in/privacy-policy.html" target="_blank">Privacy Policy</a>
+            <a href="https://soarai.in/terms-of-service.html" target="_blank">Terms of Service</a>
+            <a href="https://soarai.in/refund-policy.html" target="_blank">Refund Policy</a>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <span>&copy; 2025 Wellington Marketers. All rights reserved.</span>
+        <span>Powered by AI. Built in India.</span>
+    </div>
+</footer>
+
+<script>
+// Smooth scroll for nav links
+document.querySelectorAll('a[href^="#"]').forEach(function(anchor) {
+    anchor.addEventListener('click', function(e) {
+        var target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+            e.preventDefault();
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    });
+});
+
+// Nav background on scroll
+window.addEventListener('scroll', function() {
+    var nav = document.querySelector('nav');
+    if (window.scrollY > 50) {
+        nav.style.background = 'rgba(10, 15, 30, 0.98)';
+    } else {
+        nav.style.background = 'rgba(10, 15, 30, 0.95)';
+    }
+});
+</script>
+
+</body>
+</html>
