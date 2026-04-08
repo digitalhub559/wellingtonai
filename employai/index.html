@@ -24,8 +24,12 @@
       background: linear-gradient(135deg, #1e1b4b 0%, #312e81 55%, #1e3a5f 100%);
       padding: 20px 40px; display: flex; align-items: center; gap: 20px;
     }
+    .logo-group { display: flex; flex-direction: column; gap: 2px; }
     .logo { font-size: 26px; font-weight: 800; color: #fff; letter-spacing: -1px; }
     .logo span { color: #a5b4fc; }
+    .logo-byline { font-size: 11px; color: rgba(255,255,255,0.45); font-weight: 400; letter-spacing: 0.3px; }
+    .logo-byline a { color: rgba(255,255,255,0.45); text-decoration: none; transition: color 0.2s; }
+    .logo-byline a:hover { color: #a5b4fc; }
     .tagline { color: #a5b4fc; font-size: 13px; border-left: 1px solid rgba(255,255,255,0.25); padding-left: 20px; }
 
     .container { max-width: 1200px; margin: 0 auto; padding: 36px 20px; }
@@ -188,7 +192,10 @@
 <body>
 
 <header>
-  <div class="logo">Employ<span>AI</span></div>
+  <div class="logo-group">
+    <div class="logo">Employ<span>AI</span></div>
+    <div class="logo-byline">by <a href="https://wellingtonai.in">Wellington Marketers</a></div>
+  </div>
   <div class="tagline">AI-Era Employability Index · Industry &amp; Business Model Matrix</div>
 </header>
 
