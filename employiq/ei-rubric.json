@@ -1,0 +1,361 @@
+{
+  "_instructions": "Edit this file to update the scoring rubric in the EmployIQ app. After editing, copy the contents into the RUBRIC constant inside employability-index.html (clearly marked with === RUBRIC CONFIG ===). All scores are 0-100. Risk levels: LOW = high employability (70-100), MEDIUM = moderate (40-69), HIGH = low employability (0-39). weightsStandard is used for A/B/C/D (7 dimensions, must sum to 1.0). weightsCompany is used for E (9 dimensions, must sum to 1.0).",
+
+  "rubric": {
+    "version": "1.2",
+    "lastUpdated": "2026-04-08",
+    "source": "RiskMatrix.numbers — EI-Index folder",
+    "description": "Risk thresholds derived from the EI-Index Risk Matrix. Each dimension maps user inputs to a risk level (LOW/MEDIUM/HIGH) and a base employability score. v1.2 adds futureCosts (all classifications), payroll and absence (Company-E only).",
+
+    "riskBands": {
+      "LOW":    { "label": "Low Risk",   "min": 70, "max": 100, "badgeClass": "lv-high",   "fillClass": "fill-high",   "color": "#10b981" },
+      "MEDIUM": { "label": "Medium Risk","min": 40, "max": 69,  "badgeClass": "lv-medium", "fillClass": "fill-medium", "color": "#f59e0b" },
+      "HIGH":   { "label": "High Risk",  "min": 0,  "max": 39,  "badgeClass": "lv-low",    "fillClass": "fill-low",    "color": "#ef4444" }
+    },
+
+    "dimensions": {
+
+      "_coreNote": "Core 6 dimensions — apply to ALL classifications (A/B/C/D/E)",
+
+      "investment": {
+        "label": "Investment",
+        "colStyle": "",
+        "rubricSource": "INVESTMENT row — Risk Matrix",
+        "options": {
+          "lt100k": {
+            "risk": "LOW",
+            "baseScore": 82,
+            "displayLabel": "< $100,000",
+            "note": "Low investment — high broad employability; UG-level roles accessible"
+          },
+          "lt300k": {
+            "risk": "MEDIUM",
+            "baseScore": 57,
+            "displayLabel": "< $300,000",
+            "note": "Medium investment — high employability for UGs; moderate specialisation required"
+          },
+          "gt500k": {
+            "risk": "HIGH",
+            "baseScore": 28,
+            "displayLabel": "> $500,000",
+            "note": "High investment — concentrated employability for Management graduates only"
+          }
+        }
+      },
+
+      "returns": {
+        "label": "Returns",
+        "colStyle": "",
+        "rubricSource": "RETURNS row — Risk Matrix",
+        "options": {
+          "lt15": {
+            "risk": "LOW",
+            "baseScore": 78,
+            "displayLabel": "< 15%",
+            "note": "Low returns (1x-3x) — operational projects, high UG-level employability"
+          },
+          "gt15": {
+            "risk": "MEDIUM",
+            "baseScore": 54,
+            "displayLabel": "15%",
+            "note": "Mid returns (3x-5x) — financial projects, UG+management level needed"
+          },
+          "r1530": {
+            "risk": "HIGH",
+            "baseScore": 26,
+            "displayLabel": "15% – 30%",
+            "note": "High returns (5x-7x) — service/market projects, Masters and senior management only"
+          }
+        }
+      },
+
+      "tenure": {
+        "label": "Tenure",
+        "colStyle": "",
+        "rubricSource": "TENURE row — Risk Matrix",
+        "options": {
+          "t510": {
+            "risk": "LOW",
+            "baseScore": 90,
+            "displayLabel": "5 – 10 Years",
+            "note": "Long tenure — very stable, strong institutional knowledge, low disruption risk"
+          },
+          "t5": {
+            "risk": "LOW",
+            "baseScore": 78,
+            "displayLabel": "5 Years",
+            "note": "Established tenure — stable employment, low risk"
+          },
+          "t3": {
+            "risk": "MEDIUM",
+            "baseScore": 54,
+            "displayLabel": "3 Years",
+            "note": "Mid-stage tenure — moderate risk, organisation still evolving"
+          },
+          "t1": {
+            "risk": "HIGH",
+            "baseScore": 26,
+            "displayLabel": "1 Year",
+            "note": "Early tenure (1-3 years) — high disruption risk, limited role stability"
+          }
+        }
+      },
+
+      "ai": {
+        "label": "AI & Automation",
+        "colStyle": "",
+        "rubricSource": "AI AND AUTOMATION row — Risk Matrix",
+        "note": "Highest-weight dimension — AI exposure is the primary driver of employability risk",
+        "options": {
+          "low": {
+            "risk": "LOW",
+            "baseScore": 85,
+            "displayLabel": "Low",
+            "note": "Low AI exposure — higher employability across all role types"
+          },
+          "medium": {
+            "risk": "MEDIUM",
+            "baseScore": 55,
+            "displayLabel": "Medium",
+            "note": "Medium AI exposure — medium employability, proactive reskilling recommended"
+          },
+          "high": {
+            "risk": "HIGH",
+            "baseScore": 22,
+            "displayLabel": "High",
+            "note": "High AI exposure — low employability, significant automation displacement likely"
+          }
+        }
+      },
+
+      "cost": {
+        "label": "Cost",
+        "colStyle": "",
+        "rubricSource": "COST row — Risk Matrix",
+        "options": {
+          "low": {
+            "risk": "LOW",
+            "baseScore": 85,
+            "displayLabel": "Low",
+            "note": "< $30,000 operational cost — high employability"
+          },
+          "medium": {
+            "risk": "MEDIUM",
+            "baseScore": 58,
+            "displayLabel": "Medium",
+            "note": "$30,000 – $100,000 operational cost — medium employability"
+          },
+          "high": {
+            "risk": "HIGH",
+            "baseScore": 30,
+            "displayLabel": "High",
+            "note": "> $100,000 operational cost — low employability, lean structures required"
+          }
+        }
+      },
+
+      "market": {
+        "label": "Market Potential",
+        "colStyle": "",
+        "rubricSource": "MARKET POTENTIAL row — Risk Matrix",
+        "note": "Larger markets concentrate talent at senior levels — broad workforce access decreases",
+        "options": {
+          "m2": {
+            "risk": "LOW",
+            "baseScore": 78,
+            "displayLabel": "$2 MM",
+            "note": "$2M market, ~10 resources — broad workforce access, many roles available"
+          },
+          "m25": {
+            "risk": "MEDIUM",
+            "baseScore": 55,
+            "displayLabel": "$2 MM – $5 MM",
+            "note": "$5M market, ~5 resources + high-performance teams — selective hiring"
+          },
+          "m510": {
+            "risk": "HIGH",
+            "baseScore": 28,
+            "displayLabel": "$5 MM – $10 MM",
+            "note": "$10M market, ~1 senior resource — concentrated senior talent, high risk for broad workforce"
+          }
+        }
+      },
+
+      "_newNote": "New v1.2 dimensions — futureCosts applies to ALL classifications; payroll and absence apply to Company (E) only",
+
+      "futureCosts": {
+        "label": "Future Costs vs Work Potential",
+        "colStyle": "th-new",
+        "rubricSource": "FUTURE COSTS VS WORK POTENTIAL row — Risk Matrix",
+        "note": "Evaluates whether projected future costs are justified by the workforce's output potential",
+        "visibility": "all",
+        "options": {
+          "low": {
+            "risk": "LOW",
+            "baseScore": 80,
+            "displayLabel": "Low",
+            "note": "Low future costs — sustainable workforce potential"
+          },
+          "medium": {
+            "risk": "MEDIUM",
+            "baseScore": 55,
+            "displayLabel": "Medium",
+            "note": "Medium future costs — manageable trade-off"
+          },
+          "high": {
+            "risk": "HIGH",
+            "baseScore": 28,
+            "displayLabel": "High",
+            "note": "High future costs exceed work potential"
+          }
+        }
+      },
+
+      "payroll": {
+        "label": "Employee Payroll ($)",
+        "colStyle": "th-company",
+        "rubricSource": "EMPLOYEE MONTHLY PAYROLL row — Risk Matrix",
+        "note": "Monthly payroll per employee. Higher payroll reduces workforce scalability.",
+        "visibility": "E only",
+        "options": {
+          "p10k": {
+            "risk": "LOW",
+            "baseScore": 80,
+            "displayLabel": "$10,000 / mo",
+            "note": "$10K/mo — affordable, broad hiring possible"
+          },
+          "p20k": {
+            "risk": "MEDIUM",
+            "baseScore": 55,
+            "displayLabel": "$20,000 / mo",
+            "note": "$20K/mo — moderate payroll burden"
+          },
+          "p30k": {
+            "risk": "HIGH",
+            "baseScore": 28,
+            "displayLabel": "$30,000 / mo",
+            "note": "$30K/mo — high payroll, fewer positions sustainable"
+          }
+        }
+      },
+
+      "absence": {
+        "label": "Absence / Leave (days/mo)",
+        "colStyle": "th-company",
+        "rubricSource": "EMPLOYEE ABSENCE/LEAVE PER MONTH row — Risk Matrix",
+        "note": "Average employee absence days per month. Higher absence signals workforce instability.",
+        "visibility": "E only",
+        "options": {
+          "a1": {
+            "risk": "LOW",
+            "baseScore": 82,
+            "displayLabel": "1 day",
+            "note": "1 day — stable, productive workforce"
+          },
+          "a3": {
+            "risk": "MEDIUM",
+            "baseScore": 55,
+            "displayLabel": "3 days",
+            "note": "3 days — moderate disruption"
+          },
+          "a5": {
+            "risk": "HIGH",
+            "baseScore": 26,
+            "displayLabel": "5 days",
+            "note": "5 days — high absence, workforce instability"
+          }
+        }
+      }
+    },
+
+    "classModifiers": {
+      "_description": "Per-classification score adjustments applied on top of base dimension scores. Positive = more resilient in that dimension. Negative = more exposed. All 9 dimensions must be present for all 5 types.",
+      "A": {
+        "_name": "Operational",
+        "investment":   0,
+        "returns":     -5,
+        "tenure":       5,
+        "ai":         -15,
+        "cost":        -5,
+        "market":      -8,
+        "futureCosts": -5,
+        "payroll":     -5,
+        "absence":     -8
+      },
+      "B": {
+        "_name": "Financial",
+        "investment":   5,
+        "returns":      5,
+        "tenure":       0,
+        "ai":          -8,
+        "cost":         0,
+        "market":       0,
+        "futureCosts":  3,
+        "payroll":      0,
+        "absence":     -3
+      },
+      "C": {
+        "_name": "Market",
+        "investment":   8,
+        "returns":     10,
+        "tenure":      -4,
+        "ai":          12,
+        "cost":         5,
+        "market":      12,
+        "futureCosts":  5,
+        "payroll":      5,
+        "absence":      5
+      },
+      "D": {
+        "_name": "HR",
+        "investment":   3,
+        "returns":     -3,
+        "tenure":       3,
+        "ai":           0,
+        "cost":         0,
+        "market":      -5,
+        "futureCosts":  0,
+        "payroll":      3,
+        "absence":      8
+      },
+      "E": {
+        "_name": "Company",
+        "investment":   5,
+        "returns":      0,
+        "tenure":       0,
+        "ai":           5,
+        "cost":         0,
+        "market":       4,
+        "futureCosts":  3,
+        "payroll":      0,
+        "absence":      0
+      }
+    },
+
+    "weightsStandard": {
+      "_description": "Weights for A/B/C/D classifications — 7 dimensions. Must sum to 1.0.",
+      "_dimensions": ["ai", "investment", "returns", "tenure", "cost", "market", "futureCosts"],
+      "ai":          0.28,
+      "investment":  0.14,
+      "returns":     0.13,
+      "tenure":      0.13,
+      "cost":        0.11,
+      "market":      0.12,
+      "futureCosts": 0.09
+    },
+
+    "weightsCompany": {
+      "_description": "Weights for Company (E) classification — 9 dimensions. Must sum to 1.0.",
+      "_dimensions": ["ai", "investment", "returns", "tenure", "cost", "market", "futureCosts", "payroll", "absence"],
+      "ai":          0.25,
+      "investment":  0.11,
+      "returns":     0.11,
+      "tenure":      0.11,
+      "cost":        0.10,
+      "market":      0.10,
+      "futureCosts": 0.10,
+      "payroll":     0.07,
+      "absence":     0.05
+    }
+  }
+}
