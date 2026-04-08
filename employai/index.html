@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EmployAI — Employability Index Matrix</title>
+  <meta name="description" content="EmployAI by Wellington Marketers — score your company or initiative across 9 workforce dimensions and get an AI-era employability risk rating instantly." />
+  <link rel="canonical" href="https://wellingtonai.in/employai/" />
+  <meta property="og:title" content="EmployAI — Employability Index Matrix" />
+  <meta property="og:description" content="Score your workforce risk across Investment, AI Exposure, Returns, Tenure, Cost, Market Potential, and more." />
+  <meta property="og:url" content="https://wellingtonai.in/employai/" />
+  <meta property="og:type" content="website" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --primary: #4f46e5; --bg: #f1f5f9; --card: #ffffff;
+      --text: #1e293b; --muted: #64748b; --border: #e2e8f0;
+    }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+    header {
+      background: linear-gradient(135deg, #1e1b4b 0%, #312e81 55%, #1e3a5f 100%);
+      padding: 20px 40px; display: flex; align-items: center; gap: 20px;
+    }
+    .logo { font-size: 26px; font-weight: 800; color: #fff; letter-spacing: -1px; }
+    .logo span { color: #a5b4fc; }
+    .tagline { color: #a5b4fc; font-size: 13px; border-left: 1px solid rgba(255,255,255,0.25); padding-left: 20px; }
+
+    .container { max-width: 1200px; margin: 0 auto; padding: 36px 20px; }
+
+    .card {
+      background: var(--card); border-radius: 14px; border: 1px solid var(--border);
+      padding: 28px 32px; margin-bottom: 24px; box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    }
+    .section-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.4px; color: var(--primary); margin-bottom: 6px; }
+    .card-title { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
+    .card-sub   { font-size: 14px; color: var(--muted); margin-bottom: 20px; }
+
+    /* Classification tiles */
+    .classification-row { display: grid; grid-template-columns: repeat(5,1fr); gap: 10px; margin-bottom: 24px; }
+    .cls-btn {
+      display: flex; flex-direction: column; align-items: center; gap: 4px;
+      padding: 14px 8px; border: 2px solid var(--border); border-radius: 12px;
+      background: #fff; cursor: pointer; transition: all 0.18s; text-align: center;
+    }
+    .cls-btn:hover { border-color: #818cf8; background: #eef2ff; }
+    .cls-btn.active { border-color: var(--primary); background: #eef2ff; box-shadow: 0 0 0 3px rgba(79,70,229,0.15); }
+    .cls-code { font-size: 22px; font-weight: 800; line-height: 1; }
+    .cls-name { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.6px; color: var(--muted); }
+    .cls-btn.active .cls-name { color: var(--primary); }
+    .cls-A .cls-code { color: #7c3aed; } .cls-B .cls-code { color: #1d4ed8; }
+    .cls-C .cls-code { color: #065f46; } .cls-D .cls-code { color: #92400e; }
+    .cls-E .cls-code { color: #9d174d; }
+
+    /* Inputs */
+    .inputs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px,1fr)); gap: 16px; }
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    .field label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--muted); }
+    .field select {
+      padding: 10px 36px 10px 12px; border: 1.5px solid var(--border); border-radius: 9px;
+      font-size: 14px; font-family: 'Inter', sans-serif; color: var(--text);
+      background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") no-repeat right 10px center;
+      appearance: none; cursor: pointer; transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .field select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79,70,229,0.12); }
+
+    /* Additional fields section */
+    .extra-section {
+      margin-top: 20px; padding-top: 20px;
+      border-top: 1px dashed var(--border);
+      animation: fadeIn 0.3s ease;
+    }
+    .extra-label {
+      font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px;
+      color: #6366f1; margin-bottom: 4px; display: flex; align-items: center; gap: 6px;
+    }
+    .extra-label::before { content:''; display:inline-block; width:8px; height:8px; border-radius:50%; background:#6366f1; }
+    .extra-sub { font-size: 13px; color: var(--muted); margin-bottom: 14px; }
+    @keyframes fadeIn { from{opacity:0;transform:translateY(-6px)} to{opacity:1;transform:translateY(0)} }
+
+    /* Company-only badge */
+    .company-tag {
+      display: inline-block; font-size: 10px; font-weight: 700; padding: 2px 8px;
+      border-radius: 10px; background: #fce7f3; color: #9d174d;
+      text-transform: uppercase; letter-spacing: 0.5px; margin-left: 6px;
+    }
+
+    .btn {
+      width: 100%; padding: 15px; margin-top: 22px;
+      background: linear-gradient(135deg, #4f46e5, #7c3aed);
+      color: #fff; border: none; border-radius: 10px;
+      font-size: 15px; font-weight: 700; font-family: 'Inter', sans-serif;
+      cursor: pointer; transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .btn:hover  { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(79,70,229,0.32); }
+    .btn:active { transform: translateY(0); }
+    .btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none; box-shadow: none; }
+
+    /* Results */
+    #results { display: none; animation: rise 0.45s ease both; }
+    @keyframes rise { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:translateY(0)} }
+
+    .summary-strip { display: flex; gap: 12px; flex-wrap: wrap; }
+    .sum-item {
+      flex: 1 1 120px; background: #f8fafc; border: 1px solid var(--border);
+      border-radius: 10px; padding: 13px 15px; display: flex; flex-direction: column; gap: 4px;
+    }
+    .si-label { font-size: 10px; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; }
+    .si-val   { font-size: 18px; font-weight: 800; }
+
+    /* Featured single-type card */
+    .featured-card {
+      border: 2px solid var(--primary); border-radius: 14px; padding: 24px 28px;
+      margin-bottom: 24px; background: #fafafe;
+    }
+    .featured-header { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; flex-wrap: wrap; }
+    .featured-badge {
+      width: 50px; height: 50px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px; font-weight: 900; color: #fff; flex-shrink: 0;
+    }
+    .featured-header h2 { font-size: 19px; font-weight: 800; }
+    .featured-header p  { font-size: 13px; color: var(--muted); margin-top: 2px; }
+    .featured-score { font-size: 38px; font-weight: 900; line-height: 1; margin-left: auto; }
+    .featured-score span { font-size: 13px; font-weight: 500; color: var(--muted); }
+
+    .dim-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(148px,1fr)); gap: 10px; }
+    .dim-tile { background: #fff; border: 1px solid var(--border); border-radius: 10px; padding: 12px; display: flex; flex-direction: column; gap: 7px; }
+    .dim-tile-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.7px; color: var(--muted); }
+    .dim-tile-score { font-size: 20px; font-weight: 800; }
+    .dim-tile-bar  { height: 5px; background: #e2e8f0; border-radius: 3px; overflow: hidden; }
+    .dim-tile-fill { height: 100%; border-radius: 3px; }
+    .dim-tile-badge { display: inline-block; padding: 2px 9px; border-radius: 20px; font-size: 10px; font-weight: 700; text-transform: uppercase; }
+    .dim-tile-note { font-size: 11px; color: var(--muted); font-style: italic; line-height: 1.4; }
+
+    /* Matrix table */
+    .matrix-wrap { overflow-x: auto; }
+    table.matrix { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 12.5px; }
+    table.matrix thead th {
+      background: #f8fafc; padding: 10px 11px; font-size: 10px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.7px; color: var(--muted);
+      border-bottom: 2px solid var(--border); white-space: nowrap; text-align: center;
+    }
+    table.matrix thead th:first-child { text-align: left; min-width: 140px; }
+    table.matrix thead th.th-new { background: #ede9fe; color: #5b21b6; }
+    table.matrix thead th.th-company { background: #fce7f3; color: #9d174d; }
+    table.matrix tbody tr:hover td { background: #f8fafc; }
+    table.matrix tbody tr.row-selected td { background: #eef2ff !important; }
+    table.matrix tbody tr.row-selected td:first-child { border-left: 3px solid var(--primary); }
+    table.matrix tbody td { padding: 11px; border-bottom: 1px solid var(--border); text-align: center; vertical-align: middle; }
+    table.matrix tbody td:first-child { text-align: left; }
+    table.matrix tbody tr:last-child td { border-bottom: none; }
+
+    .type-code  { font-size: 13px; font-weight: 800; }
+    .type-badge { font-size: 10px; font-weight: 700; background: #eef2ff; color: var(--primary); padding: 2px 7px; border-radius: 10px; margin-top: 2px; display: inline-block; }
+    .rubric-note { font-size: 10px; color: var(--muted); font-style: italic; margin-top: 2px; }
+
+    .score-badge { display: inline-flex; flex-direction: column; align-items: center; gap: 3px; min-width: 72px; }
+    .sb-label { display: inline-block; padding: 2px 9px; border-radius: 20px; font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+    .sb-bar  { width: 62px; height: 4px; background: #e2e8f0; border-radius: 3px; overflow: hidden; }
+    .sb-fill { height: 100%; border-radius: 3px; }
+    .sb-num  { font-size: 10px; color: var(--muted); font-weight: 500; }
+
+    .lv-high   { background: #d1fae5; color: #065f46; }
+    .lv-medium { background: #fef3c7; color: #92400e; }
+    .lv-low    { background: #fee2e2; color: #991b1b; }
+    .fill-high   { background: #10b981; }
+    .fill-medium { background: #f59e0b; }
+    .fill-low    { background: #ef4444; }
+
+    .overall-cell { font-weight: 800; font-size: 15px; }
+
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    @media (max-width: 720px) { .two-col { grid-template-columns: 1fr; } }
+
+    .rec { display: flex; gap: 12px; padding: 12px 15px; background: #f8fafc; border-left: 3px solid var(--primary); border-radius: 8px; margin-bottom: 10px; }
+    .rec-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+    .rec-body strong { display: block; font-size: 13.5px; margin-bottom: 2px; }
+    .rec-body span   { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+    .legend { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; margin-bottom: 14px; }
+    .leg-item { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--muted); font-weight: 600; }
+    .leg-dot  { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Employ<span>AI</span></div>
+  <div class="tagline">AI-Era Employability Index · Industry &amp; Business Model Matrix</div>
+</header>
+
+<div class="container">
+
+  <!-- ── Input card ── -->
+  <div class="card">
+    <div class="section-label">Step 1 — Select Classification</div>
+    <div class="card-title">Project Classification</div>
+    <div class="card-sub" style="margin-bottom:16px">
+      Choose the project type. <strong>Company (E)</strong> shows the full A–E matrix and unlocks workforce inputs. All others show that classification's row only.
+    </div>
+
+    <div class="classification-row">
+      <button class="cls-btn cls-A" onclick="selectClass('A')" id="cls-A">
+        <span class="cls-code">A</span><span class="cls-name">Operational</span>
+      </button>
+      <button class="cls-btn cls-B" onclick="selectClass('B')" id="cls-B">
+        <span class="cls-code">B</span><span class="cls-name">Financial</span>
+      </button>
+      <button class="cls-btn cls-C" onclick="selectClass('C')" id="cls-C">
+        <span class="cls-code">C</span><span class="cls-name">Market</span>
+      </button>
+      <button class="cls-btn cls-D" onclick="selectClass('D')" id="cls-D">
+        <span class="cls-code">D</span><span class="cls-name">HR</span>
+      </button>
+      <button class="cls-btn cls-E" onclick="selectClass('E')" id="cls-E">
+        <span class="cls-code">E</span><span class="cls-name">Company</span>
+      </button>
+    </div>
+
+    <div class="section-label">Step 2 — Market &amp; Risk Parameters</div>
+    <div class="card-sub">Select all parameters. Additional fields appear based on your classification choice.</div>
+
+    <!-- Base 6 inputs — always shown -->
+    <div class="inputs-grid" id="baseInputs">
+      <div class="field">
+        <label>Investment Level</label>
+        <select id="investment" onchange="checkReady()">
+          <option value="">— Select —</option>
+          <option value="lt100k">&lt; $100,000</option>
+          <option value="lt300k">&lt; $300,000</option>
+          <option value="gt500k">&gt; $500,000</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Expected Returns</label>
+        <select id="returns" onchange="checkReady()">
+          <option value="">— Select —</option>
+          <option value="lt15">&lt; 15%</option>
+          <option value="gt15">15%</option>
+          <option value="r1530">15% – 30%</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Tenure (Years)</label>
+        <select id="tenure" onchange="checkReady()">
+          <option value="">— Select —</option>
+          <option value="t1">1 Year</option>
+          <option value="t3">3 Years</option>
+          <option value="t5">5 Years</option>
+          <option value="t510">5 – 10 Years</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>AI / Automation Exposure</label>
+        <select id="ai" onchange="checkReady()">
+          <option value="">— Select —</option>
+          <option value="low">Low</option>
+          <option value="medium">Medium</option>
+          <option value="high">High</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Operational Cost</label>
+        <select id="cost" onchange="checkReady()">
+          <option value="">— Select —</option>
+          <option value="low">Low</option>
+          <option value="medium">Medium</option>
+          <option value="high">High</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Market Potential</label>
+        <select id="market" onchange="checkReady()">
+          <option value="">— Select —</option>
+          <option value="m2">$2 MM</option>
+          <option value="m25">$2 MM – $5 MM</option>
+          <option value="m510">$5 MM – $10 MM</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Future Costs — shown for ALL classifications once one is selected -->
+    <div class="extra-section" id="futureCostsSection" style="display:none">
+      <div class="extra-label">Strategic Outlook</div>
+      <div class="extra-sub">Applies to all project types.</div>
+      <div class="inputs-grid">
+        <div class="field">
+          <label>Future Costs vs. Work Potential</label>
+          <select id="futureCosts" onchange="checkReady()">
+            <option value="">— Select —</option>
+            <option value="low">Low</option>
+            <option value="medium">Medium</option>
+            <option value="high">High</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Payroll + Absence — shown ONLY for Company (E) -->
+    <div class="extra-section" id="companyExtras" style="display:none">
+      <div class="extra-label">Workforce Indicators <span class="company-tag">Company E only</span></div>
+      <div class="extra-sub">These inputs apply to company-wide workforce analysis across all classification types.</div>
+      <div class="inputs-grid">
+        <div class="field">
+          <label>Employee Monthly Payroll ($)</label>
+          <select id="payroll" onchange="checkReady()">
+            <option value="">— Select —</option>
+            <option value="p10k">$10,000</option>
+            <option value="p20k">$20,000</option>
+            <option value="p30k">$30,000</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Employee Absence / Leave per Month</label>
+          <select id="absence" onchange="checkReady()">
+            <option value="">— Select —</option>
+            <option value="a1">1 Day</option>
+            <option value="a3">3 Days</option>
+            <option value="a5">5 Days</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn" id="generateBtn" onclick="generate()" disabled>
+      ⚡ Generate Employability Matrix
+    </button>
+  </div>
+
+  <!-- ── Results ── -->
+  <div id="results">
+
+    <div class="card">
+      <div class="section-label">Assessment Summary</div>
+      <div class="card-title" id="summaryTitle">—</div>
+      <div class="card-sub" id="summaryDesc" style="margin-bottom:18px">—</div>
+      <div class="summary-strip" id="summaryStrip"></div>
+    </div>
+
+    <!-- Featured single-type profile (A/B/C/D) -->
+    <div id="featuredSection" style="display:none">
+      <div class="section-label" style="margin-bottom:8px">Classification Profile</div>
+      <div class="featured-card" id="featuredCard"></div>
+    </div>
+
+    <!-- Matrix table -->
+    <div class="card">
+      <div class="section-label">Employability Matrix — Rubric-Driven</div>
+      <div class="card-title" id="matrixCardTitle">Full Index Table · All Project Types A–E</div>
+      <div class="card-sub">
+        Risk levels from EI-Index Risk Matrix (RiskMatrix.numbers · Rubric v<span id="rubricVersion">—</span>).
+        Edit <strong>ei-rubric.json</strong> and paste into the RUBRIC CONFIG block to update.
+      </div>
+      <div class="legend">
+        <div class="leg-item"><div class="leg-dot" style="background:#10b981"></div>Low Risk (70–100)</div>
+        <div class="leg-item"><div class="leg-dot" style="background:#f59e0b"></div>Medium Risk (40–69)</div>
+        <div class="leg-item"><div class="leg-dot" style="background:#ef4444"></div>High Risk (0–39)</div>
+      </div>
+      <div class="matrix-wrap">
+        <table class="matrix">
+          <thead><tr id="matrixHead"></tr></thead>
+          <tbody id="matrixBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Charts (E / full grid only) -->
+    <div class="two-col" id="chartsSection" style="display:none">
+      <div class="card">
+        <div class="section-label">Visual Comparison</div>
+        <div class="card-title">Radar Profile by Type</div>
+        <div class="card-sub">Employability shape across all five classifications.</div>
+        <canvas id="radarChart"></canvas>
+      </div>
+      <div class="card">
+        <div class="section-label">Overall Ranking</div>
+        <div class="card-title">Employability Score — A to E</div>
+        <div class="card-sub">Ranked under current conditions.</div>
+        <canvas id="barChart"></canvas>
+      </div>
+    </div>
+
+    <!-- Recommendations -->
+    <div class="card">
+      <div class="section-label">Strategic Recommendations</div>
+      <div class="card-title">Action Plan</div>
+      <div class="card-sub">Insights from your rubric profile.</div>
+      <div id="recommendations"></div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ================================================================
+//  === RUBRIC CONFIG — EDIT HERE ===
+//  Source: RiskMatrix.numbers / ei-rubric.json (EI-Index folder)
+//  To update: edit ei-rubric.json then paste values below.
+//
+//  NEW v1.2: futureCosts (all types), payroll + absence (E only)
+//  weightsStandard → A/B/C/D (7 dims, must sum to 1.0)
+//  weightsCompany  → E       (9 dims, must sum to 1.0)
+// ================================================================
+const RUBRIC = {
+  version: "1.2",
+  riskBands: {
+    LOW:    { label:"Low Risk",   badgeClass:"lv-high",   fillClass:"fill-high",   color:"#10b981" },
+    MEDIUM: { label:"Medium Risk",badgeClass:"lv-medium", fillClass:"fill-medium", color:"#f59e0b" },
+    HIGH:   { label:"High Risk",  badgeClass:"lv-low",    fillClass:"fill-low",    color:"#ef4444" }
+  },
+  dimensions: {
+    // ── Core 6 (all classifications) ──
+    investment: {
+      label:"Investment", colStyle:"",
+      options: {
+        lt100k: { risk:"LOW",    baseScore:82, note:"<$100K — UG-level roles accessible" },
+        lt300k: { risk:"MEDIUM", baseScore:57, note:"<$300K — UG + moderate specialisation" },
+        gt500k: { risk:"HIGH",   baseScore:28, note:">$500K — Management graduates only" }
+      }
+    },
+    returns: {
+      label:"Returns", colStyle:"",
+      options: {
+        lt15:  { risk:"LOW",    baseScore:78, note:"<15% (1x-3x) — operational, UG-level" },
+        gt15:  { risk:"MEDIUM", baseScore:54, note:"15% (3x-5x) — financial, UG+management" },
+        r1530: { risk:"HIGH",   baseScore:26, note:"15-30% (5x-7x) — Masters & senior mgmt" }
+      }
+    },
+    tenure: {
+      label:"Tenure", colStyle:"",
+      options: {
+        t510: { risk:"LOW",    baseScore:90, note:"5-10yrs — very stable" },
+        t5:   { risk:"LOW",    baseScore:78, note:"5yrs — stable employment" },
+        t3:   { risk:"MEDIUM", baseScore:54, note:"3yrs — moderate risk" },
+        t1:   { risk:"HIGH",   baseScore:26, note:"1yr — high disruption risk" }
+      }
+    },
+    ai: {
+      label:"AI & Automation", colStyle:"",
+      options: {
+        low:    { risk:"LOW",    baseScore:85, note:"Low AI — high employability" },
+        medium: { risk:"MEDIUM", baseScore:55, note:"Medium AI — reskilling needed" },
+        high:   { risk:"HIGH",   baseScore:22, note:"High AI — displacement risk" }
+      }
+    },
+    cost: {
+      label:"Cost", colStyle:"",
+      options: {
+        low:    { risk:"LOW",    baseScore:85, note:"<$30K — high employability" },
+        medium: { risk:"MEDIUM", baseScore:58, note:"$30K-$100K — medium employability" },
+        high:   { risk:"HIGH",   baseScore:30, note:">$100K — lean structures" }
+      }
+    },
+    market: {
+      label:"Market Potential", colStyle:"",
+      options: {
+        m2:   { risk:"LOW",    baseScore:78, note:"$2M / ~10 resources" },
+        m25:  { risk:"MEDIUM", baseScore:55, note:"$5M / ~5 resources" },
+        m510: { risk:"HIGH",   baseScore:28, note:"$10M / 1 senior resource" }
+      }
+    },
+    // ── New v1.2: all classifications ──
+    futureCosts: {
+      label:"Future Costs vs Work Potential", colStyle:"th-new",
+      options: {
+        low:    { risk:"LOW",    baseScore:80, note:"Low future costs — sustainable workforce potential" },
+        medium: { risk:"MEDIUM", baseScore:55, note:"Medium future costs — manageable trade-off" },
+        high:   { risk:"HIGH",   baseScore:28, note:"High future costs exceed work potential" }
+      }
+    },
+    // ── New v1.2: Company (E) only ──
+    payroll: {
+      label:"Employee Payroll ($)", colStyle:"th-company",
+      options: {
+        p10k: { risk:"LOW",    baseScore:80, note:"$10K/mo — affordable, broad hiring possible" },
+        p20k: { risk:"MEDIUM", baseScore:55, note:"$20K/mo — moderate payroll burden" },
+        p30k: { risk:"HIGH",   baseScore:28, note:"$30K/mo — high payroll, fewer positions" }
+      }
+    },
+    absence: {
+      label:"Absence / Leave (days/mo)", colStyle:"th-company",
+      options: {
+        a1: { risk:"LOW",    baseScore:82, note:"1 day — stable, productive workforce" },
+        a3: { risk:"MEDIUM", baseScore:55, note:"3 days — moderate disruption" },
+        a5: { risk:"HIGH",   baseScore:26, note:"5 days — high absence, workforce instability" }
+      }
+    }
+  },
+  classModifiers: {
+    // Positive = more resilient, Negative = more exposed
+    A: { investment:0,  returns:-5, tenure:5,  ai:-15, cost:-5, market:-8,  futureCosts:-5, payroll:-5, absence:-8 },
+    B: { investment:5,  returns:5,  tenure:0,  ai:-8,  cost:0,  market:0,   futureCosts:3,  payroll:0,  absence:-3 },
+    C: { investment:8,  returns:10, tenure:-4, ai:12,  cost:5,  market:12,  futureCosts:5,  payroll:5,  absence:5  },
+    D: { investment:3,  returns:-3, tenure:3,  ai:0,   cost:0,  market:-5,  futureCosts:0,  payroll:3,  absence:8  },
+    E: { investment:5,  returns:0,  tenure:0,  ai:5,   cost:0,  market:4,   futureCosts:3,  payroll:0,  absence:0  }
+  },
+  // Weights for A/B/C/D (7 dims — must sum to 1.0)
+  weightsStandard: {
+    ai:0.28, investment:0.14, returns:0.13, tenure:0.13, cost:0.11, market:0.12, futureCosts:0.09
+  },
+  // Weights for Company E (9 dims — must sum to 1.0)
+  weightsCompany: {
+    ai:0.25, investment:0.11, returns:0.11, tenure:0.11, cost:0.10, market:0.10, futureCosts:0.10, payroll:0.07, absence:0.05
+  }
+};
+// ================================================================
+//  === END RUBRIC CONFIG ===
+// ================================================================
+
+const TYPES = [
+  { id:'A', name:'Operational', color:'#7c3aed' },
+  { id:'B', name:'Financial',   color:'#1d4ed8' },
+  { id:'C', name:'Market',      color:'#065f46' },
+  { id:'D', name:'HR',          color:'#92400e' },
+  { id:'E', name:'Company',     color:'#9d174d' }
+];
+
+// Dimension key sets
+const DIM_BASE     = ['investment','returns','tenure','ai','cost','market'];
+const DIM_STANDARD = [...DIM_BASE, 'futureCosts'];           // A / B / C / D
+const DIM_COMPANY  = [...DIM_BASE, 'futureCosts','payroll','absence']; // E
+
+let selectedClass = null;
+
+// ── On load: set rubric version label ──
+document.getElementById('rubricVersion').textContent = RUBRIC.version;
+
+// ── Classification selection ──
+function selectClass(id) {
+  selectedClass = id;
+  document.querySelectorAll('.cls-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('cls-' + id).classList.add('active');
+
+  // Always show futureCosts once a classification is chosen
+  document.getElementById('futureCostsSection').style.display = 'block';
+
+  // Company extras only for E
+  const showCompany = id === 'E';
+  document.getElementById('companyExtras').style.display = showCompany ? 'block' : 'none';
+  if (!showCompany) {
+    document.getElementById('payroll').value  = '';
+    document.getElementById('absence').value  = '';
+  }
+  checkReady();
+}
+
+// ── Button enable/disable ──
+function checkReady() {
+  if (!selectedClass) { document.getElementById('generateBtn').disabled = true; return; }
+  const dimKeys = selectedClass === 'E' ? DIM_COMPANY : DIM_STANDARD;
+  const allFilled = dimKeys.every(k => {
+    const el = document.getElementById(k);
+    return el && el.value !== '';
+  });
+  document.getElementById('generateBtn').disabled = !allFilled;
+}
+
+// ── Helpers ──
+function clamp(n) { return Math.min(100, Math.max(0, Math.round(n))); }
+
+function bandFor(score) {
+  if (score >= 70) return RUBRIC.riskBands.LOW;
+  if (score >= 40) return RUBRIC.riskBands.MEDIUM;
+  return RUBRIC.riskBands.HIGH;
+}
+function hexColor(score) { return bandFor(score).color; }
+
+function badge(score) {
+  const b = bandFor(score);
+  return `<div class="score-badge">
+    <span class="sb-label ${b.badgeClass}">${b.label}</span>
+    <div class="sb-bar"><div class="sb-fill ${b.fillClass}" style="width:${score}%"></div></div>
+    <span class="sb-num">${score}/100</span>
+  </div>`;
+}
+
+// ── Score computation ──
+function computeScores(typeId, inputs, dimKeys) {
+  const mods    = RUBRIC.classModifiers[typeId];
+  const weights = dimKeys.length > 7 ? RUBRIC.weightsCompany : RUBRIC.weightsStandard;
+  const scores  = {};
+
+  for (const k of dimKeys) {
+    const optCfg   = RUBRIC.dimensions[k].options[inputs[k]];
+    const rawScore = optCfg.baseScore + (mods[k] || 0);
+    scores[k] = { score: clamp(rawScore), risk: optCfg.risk, note: optCfg.note };
+  }
+
+  let total = 0;
+  for (const k of dimKeys) total += scores[k].score * (weights[k] || 0);
+  scores.overall = clamp(total);
+  return scores;
+}
+
+// ── Build table header ──
+function buildHeader(dimKeys) {
+  const head = document.getElementById('matrixHead');
+  head.innerHTML = `<th>Project Type</th>` +
+    dimKeys.map(k => `<th class="${RUBRIC.dimensions[k].colStyle || ''}">${RUBRIC.dimensions[k].label}</th>`).join('') +
+    `<th style="background:#eef2ff;color:#4f46e5;">Overall Score</th>`;
+}
+
+// ── Build featured profile card ──
+function buildFeaturedCard(type, scores, dimKeys) {
+  document.getElementById('featuredCard').innerHTML = `
+    <div class="featured-header">
+      <div class="featured-badge" style="background:${type.color}">${type.id}</div>
+      <div>
+        <h2>${type.id} — ${type.name}</h2>
+        <p>Employability profile · Rubric v${RUBRIC.version}</p>
+      </div>
+      <div class="featured-score" style="color:${hexColor(scores.overall)}">${scores.overall}<span>/100</span></div>
+    </div>
+    <div class="dim-grid">
+      ${dimKeys.map(k => {
+        const d = scores[k], b = bandFor(d.score);
+        return `<div class="dim-tile">
+          <div class="dim-tile-label">${RUBRIC.dimensions[k].label}</div>
+          <div class="dim-tile-score" style="color:${b.color}">${d.score}</div>
+          <div class="dim-tile-bar"><div class="dim-tile-fill ${b.fillClass}" style="width:${d.score}%"></div></div>
+          <span class="dim-tile-badge ${b.badgeClass}">${b.label}</span>
+          <div class="dim-tile-note">${d.note}</div>
+        </div>`;
+      }).join('')}
+    </div>`;
+}
+
+// ── Charts ──
+let radar = null, bar = null;
+function buildCharts(allResults, dimKeys) {
+  const colors = allResults.map(r => hexColor(r.scores.overall));
+  if (radar) radar.destroy();
+  radar = new Chart(document.getElementById('radarChart'), {
+    type:'radar',
+    data:{
+      labels: dimKeys.map(k => RUBRIC.dimensions[k].label),
+      datasets: allResults.map((r,i) => ({
+        label:`Type ${r.type.id}`,
+        data: dimKeys.map(k => r.scores[k].score),
+        borderColor:colors[i], backgroundColor:colors[i]+'18', borderWidth:2, pointRadius:3
+      }))
+    },
+    options:{
+      responsive:true,
+      scales:{ r:{ min:0,max:100,ticks:{stepSize:25,font:{size:9}},
+        pointLabels:{font:{size:9,family:'Inter'}},grid:{color:'#e2e8f0'} } },
+      plugins:{ legend:{position:'bottom',labels:{font:{size:10,family:'Inter'},boxWidth:10}} }
+    }
+  });
+  if (bar) bar.destroy();
+  bar = new Chart(document.getElementById('barChart'), {
+    type:'bar',
+    data:{
+      labels: allResults.map(r=>`Type ${r.type.id}`),
+      datasets:[{ data:allResults.map(r=>r.scores.overall), backgroundColor:colors, borderRadius:8, borderSkipped:false }]
+    },
+    options:{
+      indexAxis:'y', responsive:true,
+      scales:{
+        x:{min:0,max:100,grid:{color:'#e2e8f0'},ticks:{font:{size:11}}},
+        y:{grid:{display:false},ticks:{font:{size:12,weight:'600',family:'Inter'}}}
+      },
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`Score: ${ctx.parsed.x}/100`}}}
+    }
+  });
+}
+
+// ── Recommendations ──
+function buildRecs(inputs, focusType, allResults, dimKeys) {
+  const recs = [];
+  const aiOpt  = RUBRIC.dimensions.ai.options[inputs.ai];
+  const retOpt = RUBRIC.dimensions.returns.options[inputs.returns];
+  const mktOpt = RUBRIC.dimensions.market.options[inputs.market];
+  const fcOpt  = RUBRIC.dimensions.futureCosts.options[inputs.futureCosts];
+
+  if (focusType.id !== 'E') {
+    const sc = allResults[0].scores;
+    const worst = dimKeys.reduce((a,b) => sc[a].score < sc[b].score ? a : b);
+    const best  = dimKeys.reduce((a,b) => sc[a].score > sc[b].score ? a : b);
+    recs.push({ icon:'🎯', title:`${focusType.name} Profile — ${sc.overall}/100`,
+      text:`Strongest dimension: ${RUBRIC.dimensions[best].label} (${sc[best].score}). Weakest: ${RUBRIC.dimensions[worst].label} (${sc[worst].score}). Focus improvement efforts on the weakest dimension first.` });
+  } else {
+    const best  = allResults.reduce((a,b)=>a.scores.overall>b.scores.overall?a:b);
+    const worst = allResults.reduce((a,b)=>a.scores.overall<b.scores.overall?a:b);
+    const avg   = Math.round(allResults.reduce((a,b)=>a+b.scores.overall,0)/allResults.length);
+    recs.push({ icon:'✅', title:`Best: ${best.type.id} — ${best.type.name} (${best.scores.overall}/100) · Avg: ${avg}/100`,
+      text:`${best.type.name} functions lead under current conditions. ${worst.type.name} (${worst.type.id}) scores lowest at ${worst.scores.overall}/100 — prioritise reskilling and role redesign there.` });
+  }
+
+  if (aiOpt.risk === 'HIGH') recs.push({ icon:'🤖', title:'AI Reskilling — Immediate Priority',
+    text:'High AI exposure is the dominant risk. Invest in upskilling for AI augmentation, prompt engineering, and human-AI workflows within 12 months. Operational (A) and Financial (B) face the steepest contraction.' });
+
+  if (fcOpt.risk === 'HIGH') recs.push({ icon:'💸', title:'Future Costs Exceed Work Potential — Structural Risk',
+    text:'High future costs relative to work output signals an unsustainable workforce model. Audit role-level cost-to-output ratios, prioritise automation of low-value tasks, and redesign compensation structures to align cost with productivity.' });
+  else if (fcOpt.risk === 'LOW') recs.push({ icon:'📈', title:'Favourable Cost-to-Potential Ratio — Scale Window Open',
+    text:'Low future costs relative to work potential is a structural hiring advantage. This is the ideal window to expand headcount and build institutional depth before market conditions tighten.' });
+
+  if (focusType.id === 'E' && inputs.payroll && inputs.absence) {
+    const payOpt = RUBRIC.dimensions.payroll.options[inputs.payroll];
+    const absOpt = RUBRIC.dimensions.absence.options[inputs.absence];
+    if (payOpt.risk === 'HIGH' && absOpt.risk === 'HIGH') recs.push({ icon:'⚠️', title:'High Payroll + High Absence — Critical Workforce Drain',
+      text:'A $30K/month payroll combined with 5 days of absence per month represents maximum workforce cost drag. Implement attendance incentive programmes, flexible-work policies, and review total compensation structure to improve ROI per headcount.' });
+    else if (absOpt.risk === 'HIGH') recs.push({ icon:'🏥', title:'High Employee Absence — Productivity Risk',
+      text:'5 absence days per month per employee signals significant productivity leakage. Investigate root causes (workload, culture, health), implement structured absence management, and consider role-level workload audits.' });
+    else if (payOpt.risk === 'LOW') recs.push({ icon:'💰', title:'Lean Payroll Structure — Hiring Capacity Strong',
+      text:'$10K/month payroll enables a wider hiring base. Use this cost advantage to build bench strength in high-risk classifications (Operational A, Financial B) before AI-driven consolidation increases talent competition.' });
+  }
+
+  recs.push({ icon:'📊', title:'Reassess Quarterly — AI Disruption is Non-Linear',
+    text:'Update this matrix every quarter. Edit ei-rubric.json to update thresholds, then paste changes into the RUBRIC CONFIG block in this file.' });
+
+  return recs.slice(0,4);
+}
+
+// ── Main generate ──
+function generate() {
+  if (!selectedClass) { alert('Please select a project classification first.'); return; }
+
+  const isFullGrid = selectedClass === 'E';
+  const dimKeys    = isFullGrid ? DIM_COMPANY : DIM_STANDARD;
+
+  const inputs = {};
+  for (const k of dimKeys) {
+    const el = document.getElementById(k);
+    inputs[k] = el ? el.value : '';
+  }
+  if (Object.values(inputs).some(v => !v)) { alert('Please fill in all parameter fields.'); return; }
+
+  const focusType = TYPES.find(t => t.id === selectedClass);
+  const rowTypes  = isFullGrid ? TYPES : [focusType];
+  const allResults = rowTypes.map(type => ({ type, scores: computeScores(type.id, inputs, dimKeys) }));
+
+  // ── Header
+  buildHeader(dimKeys);
+
+  // ── Table rows
+  document.getElementById('matrixCardTitle').textContent = isFullGrid
+    ? 'Full Index Table · All Project Types A–E'
+    : `Index Table · ${focusType.id} — ${focusType.name}`;
+
+  document.getElementById('matrixBody').innerHTML = allResults.map(r => `
+    <tr${isFullGrid && r.type.id === selectedClass ? ' class="row-selected"' : ''}>
+      <td>
+        <div class="type-code" style="color:${r.type.color}">${r.type.id} — ${r.type.name}</div>
+        ${isFullGrid && r.type.id === selectedClass ? '<span class="type-badge">★ Selected</span>' : ''}
+        <div class="rubric-note">${RUBRIC.dimensions.ai.options[inputs.ai].note}</div>
+      </td>
+      ${dimKeys.map(k=>`<td>${badge(r.scores[k].score)}</td>`).join('')}
+      <td style="background:#eef2ff;">
+        <span class="overall-cell" style="color:${hexColor(r.scores.overall)}">
+          ${r.scores.overall}<span style="font-size:11px;font-weight:500;color:var(--muted)">/100</span>
+        </span>
+      </td>
+    </tr>`).join('');
+
+  // ── Featured card
+  if (!isFullGrid) {
+    buildFeaturedCard(focusType, allResults[0].scores, dimKeys);
+    document.getElementById('featuredSection').style.display = 'block';
+  } else {
+    document.getElementById('featuredSection').style.display = 'none';
+  }
+
+  // ── Charts
+  if (isFullGrid) { document.getElementById('chartsSection').style.display = 'grid'; buildCharts(allResults, dimKeys); }
+  else            { document.getElementById('chartsSection').style.display = 'none'; }
+
+  // ── Summary strip
+  const aiRisk  = RUBRIC.dimensions.ai.options[inputs.ai].risk;
+  const mktNote = RUBRIC.dimensions.market.options[inputs.market].note.split('—')[0].trim();
+
+  const summaryItems = isFullGrid ? [
+    { label:'Avg. Score', val:`${Math.round(allResults.reduce((s,r)=>s+r.scores.overall,0)/allResults.length)}/100`, color: hexColor(Math.round(allResults.reduce((s,r)=>s+r.scores.overall,0)/allResults.length)) },
+    { label:'Best Type',  val:`${allResults.reduce((a,b)=>a.scores.overall>b.scores.overall?a:b).type.id} — ${allResults.reduce((a,b)=>a.scores.overall>b.scores.overall?a:b).type.name}`, color:'#10b981' },
+    { label:'Weakest',    val:`${allResults.reduce((a,b)=>a.scores.overall<b.scores.overall?a:b).type.id} — ${allResults.reduce((a,b)=>a.scores.overall<b.scores.overall?a:b).type.name}`, color:'#ef4444' },
+    { label:'AI Risk',    val:RUBRIC.riskBands[aiRisk].label, color:RUBRIC.riskBands[aiRisk].color },
+    { label:'Future Costs',val:RUBRIC.riskBands[RUBRIC.dimensions.futureCosts.options[inputs.futureCosts].risk].label, color:RUBRIC.riskBands[RUBRIC.dimensions.futureCosts.options[inputs.futureCosts].risk].color }
+  ] : [
+    { label:'Classification', val:`${focusType.id} — ${focusType.name}`, color:focusType.color },
+    { label:'Overall Score',  val:`${allResults[0].scores.overall}/100`, color:hexColor(allResults[0].scores.overall) },
+    { label:'Risk Level',     val:bandFor(allResults[0].scores.overall).label, color:hexColor(allResults[0].scores.overall) },
+    { label:'AI Risk',        val:RUBRIC.riskBands[aiRisk].label, color:RUBRIC.riskBands[aiRisk].color },
+    { label:'Future Costs',   val:RUBRIC.riskBands[RUBRIC.dimensions.futureCosts.options[inputs.futureCosts].risk].label, color:RUBRIC.riskBands[RUBRIC.dimensions.futureCosts.options[inputs.futureCosts].risk].color }
+  ];
+
+  document.getElementById('summaryTitle').textContent = isFullGrid
+    ? `Full Company Matrix · AI: ${inputs.ai.charAt(0).toUpperCase()+inputs.ai.slice(1)} · Market: ${mktNote}`
+    : `${focusType.name} Profile · AI: ${inputs.ai.charAt(0).toUpperCase()+inputs.ai.slice(1)} · Market: ${mktNote}`;
+  document.getElementById('summaryDesc').textContent =
+    `Rubric v${RUBRIC.version} · ${dimKeys.length} dimensions · ${isFullGrid ? '5 project types' : `${focusType.id} — ${focusType.name}`} · AI & Automation = ${Math.round(RUBRIC[isFullGrid?'weightsCompany':'weightsStandard'].ai*100)}% weight`;
+
+  document.getElementById('summaryStrip').innerHTML = summaryItems
+    .map(i=>`<div class="sum-item"><span class="si-label">${i.label}</span><span class="si-val" style="color:${i.color}">${i.val}</span></div>`).join('');
+
+  // ── Recs
+  document.getElementById('recommendations').innerHTML = buildRecs(inputs, focusType, allResults, dimKeys)
+    .map(r=>`<div class="rec"><div class="rec-icon">${r.icon}</div><div class="rec-body"><strong>${r.title}</strong><span>${r.text}</span></div></div>`).join('');
+
+  const el = document.getElementById('results');
+  el.style.display = 'block';
+  el.scrollIntoView({ behavior:'smooth' });
+}
+</script>
+</body>
+</html>
