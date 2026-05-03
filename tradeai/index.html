@@ -475,7 +475,7 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:var(--gray-50);c
   </div>
   <div class="kpi-grid">
     <div class="kpi navy"><div class="kpi-label">Total Factories</div><div class="kpi-value" id="s-kpi1">306</div><div class="kpi-sub" id="s-kpi1-sub">Darjeeling · Nilgiris · Assam</div></div>
-    <div class="kpi emerald"><div class="kpi-label">Tier A (Pareto Core)</div><div class="kpi-value">~20%</div><div class="kpi-sub">&gt;3,000 ton/month · Direct export</div></div>
+    <div class="kpi emerald"><div class="kpi-label">Tier A (Pareto Core)</div><div class="kpi-value">~20%</div><div class="kpi-sub">&gt;100 ton/month · Direct export</div></div>
     <div class="kpi indigo"><div class="kpi-label">Tier B</div><div class="kpi-value">~30%</div><div class="kpi-sub">Mid capacity · Consolidator needed</div></div>
     <div class="kpi amber"><div class="kpi-label">Tier C</div><div class="kpi-value">~50%</div><div class="kpi-sub">Small scale · Cluster routing</div></div>
   </div>
@@ -486,7 +486,7 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:var(--gray-50);c
       <div class="tier-card tier-a">
         <div class="tier-title" style="color:#065f46">Tier A — Pareto Core</div>
         <div class="text-sm" style="margin-bottom:12px">Large capacity. Direct export to international buyers.</div>
-        <div class="tier-metric"><span>Monthly capacity</span><span class="tier-metric-val" id="ta-cap">&gt;3,000 ton</span></div>
+        <div class="tier-metric"><span>Monthly capacity</span><span class="tier-metric-val" id="ta-cap">&gt;100 ton</span></div>
         <div class="tier-metric"><span>Factories/region</span><span class="tier-metric-val">~10</span></div>
         <div class="tier-metric"><span>Containers/month</span><span class="tier-metric-val">2.5 each</span></div>
         <div class="tier-metric"><span>Consolidator?</span><span class="tier-metric-val" style="color:#065f46">✗ No</span></div>
@@ -495,7 +495,7 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:var(--gray-50);c
       <div class="tier-card tier-b">
         <div class="tier-title" style="color:#92400e">Tier B — Mid Capacity</div>
         <div class="text-sm" style="margin-bottom:12px">Medium factories. Consolidator pools orders to fill container.</div>
-        <div class="tier-metric"><span>Monthly capacity</span><span class="tier-metric-val">~900 ton</span></div>
+        <div class="tier-metric"><span>Monthly capacity</span><span class="tier-metric-val">~30 ton</span></div>
         <div class="tier-metric"><span>Factories/region</span><span class="tier-metric-val">~50</span></div>
         <div class="tier-metric"><span>Containers/month</span><span class="tier-metric-val">0.5 each</span></div>
         <div class="tier-metric"><span>Consolidator?</span><span class="tier-metric-val" style="color:#b45309">✓ Yes</span></div>
@@ -504,7 +504,7 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:var(--gray-50);c
       <div class="tier-card tier-c">
         <div class="tier-title" style="color:#7c3aed">Tier C — Small Scale</div>
         <div class="text-sm" style="margin-bottom:12px">Small factories. Important in aggregate via cluster container.</div>
-        <div class="tier-metric"><span>Monthly capacity</span><span class="tier-metric-val">~300 ton</span></div>
+        <div class="tier-metric"><span>Monthly capacity</span><span class="tier-metric-val">~10 ton</span></div>
         <div class="tier-metric"><span>Factories/region</span><span class="tier-metric-val">~90</span></div>
         <div class="tier-metric"><span>Containers/month</span><span class="tier-metric-val">1.25 each</span></div>
         <div class="tier-metric"><span>Consolidator?</span><span class="tier-metric-val" style="color:#b45309">✓ Yes</span></div>
@@ -748,12 +748,12 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:var(--gray-50);c
       <div class="card-sub">Enter your factory details — TradeAI computes your container output and routing</div>
       <div class="calc-row"><span class="calc-label">Factory Tier</span>
         <select class="calc-select" id="pp-tier" onchange="calcProduction()">
-          <option value="A">Tier A (&gt;3,000 ton/month)</option>
-          <option value="B">Tier B (~900 ton/month)</option>
-          <option value="C" selected>Tier C (~300 ton/month)</option>
+          <option value="A">Tier A (&gt;100 ton/month)</option>
+          <option value="B">Tier B (~30 ton/month)</option>
+          <option value="C" selected>Tier C (~10 ton/month)</option>
         </select></div>
       <div class="calc-row"><span class="calc-label">Monthly Capacity (ton)</span>
-        <input class="calc-input" id="pp-daily" type="number" value="300" oninput="calcProduction()"></div>
+        <input class="calc-input" id="pp-daily" type="number" value="10" oninput="calcProduction()"></div>
       <div class="calc-row"><span class="calc-label">Export-quality allocation %</span>
         <input class="calc-input" id="pp-quality" type="number" value="50" min="0" max="100" oninput="calcProduction()"></div>
       <div class="calc-result">
@@ -771,7 +771,7 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:var(--gray-50);c
       <table class="tbl" style="margin-top:8px">
         <thead><tr><th>Metric</th><th>Tier A</th><th>Tier B</th><th>Tier C</th></tr></thead>
         <tbody>
-          <tr><td>Monthly capacity</td><td class="num">&gt;3,000 ton</td><td class="num">~900 ton</td><td class="num">~300 ton</td></tr>
+          <tr><td>Monthly capacity</td><td class="num">&gt;100 ton</td><td class="num">~30 ton</td><td class="num">~10 ton</td></tr>
           <tr><td>Containers/month</td><td class="num">2.5</td><td class="num">0.5</td><td class="num">1.25</td></tr>
           <tr><td>Consolidator?</td><td><span class="tag tag-a">No</span></td><td><span class="tag tag-c">Yes</span></td><td><span class="tag tag-c">Yes</span></td></tr>
           <tr><td>Market tier</td><td>US/EU Direct</td><td>UAE Hub</td><td>Global Infusion</td></tr>
@@ -1239,7 +1239,7 @@ function calcGap() {
 const tierMap = {A:{tier:'US/EU Direct'},B:{tier:'UAE Hub'},C:{tier:'Global Infusion'}};
 function calcProduction() {
   const tier = document.getElementById('pp-tier').value;
-  const monthly = parseFloat(document.getElementById('pp-daily').value)||300;
+  const monthly = parseFloat(document.getElementById('pp-daily').value)||10;
   const quality = parseFloat(document.getElementById('pp-quality').value)||50;
   const qMon = Math.round(monthly * quality / 100);
   const containers = (monthly * quality / 100 / 20).toFixed(2);
