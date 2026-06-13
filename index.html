@@ -84,6 +84,28 @@
         .nav-cta:hover { opacity: 0.9; }
         .mobile-toggle { display: none; background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; }
 
+        /* ---- PRODUCTS DROPDOWN ---- */
+        .nav-dropdown { position: relative; }
+        .nav-dropdown > a::after { content: ' ▾'; font-size: 0.7rem; opacity: 0.7; }
+        .dropdown-menu {
+            display: none; position: absolute; top: calc(100% + 12px); left: 50%; transform: translateX(-50%);
+            background: #0f172a; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px;
+            padding: 8px; min-width: 220px; box-shadow: 0 16px 40px rgba(0,0,0,0.4);
+            z-index: 2000;
+        }
+        .nav-dropdown:hover .dropdown-menu { display: block; }
+        .dropdown-item {
+            display: flex; align-items: center; gap: 10px; padding: 10px 12px;
+            border-radius: 8px; text-decoration: none; transition: background 0.15s;
+        }
+        .dropdown-item:hover { background: rgba(255,255,255,0.07); }
+        .dropdown-item-icon {
+            width: 32px; height: 32px; border-radius: 7px; display: flex; align-items: center;
+            justify-content: center; font-size: 14px; flex-shrink: 0;
+        }
+        .dropdown-item-text strong { display: block; font-size: 0.85rem; color: #fff; font-weight: 600; }
+        .dropdown-item-text span { font-size: 0.75rem; color: var(--gray-400); }
+
         /* ---- HERO ---- */
         .hero {
             background: var(--gradient-dark); color: var(--white);
@@ -310,7 +332,27 @@
         <ul class="nav-links">
             <li><a href="#about">About</a></li>
             <li><a href="#services">Services</a></li>
-            <li><a href="#products">Products</a></li>
+            <li class="nav-dropdown">
+                <a href="#products">Products</a>
+                <div class="dropdown-menu">
+                    <a href="https://soarai.in" target="_blank" class="dropdown-item">
+                        <div class="dropdown-item-icon" style="background:#eff6ff;">🚀</div>
+                        <div class="dropdown-item-text"><strong>SoarAI</strong><span>AI Marketing Intelligence</span></div>
+                    </a>
+                    <a href="https://wellingtonai.in/employai/" class="dropdown-item">
+                        <div class="dropdown-item-icon" style="background:#f5f3ff;">👥</div>
+                        <div class="dropdown-item-text"><strong>EmployAI</strong><span>Workforce Risk Scoring</span></div>
+                    </a>
+                    <a href="https://wellingtonai.in/tradeai/" class="dropdown-item">
+                        <div class="dropdown-item-icon" style="background:#ecfdf5;">📦</div>
+                        <div class="dropdown-item-text"><strong>TradeAI</strong><span>Global Trade Intelligence</span></div>
+                    </a>
+                    <a href="https://wellingtonai.in/urbanai/" class="dropdown-item">
+                        <div class="dropdown-item-icon" style="background:#e0f2fe;">🌊</div>
+                        <div class="dropdown-item-text"><strong>UrbanAI</strong><span>Urban Flood Resilience</span></div>
+                    </a>
+                </div>
+            </li>
             <li><a href="#leadership">Leadership</a></li>
             <li><a href="#contact">Contact</a></li>
             <li><a href="https://soarai.in" target="_blank" class="nav-cta">Try SoarAI Free</a></li>
@@ -537,6 +579,40 @@
     </div>
 </section>
 
+<!-- ====== URBAN AI ====== -->
+<section id="urbanai" style="background: linear-gradient(135deg, #0c1a2e 0%, #0f3460 50%, #0e4d6e 100%); padding-top: 0; padding-bottom: 100px;">
+    <div class="section-inner">
+        <span class="section-label" style="color: #38bdf8;">Urban Infrastructure Intelligence</span>
+        <h2 class="section-title" style="color: #fff;">Introducing UrbanAI</h2>
+        <p class="section-subtitle" style="color: rgba(255,255,255,0.7);">Adaptive multi-layer flood resilience intelligence for 14 global cities — modelling infrastructure, pumping strategy, and 30-year investment returns.</p>
+
+        <div class="product-hero" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(56,189,248,0.2);">
+            <div>
+                <h3 style="color: #fff;">UrbanAI — Urban Flood Resilience Platform</h3>
+                <p style="color: rgba(255,255,255,0.75);">UrbanAI models an adaptive four-layer infrastructure system for extreme rainfall events across 14 global cities. Select a city and rainfall scenario — the platform instantly computes floodwater volume, hub clearance time, optimal pump mix, infrastructure layer activation, and a full 30-year NPV/IRR financial model. Built on empirical flood engineering data and HMRC-qualifying R&D.</p>
+                <ul class="product-features" style="color: rgba(255,255,255,0.8);">
+                    <li>14 global cities — India, Europe, Americas, Asia</li>
+                    <li>6 rainfall scenarios from Light to Climate Stress</li>
+                    <li>4 adaptive infrastructure layers — activated by rainfall intensity</li>
+                    <li>Pump type optimisation across 4 HP classes (1.5–100 hp)</li>
+                    <li>30-year NPV/IRR financial model with CAPEX breakdown</li>
+                    <li>Live SVG urban flood map with ward-level risk visualisation</li>
+                </ul>
+                <a href="https://wellingtonai.in/urbanai/" class="btn btn-primary" style="background: linear-gradient(135deg, #0369a1, #0ea5e9);">Explore UrbanAI &#8594;</a>
+            </div>
+            <div class="product-visual" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(56,189,248,0.15);">
+                <div class="soar-logo" style="color: #fff;">Urban<span style="color: #38bdf8;">AI</span></div>
+                <p style="color: rgba(255,255,255,0.5);">by Wellington AI</p>
+                <div class="product-tools">
+                    <div class="product-tool" style="background: rgba(56,189,248,0.1); border-color: rgba(56,189,248,0.2); color: #fff;"><strong style="color:#38bdf8;">14</strong>Global Cities</div>
+                    <div class="product-tool" style="background: rgba(56,189,248,0.1); border-color: rgba(56,189,248,0.2); color: #fff;"><strong style="color:#38bdf8;">4 Layers</strong>Adaptive Infra</div>
+                    <div class="product-tool" style="background: rgba(56,189,248,0.1); border-color: rgba(56,189,248,0.2); color: #fff;"><strong style="color:#38bdf8;">30-yr</strong>NPV / IRR</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
 <!-- ====== CEO / LEADERSHIP ====== -->
 <section id="leadership">
     <div class="section-inner">
@@ -607,9 +683,11 @@
             <a href="#contact">Contact</a>
         </div>
         <div class="footer-col">
-            <h4>Services</h4>
-            <a href="#services">Full-Service Marketing</a>
-            <a href="https://soarai.in" target="_blank">SoarAI Platform</a>
+            <h4>Products</h4>
+            <a href="https://soarai.in" target="_blank">SoarAI</a>
+            <a href="https://wellingtonai.in/employai/">EmployAI</a>
+            <a href="https://wellingtonai.in/tradeai/">TradeAI</a>
+            <a href="https://wellingtonai.in/urbanai/">UrbanAI</a>
         </div>
         <div class="footer-col">
             <h4>Legal</h4>
