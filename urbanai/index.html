@@ -1,0 +1,1122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UrbanAI — Wellington AI</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: Arial, sans-serif; background: #F0F4F8; color: #2C3E50; min-height: 100vh; }
+
+/* ── Header ── */
+.header { background: #1F3864; padding: 14px 32px; display: flex; align-items: center; gap: 20px; }
+.header-logo { color: #fff; font-size: 12px; letter-spacing: 2px; opacity: 0.7; text-transform: uppercase; }
+.header-title { color: #fff; font-size: 22px; font-weight: bold; }
+.header-sub { color: #90B8E0; font-size: 12px; margin-top: 2px; }
+.header-badge { margin-left: auto; background: #2E75B6; color: #fff; font-size: 11px; padding: 4px 12px; border-radius: 20px; }
+
+/* ── Selectors ── */
+.selector-bar { background: #fff; border-bottom: 1px solid #DDE4EE; padding: 12px 32px; }
+.selector-label { font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: #888; margin-bottom: 6px; }
+.pill-group { display: flex; flex-wrap: wrap; gap: 6px; }
+.city-group { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 4px; }
+.city-divider { width: 100%; height: 0; }
+
+.pill {
+  padding: 5px 14px; border-radius: 20px; font-size: 12px; cursor: pointer;
+  border: 2px solid #DDE4EE; background: #F8FAFD; color: #555; transition: all 0.2s;
+}
+.pill:hover { border-color: #2E75B6; color: #2E75B6; }
+.pill.active { background: #1F3864; border-color: #1F3864; color: #fff; }
+.pill.scenario-light.active { background: #27AE60; border-color: #27AE60; }
+.pill.scenario-design.active { background: #F39C12; border-color: #F39C12; }
+.pill.scenario-severe.active { background: #E67E22; border-color: #E67E22; }
+.pill.scenario-extreme.active { background: #E74C3C; border-color: #E74C3C; }
+.pill.scenario-stress.active { background: #C0392B; border-color: #C0392B; }
+.pill.scenario-monsoon.active { background: #D35400; border-color: #D35400; }
+
+/* ── KPI Bar ── */
+.kpi-bar { background: #1F3864; padding: 12px 32px; display: flex; gap: 0; }
+.kpi-item { flex: 1; text-align: center; border-right: 1px solid rgba(255,255,255,0.15); padding: 0 12px; }
+.kpi-item:last-child { border-right: none; }
+.kpi-val { font-size: 20px; font-weight: bold; color: #fff; }
+.kpi-label { font-size: 10px; color: #90B8E0; margin-top: 2px; text-transform: uppercase; letter-spacing: 0.5px; }
+.kpi-unit { font-size: 10px; color: #aaa; }
+
+/* ── Tabs ── */
+.tab-nav { background: #fff; border-bottom: 2px solid #1F3864; padding: 0 32px; display: flex; gap: 0; }
+.tab-btn {
+  padding: 12px 22px; font-size: 13px; font-weight: bold; cursor: pointer;
+  border: none; background: none; color: #666; border-bottom: 3px solid transparent; margin-bottom: -2px;
+  transition: all 0.2s;
+}
+.tab-btn:hover { color: #1F3864; }
+.tab-btn.active { color: #1F3864; border-bottom-color: #1F3864; }
+
+/* ── Tab Content ── */
+.tab-pane { display: none; padding: 24px 32px; }
+.tab-pane.active { display: block; }
+
+/* ── Cards & Grid ── */
+.card { background: #fff; border-radius: 8px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+.card-title { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #888; margin-bottom: 12px; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+
+/* ── Metric Cards ── */
+.metric { background: #F8FAFD; border-radius: 6px; padding: 14px 16px; border-left: 3px solid #2E75B6; }
+.metric.navy { border-left-color: #1F3864; }
+.metric.green { border-left-color: #27AE60; }
+.metric.orange { border-left-color: #E67E22; }
+.metric.red { border-left-color: #E74C3C; }
+.metric-val { font-size: 22px; font-weight: bold; color: #1F3864; }
+.metric-lbl { font-size: 11px; color: #888; margin-top: 3px; }
+.metric-sub { font-size: 11px; color: #aaa; margin-top: 2px; }
+
+/* ── Section Headers ── */
+.section-hdr {
+  background: #1F3864; color: #fff; padding: 8px 16px; border-radius: 6px 6px 0 0;
+  font-size: 12px; font-weight: bold; letter-spacing: 0.5px; margin-bottom: 0;
+}
+.section-body { background: #fff; padding: 16px; border-radius: 0 0 6px 6px; border: 1px solid #DDE4EE; border-top: none; margin-bottom: 16px; }
+
+/* ── City Intel Tab ── */
+.city-info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+.city-overview { background: #EBF3FB; border-radius: 8px; padding: 18px; }
+.city-overview h2 { font-size: 24px; color: #1F3864; font-weight: bold; }
+.city-overview .city-meta { font-size: 12px; color: #666; margin-top: 4px; }
+.city-params { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
+.param-row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #DDE4EE; font-size: 12px; }
+.param-row:last-child { border-bottom: none; }
+.param-key { color: #666; }
+.param-val { font-weight: bold; color: #1F3864; }
+
+/* ── Layer Cards ── */
+.layer-card {
+  border-radius: 8px; padding: 18px; margin-bottom: 14px;
+  border: 2px solid #DDE4EE; background: #fff; transition: all 0.3s;
+}
+.layer-card.active-layer { border-color: #1F3864; background: #F0F6FF; }
+.layer-card.standby { opacity: 0.5; }
+.layer-header { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+.layer-num { background: #1F3864; color: #fff; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: bold; flex-shrink: 0; }
+.layer-num.standby { background: #ccc; }
+.layer-title { font-size: 14px; font-weight: bold; color: #1F3864; }
+.layer-badge { margin-left: auto; padding: 3px 12px; border-radius: 20px; font-size: 11px; font-weight: bold; }
+.badge-active { background: #DFFBE9; color: #27AE60; border: 1px solid #27AE60; }
+.badge-standby { background: #F5F5F5; color: #999; border: 1px solid #ccc; }
+.layer-desc { font-size: 12px; color: #555; line-height: 1.6; }
+.layer-kpis { display: flex; gap: 16px; margin-top: 10px; }
+.layer-kpi { font-size: 11px; color: #666; }
+.layer-kpi strong { color: #1F3864; font-size: 13px; display: block; }
+
+/* ── Pump Table ── */
+.pump-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.pump-table th { background: #1F3864; color: #fff; padding: 8px 12px; text-align: left; font-size: 11px; }
+.pump-table td { padding: 8px 12px; border-bottom: 1px solid #EEE; }
+.pump-table tr:nth-child(even) td { background: #F8FAFD; }
+.pump-table tr:last-child td { border-bottom: none; }
+.pump-bar { height: 8px; background: #EBF3FB; border-radius: 4px; margin-top: 4px; }
+.pump-fill { height: 8px; background: #1F3864; border-radius: 4px; transition: width 0.5s; }
+
+/* ── Financial Tab ── */
+.fin-kpis { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 20px; }
+.fin-kpi { background: #F8FAFD; border-radius: 8px; padding: 16px; text-align: center; border-top: 4px solid #1F3864; }
+.fin-kpi-val { font-size: 20px; font-weight: bold; color: #1F3864; }
+.fin-kpi-lbl { font-size: 10px; color: #888; margin-top: 4px; text-transform: uppercase; }
+
+.rec-banner {
+  border-radius: 8px; padding: 16px 24px; display: flex; align-items: center; gap: 16px;
+  margin-top: 16px;
+}
+.rec-excellent { background: #DFFBE9; border: 2px solid #27AE60; }
+.rec-strong { background: #EBF3FB; border: 2px solid #2E75B6; }
+.rec-moderate { background: #FFF3CD; border: 2px solid #F39C12; }
+.rec-marginal { background: #FDECEA; border: 2px solid #E74C3C; }
+.rec-icon { font-size: 28px; }
+.rec-title { font-size: 15px; font-weight: bold; }
+.rec-sub { font-size: 12px; color: #555; margin-top: 3px; }
+
+/* ── Urban Map ── */
+#urban-map-svg { width: 100%; height: 480px; border-radius: 8px; overflow: hidden; }
+.map-legend { display: flex; gap: 20px; margin-top: 12px; flex-wrap: wrap; }
+.legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #555; }
+.legend-dot { width: 16px; height: 16px; border-radius: 50%; flex-shrink: 0; }
+
+/* ── Gauge ── */
+.gauge-wrap { text-align: center; }
+.gauge-score { font-size: 42px; font-weight: bold; color: #1F3864; }
+.gauge-band { font-size: 14px; font-weight: bold; margin-top: 4px; }
+.gauge-sub { font-size: 11px; color: #888; margin-top: 4px; }
+
+/* ── Risk Chip ── */
+.risk-chip { display: inline-block; padding: 3px 12px; border-radius: 20px; font-size: 11px; font-weight: bold; }
+.risk-low { background: #DFFBE9; color: #27AE60; }
+.risk-medium { background: #FFF3CD; color: #E67E22; }
+.risk-high { background: #FFE8D6; color: #D35400; }
+.risk-critical { background: #FDECEA; color: #E74C3C; }
+
+/* ── Responsive tweaks ── */
+@media (max-width: 900px) {
+  .fin-kpis { grid-template-columns: repeat(3, 1fr); }
+  .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+  .kpi-bar { flex-wrap: wrap; }
+  .kpi-item { min-width: 33%; border-right: none; border-bottom: 1px solid rgba(255,255,255,0.15); padding: 8px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+  <div>
+    <div class="header-logo">Wellington AI</div>
+    <div class="header-title">UrbanAI</div>
+    <div class="header-sub">Adaptive Multi-Layer Urban Flood Resilience Intelligence Platform</div>
+  </div>
+  <div class="header-badge">14 Global Cities · 6 Rainfall Scenarios · 30-Year Financial Model</div>
+</div>
+
+<!-- City Selector -->
+<div class="selector-bar">
+  <div class="selector-label">Select City</div>
+  <div style="margin-bottom:6px;">
+    <span style="font-size:10px;color:#aaa;margin-right:6px;">🇮🇳 India</span>
+    <span class="pill active" data-city="coimbatore" onclick="selectCity(this,'coimbatore')">Coimbatore</span>
+    <span class="pill" data-city="chennai" onclick="selectCity(this,'chennai')">Chennai</span>
+    <span class="pill" data-city="mumbai" onclick="selectCity(this,'mumbai')">Mumbai</span>
+    <span class="pill" data-city="delhi" onclick="selectCity(this,'delhi')">Delhi</span>
+    <span class="pill" data-city="bengaluru" onclick="selectCity(this,'bengaluru')">Bengaluru</span>
+    <span class="pill" data-city="hyderabad" onclick="selectCity(this,'hyderabad')">Hyderabad</span>
+    &nbsp;&nbsp;
+    <span style="font-size:10px;color:#aaa;margin-right:6px;">🌍 Europe / Americas / ME</span>
+    <span class="pill" data-city="london" onclick="selectCity(this,'london')">London</span>
+    <span class="pill" data-city="amsterdam" onclick="selectCity(this,'amsterdam')">Amsterdam</span>
+    <span class="pill" data-city="newyork" onclick="selectCity(this,'newyork')">New York</span>
+    <span class="pill" data-city="singapore" onclick="selectCity(this,'singapore')">Singapore</span>
+    <span class="pill" data-city="dubai" onclick="selectCity(this,'dubai')">Dubai</span>
+    &nbsp;&nbsp;
+    <span style="font-size:10px;color:#aaa;margin-right:6px;">🌏 Asia</span>
+    <span class="pill" data-city="tokyo" onclick="selectCity(this,'tokyo')">Tokyo</span>
+    <span class="pill" data-city="jakarta" onclick="selectCity(this,'jakarta')">Jakarta</span>
+    <span class="pill" data-city="bangkok" onclick="selectCity(this,'bangkok')">Bangkok</span>
+  </div>
+  <div class="selector-label" style="margin-top:8px;">Rainfall Scenario</div>
+  <div class="pill-group">
+    <span class="pill scenario-light" onclick="selectScenario(this,'Light')">☀️ Light</span>
+    <span class="pill scenario-design active" onclick="selectScenario(this,'Design Storm')">🌧️ Design Storm</span>
+    <span class="pill scenario-severe" onclick="selectScenario(this,'Severe')">⛈️ Severe</span>
+    <span class="pill scenario-extreme" onclick="selectScenario(this,'Extreme')">🌊 Extreme</span>
+    <span class="pill scenario-stress" onclick="selectScenario(this,'Climate Stress')">🔴 Climate Stress</span>
+    <span class="pill scenario-monsoon" onclick="selectScenario(this,'Monsoon Peak')">🌀 Monsoon Peak</span>
+  </div>
+</div>
+
+<!-- KPI Bar -->
+<div class="kpi-bar">
+  <div class="kpi-item">
+    <div class="kpi-val" id="kpi-volume">—</div>
+    <div class="kpi-label">Floodwater Volume</div>
+    <div class="kpi-unit">million m³</div>
+  </div>
+  <div class="kpi-item">
+    <div class="kpi-val" id="kpi-hub-hrs">—</div>
+    <div class="kpi-label">Hub Clearance</div>
+    <div class="kpi-unit">hours</div>
+  </div>
+  <div class="kpi-item">
+    <div class="kpi-val" id="kpi-saving">—</div>
+    <div class="kpi-label">Clearance Saving vs Distributed</div>
+    <div class="kpi-unit">%</div>
+  </div>
+  <div class="kpi-item">
+    <div class="kpi-val" id="kpi-capex">—</div>
+    <div class="kpi-label">Total CAPEX</div>
+    <div class="kpi-unit" id="kpi-currency">—</div>
+  </div>
+  <div class="kpi-item">
+    <div class="kpi-val" id="kpi-npv">—</div>
+    <div class="kpi-label">30-Year NPV</div>
+    <div class="kpi-unit" id="kpi-currency2">—</div>
+  </div>
+  <div class="kpi-item">
+    <div class="kpi-val" id="kpi-resilience">—</div>
+    <div class="kpi-label">Resilience Score</div>
+    <div class="kpi-unit">/ 100</div>
+  </div>
+</div>
+
+<!-- Tabs -->
+<div class="tab-nav">
+  <button class="tab-btn active" onclick="showTab('city')">🏙️ City Intelligence</button>
+  <button class="tab-btn" onclick="showTab('flood')">🌊 Flood Simulation</button>
+  <button class="tab-btn" onclick="showTab('layers')">⚙️ Infrastructure Layers</button>
+  <button class="tab-btn" onclick="showTab('financial')">💰 Financial Model</button>
+  <button class="tab-btn" onclick="showTab('map')">🗺️ Urban Map</button>
+</div>
+
+<!-- ══════════ TAB: CITY INTELLIGENCE ══════════ -->
+<div class="tab-pane active" id="tab-city">
+  <div class="city-info-grid">
+    <div class="card">
+      <div class="card-title">City Overview</div>
+      <div class="city-overview">
+        <h2 id="city-name">—</h2>
+        <div class="city-meta" id="city-meta">—</div>
+        <div class="city-params">
+          <div>
+            <div class="param-row"><span class="param-key">Population</span><span class="param-val" id="cp-pop">—</span></div>
+            <div class="param-row"><span class="param-key">Urban Area</span><span class="param-val" id="cp-area">—</span></div>
+            <div class="param-row"><span class="param-key">Ward Count</span><span class="param-val" id="cp-wards">—</span></div>
+            <div class="param-row"><span class="param-key">Base Rainfall</span><span class="param-val" id="cp-rain">—</span></div>
+          </div>
+          <div>
+            <div class="param-row"><span class="param-key">Runoff Coefficient</span><span class="param-val" id="cp-runoff">—</span></div>
+            <div class="param-row"><span class="param-key">Hub Count</span><span class="param-val" id="cp-hubs">—</span></div>
+            <div class="param-row"><span class="param-key">Hub Capacity</span><span class="param-val" id="cp-hubcap">—</span></div>
+            <div class="param-row"><span class="param-key">Storage Buffer</span><span class="param-val" id="cp-storage">—</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Selected Scenario: <span id="ci-scenario">—</span> &nbsp; <span id="ci-risk-chip"></span></div>
+      <div class="grid-2" style="margin-top:6px;">
+        <div class="metric navy">
+          <div class="metric-val" id="ci-volume">—</div>
+          <div class="metric-lbl">Floodwater Volume (m³)</div>
+        </div>
+        <div class="metric">
+          <div class="metric-val" id="ci-poststore">—</div>
+          <div class="metric-lbl">Post-Storage Volume (m³)</div>
+        </div>
+        <div class="metric green">
+          <div class="metric-val" id="ci-hubclear">—</div>
+          <div class="metric-lbl">Hub Clearance (hours)</div>
+        </div>
+        <div class="metric orange">
+          <div class="metric-val" id="ci-randclear">—</div>
+          <div class="metric-lbl">Distributed Pump Clearance (hrs)</div>
+        </div>
+      </div>
+      <div class="metric navy" style="margin-top:10px;">
+        <div class="metric-val" id="ci-rainfall-vol">—</div>
+        <div class="metric-lbl">Effective Rainfall (cm) at selected scenario · <span id="ci-area-note"></span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Financial Snapshot -->
+  <div class="section-hdr">Financial Snapshot — <span id="ci-city-fin"></span></div>
+  <div class="section-body">
+    <div class="grid-4">
+      <div class="metric navy">
+        <div class="metric-val" id="ci-capex">—</div>
+        <div class="metric-lbl">Total CAPEX (<span class="ci-curr-lbl"></span>)</div>
+      </div>
+      <div class="metric green">
+        <div class="metric-val" id="ci-netben">—</div>
+        <div class="metric-lbl">Annual Net Benefit (<span class="ci-curr-lbl"></span>)</div>
+      </div>
+      <div class="metric">
+        <div class="metric-val" id="ci-payback">—</div>
+        <div class="metric-lbl">Simple Payback (years)</div>
+      </div>
+      <div class="metric">
+        <div class="metric-val" id="ci-irr">—</div>
+        <div class="metric-lbl">30-Year IRR</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Context -->
+  <div class="section-hdr">System Design Reference</div>
+  <div class="section-body">
+    <p style="font-size:12px;color:#555;line-height:1.8;">
+      UrbanAI models a four-layer adaptive infrastructure system inspired by empirical analysis of Chennai's flood resilience requirements and validated against global city flood management literature.
+      The platform evaluates ward-hub infrastructure against distributed pump deployment, demonstrating how centralised hub architecture reduces clearance time by routing water through interconnected storage assets
+      — sequential lake drainage, circular underground flow, directional canal systems, and emergency sea discharge pathways — each activated adaptively based on rainfall intensity.
+    </p>
+    <div class="grid-3" style="margin-top:14px;">
+      <div style="font-size:12px;">
+        <strong style="color:#1F3864;">Chennai Reference Model</strong><br>
+        <span style="color:#666;">100 wards · 70 cm design event · 28 billion litres · 2,150 hub pumps replacing 215,000 distributed units</span>
+      </div>
+      <div style="font-size:12px;">
+        <strong style="color:#1F3864;">Mumbai Benchmark</strong><br>
+        <span style="color:#666;">Stable to 70 cm · Connected underwater system with sea outfall · Reference architecture for hub-and-canal design</span>
+      </div>
+      <div style="font-size:12px;">
+        <strong style="color:#1F3864;">Global Generalisation</strong><br>
+        <span style="color:#666;">Single computation engine parameterised across 14 cities · 4 continents · 5 currencies · 6 extreme rainfall scenarios</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ TAB: FLOOD SIMULATION ══════════ -->
+<div class="tab-pane" id="tab-flood">
+  <div class="grid-2" style="margin-bottom:16px;">
+    <!-- Volume breakdown -->
+    <div class="card">
+      <div class="card-title">L1 — Rainfall Volume Computation</div>
+      <div class="metric navy" style="margin-bottom:10px;">
+        <div class="metric-val" id="fs-volume">—</div>
+        <div class="metric-lbl">Total Floodwater Volume (m³)</div>
+        <div class="metric-sub" id="fs-volume-litres">—</div>
+      </div>
+      <table style="width:100%;font-size:12px;border-collapse:collapse;">
+        <tr><td style="padding:6px;color:#666;border-bottom:1px solid #EEE;">Rainfall (cm at scenario)</td><td style="padding:6px;font-weight:bold;color:#1F3864;border-bottom:1px solid #EEE;" id="fs-rain-cm">—</td></tr>
+        <tr><td style="padding:6px;color:#666;border-bottom:1px solid #EEE;">Urban Area</td><td style="padding:6px;font-weight:bold;color:#1F3864;border-bottom:1px solid #EEE;" id="fs-area">—</td></tr>
+        <tr><td style="padding:6px;color:#666;border-bottom:1px solid #EEE;">Runoff Coefficient</td><td style="padding:6px;font-weight:bold;color:#1F3864;border-bottom:1px solid #EEE;" id="fs-runoff">—</td></tr>
+        <tr><td style="padding:6px;color:#666;border-bottom:1px solid #EEE;">Detention Storage</td><td style="padding:6px;font-weight:bold;color:#1F3864;border-bottom:1px solid #EEE;" id="fs-storage">—</td></tr>
+        <tr><td style="padding:6px;color:#666;border-bottom:1px solid #EEE;">Post-Storage Volume</td><td style="padding:6px;font-weight:bold;color:#E74C3C;border-bottom:1px solid #EEE;" id="fs-poststorage">—</td></tr>
+        <tr><td style="padding:6px;color:#666;">Storage Absorption %</td><td style="padding:6px;font-weight:bold;color:#27AE60;" id="fs-absorb">—</td></tr>
+      </table>
+    </div>
+
+    <!-- Clearance comparison -->
+    <div class="card">
+      <div class="card-title">L2 — Hub vs Distributed Clearance</div>
+      <div class="grid-2" style="margin-bottom:14px;">
+        <div class="metric green">
+          <div class="metric-val" id="fs-hub-hrs">—</div>
+          <div class="metric-lbl">Hub Clearance (hours)</div>
+          <div class="metric-sub" id="fs-hub-cap">—</div>
+        </div>
+        <div class="metric orange">
+          <div class="metric-val" id="fs-rand-hrs">—</div>
+          <div class="metric-lbl">Distributed Clearance (hours)</div>
+          <div class="metric-sub" id="fs-rand-fleet">—</div>
+        </div>
+      </div>
+      <div class="metric navy" style="margin-bottom:14px;">
+        <div class="metric-val" id="fs-saving">—</div>
+        <div class="metric-lbl">Clearance Time Saving (hub vs distributed)</div>
+      </div>
+      <canvas id="clearance-chart" height="130"></canvas>
+    </div>
+  </div>
+
+  <!-- Resilience Score -->
+  <div class="card">
+    <div class="card-title">Composite Resilience Score</div>
+    <div class="grid-4">
+      <div class="gauge-wrap">
+        <div class="gauge-score" id="res-total">—</div>
+        <div class="gauge-band" id="res-band">—</div>
+        <div class="gauge-sub">Overall Score / 100</div>
+      </div>
+      <div class="metric">
+        <div class="metric-val" id="res-hub-score">—</div>
+        <div class="metric-lbl">Hub Clearance Speed (30%)</div>
+        <div class="pump-bar"><div class="pump-fill" id="res-hub-bar" style="width:0%"></div></div>
+      </div>
+      <div class="metric">
+        <div class="metric-val" id="res-store-score">—</div>
+        <div class="metric-lbl">Storage Efficiency (20%)</div>
+        <div class="pump-bar"><div class="pump-fill" id="res-store-bar" style="width:0%"></div></div>
+      </div>
+      <div class="metric">
+        <div class="metric-val" id="res-save-score">—</div>
+        <div class="metric-lbl">Clearance Saving (25%)</div>
+        <div class="pump-bar"><div class="pump-fill" id="res-save-bar" style="width:0%"></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ TAB: INFRASTRUCTURE LAYERS ══════════ -->
+<div class="tab-pane" id="tab-layers">
+  <div id="layer-cards-container"></div>
+
+  <div class="section-hdr">Pump Type Optimisation — Per Hub Configuration</div>
+  <div class="section-body">
+    <table class="pump-table" id="pump-mix-table">
+      <thead>
+        <tr>
+          <th>Pump Type</th>
+          <th>Capacity</th>
+          <th>Capacity Share</th>
+          <th>Units per Hub</th>
+          <th>Total Fleet (all hubs)</th>
+          <th>Share of Hub Capacity</th>
+        </tr>
+      </thead>
+      <tbody id="pump-mix-body"></tbody>
+    </table>
+    <div style="font-size:11px;color:#888;margin-top:10px;">
+      Note: Pump mix achieves the target hub capacity through a blend of 40% Type D (high-power) + 30% Type C + 20% Type B + 10% Type A (base flow maintenance). Exact procurement mix subject to detailed engineering survey.
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ TAB: FINANCIAL MODEL ══════════ -->
+<div class="tab-pane" id="tab-financial">
+  <!-- KPI Row -->
+  <div class="fin-kpis">
+    <div class="fin-kpi">
+      <div class="fin-kpi-val" id="fin-capex">—</div>
+      <div class="fin-kpi-lbl">Total CAPEX (<span class="fin-curr"></span>)</div>
+    </div>
+    <div class="fin-kpi" style="border-top-color:#27AE60;">
+      <div class="fin-kpi-val" id="fin-netben">—</div>
+      <div class="fin-kpi-lbl">Annual Net Benefit (<span class="fin-curr"></span>)</div>
+    </div>
+    <div class="fin-kpi" style="border-top-color:#E67E22;">
+      <div class="fin-kpi-val" id="fin-payback">—</div>
+      <div class="fin-kpi-lbl">Simple Payback (years)</div>
+    </div>
+    <div class="fin-kpi" style="border-top-color:#2E75B6;">
+      <div class="fin-kpi-val" id="fin-npv">—</div>
+      <div class="fin-kpi-lbl">30-Year NPV (<span class="fin-curr"></span>)</div>
+    </div>
+    <div class="fin-kpi" style="border-top-color:#8E44AD;">
+      <div class="fin-kpi-val" id="fin-irr">—</div>
+      <div class="fin-kpi-lbl">30-Year IRR</div>
+    </div>
+  </div>
+
+  <!-- Charts -->
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">CAPEX Breakdown</div>
+      <canvas id="capex-chart" height="220"></canvas>
+    </div>
+    <div class="card">
+      <div class="card-title">30-Year Cumulative NPV Trajectory</div>
+      <canvas id="npv-chart" height="220"></canvas>
+    </div>
+  </div>
+
+  <!-- CAPEX detail table -->
+  <div class="section-hdr" style="margin-top:16px;">CAPEX Component Breakdown</div>
+  <div class="section-body">
+    <table style="width:100%;border-collapse:collapse;font-size:12px;">
+      <thead>
+        <tr style="background:#EBF3FB;">
+          <th style="padding:8px;text-align:left;color:#1F3864;">Component</th>
+          <th style="padding:8px;text-align:right;color:#1F3864;">Base Cost</th>
+          <th style="padding:8px;text-align:right;color:#1F3864;">Contingency</th>
+          <th style="padding:8px;text-align:right;color:#1F3864;">Total</th>
+        </tr>
+      </thead>
+      <tbody id="capex-breakdown-body"></tbody>
+    </table>
+  </div>
+
+  <!-- Recommendation -->
+  <div id="rec-banner"></div>
+</div>
+
+<!-- ══════════ TAB: URBAN MAP ══════════ -->
+<div class="tab-pane" id="tab-map">
+  <div class="card" style="padding:0;overflow:hidden;">
+    <div style="background:#1F3864;padding:10px 18px;display:flex;align-items:center;gap:16px;">
+      <span style="color:#fff;font-size:13px;font-weight:bold;">Urban Flood Infrastructure Schematic</span>
+      <span style="color:#90B8E0;font-size:11px;">City: <span id="map-city-name">—</span> · Scenario: <span id="map-scenario">—</span> · Risk: <span id="map-risk-label">—</span></span>
+    </div>
+    <svg id="urban-map-svg" viewBox="0 0 900 480" xmlns="http://www.w3.org/2000/svg">
+      <!-- Drawn dynamically by JS -->
+    </svg>
+  </div>
+  <div class="map-legend">
+    <div class="legend-item"><div class="legend-dot" style="background:#1F3864;border-radius:3px;"></div> Ward Zone (low risk)</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#F39C12;border-radius:3px;"></div> Ward Zone (medium risk)</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#E74C3C;border-radius:3px;"></div> Ward Zone (high/critical risk)</div>
+    <div class="legend-item"><div style="width:16px;height:16px;background:#1F3864;border-radius:50%;"></div> Pump Hub (●)</div>
+    <div class="legend-item"><div style="width:16px;height:16px;background:#2E75B6;border:2px solid #1F3864;border-radius:50%;"></div> Storage/Lake (◯)</div>
+    <div class="legend-item"><div style="width:16px;height:4px;background:#00A3E0;border-radius:2px;margin-top:6px;"></div> Canal/River</div>
+    <div class="legend-item"><div style="width:16px;height:16px;background:#27AE60;border-radius:3px;"></div> Safe Zone / Green Buffer</div>
+  </div>
+  <div class="section-hdr" style="margin-top:16px;">Infrastructure Layer Activation Map</div>
+  <div class="section-body">
+    <div class="grid-4" id="map-layer-status"></div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════
+// CITY DATABASE
+// ═══════════════════════════════════════════════
+const CITY_DB = {
+  coimbatore: { name:"Coimbatore", currency:"INR Cr", pop:2.5, area:257, wards:100, rainfall:70, runoff:0.60, hubs:100, hubCap:90000, storage:1500000, rPumps:215000, rPumpCap:100, capexHub:65, scada:250, canalWorks:1200, contingency:0.12, opex:380, grossDamage:1800, riskRed:0.62, discRate:0.10, benefitGrowth:0.04, opexInfl:0.05 },
+  chennai:    { name:"Chennai",    currency:"INR Cr", pop:11.5, area:1189, wards:200, rainfall:55, runoff:0.70, hubs:160, hubCap:110000, storage:4500000, rPumps:260000, rPumpCap:100, capexHub:80, scada:420, canalWorks:2500, contingency:0.14, opex:720, grossDamage:4500, riskRed:0.65, discRate:0.10, benefitGrowth:0.04, opexInfl:0.05 },
+  mumbai:     { name:"Mumbai",     currency:"INR Cr", pop:20.9, area:603,  wards:227, rainfall:45, runoff:0.78, hubs:180, hubCap:125000, storage:5200000, rPumps:300000, rPumpCap:100, capexHub:95, scada:520, canalWorks:3200, contingency:0.15, opex:940, grossDamage:6500, riskRed:0.68, discRate:0.10, benefitGrowth:0.045, opexInfl:0.055 },
+  delhi:      { name:"Delhi",      currency:"INR Cr", pop:32,   area:1484, wards:272, rainfall:35, runoff:0.55, hubs:150, hubCap:105000, storage:3800000, rPumps:280000, rPumpCap:100, capexHub:85, scada:500, canalWorks:2600, contingency:0.14, opex:850, grossDamage:5200, riskRed:0.58, discRate:0.10, benefitGrowth:0.04, opexInfl:0.055 },
+  bengaluru:  { name:"Bengaluru",  currency:"INR Cr", pop:13.6, area:741,  wards:198, rainfall:30, runoff:0.62, hubs:120, hubCap:85000,  storage:2700000, rPumps:220000, rPumpCap:100, capexHub:75, scada:390, canalWorks:1800, contingency:0.13, opex:620, grossDamage:3600, riskRed:0.57, discRate:0.10, benefitGrowth:0.04, opexInfl:0.05 },
+  hyderabad:  { name:"Hyderabad",  currency:"INR Cr", pop:10.8, area:650,  wards:150, rainfall:32, runoff:0.58, hubs:115, hubCap:82000,  storage:2300000, rPumps:210000, rPumpCap:100, capexHub:70, scada:360, canalWorks:1600, contingency:0.13, opex:560, grossDamage:3300, riskRed:0.56, discRate:0.10, benefitGrowth:0.04, opexInfl:0.05 },
+  london:     { name:"London",     currency:"GBP m",  pop:9.7,  area:1572, wards:33,  rainfall:6,  runoff:0.65, hubs:75,  hubCap:115000, storage:3500000, rPumps:120000, rPumpCap:12,  capexHub:40, scada:280, canalWorks:1800, contingency:0.15, opex:310, grossDamage:2200, riskRed:0.50, discRate:0.07, benefitGrowth:0.025, opexInfl:0.035 },
+  amsterdam:  { name:"Amsterdam",  currency:"EUR m",  pop:1.2,  area:219,  wards:8,   rainfall:8,  runoff:0.72, hubs:30,  hubCap:85000,  storage:1200000, rPumps:45000,  rPumpCap:10,  capexHub:35, scada:120, canalWorks:700,  contingency:0.12, opex:120, grossDamage:900,  riskRed:0.48, discRate:0.06, benefitGrowth:0.025, opexInfl:0.035 },
+  newyork:    { name:"New York",   currency:"USD m",  pop:19.6, area:1214, wards:59,  rainfall:13, runoff:0.70, hubs:120, hubCap:125000, storage:5500000, rPumps:160000, rPumpCap:13,  capexHub:55, scada:450, canalWorks:2500, contingency:0.16, opex:520, grossDamage:4500, riskRed:0.55, discRate:0.07, benefitGrowth:0.025, opexInfl:0.035 },
+  singapore:  { name:"Singapore",  currency:"SGD m",  pop:5.9,  area:734,  wards:55,  rainfall:15, runoff:0.76, hubs:80,  hubCap:100000, storage:4200000, rPumps:90000,  rPumpCap:12,  capexHub:50, scada:320, canalWorks:1600, contingency:0.13, opex:380, grossDamage:3000, riskRed:0.60, discRate:0.06, benefitGrowth:0.025, opexInfl:0.035 },
+  dubai:      { name:"Dubai",      currency:"AED m",  pop:3.7,  area:4114, wards:15,  rainfall:5,  runoff:0.38, hubs:40,  hubCap:90000,  storage:2500000, rPumps:60000,  rPumpCap:12,  capexHub:45, scada:260, canalWorks:1100, contingency:0.12, opex:220, grossDamage:1900, riskRed:0.45, discRate:0.07, benefitGrowth:0.025, opexInfl:0.035 },
+  tokyo:      { name:"Tokyo",      currency:"JPY bn", pop:37.2, area:2194, wards:62,  rainfall:18, runoff:0.68, hubs:170, hubCap:135000, storage:6500000, rPumps:220000, rPumpCap:10,  capexHub:60, scada:540, canalWorks:3000, contingency:0.15, opex:650, grossDamage:5600, riskRed:0.58, discRate:0.05, benefitGrowth:0.02, opexInfl:0.03 },
+  jakarta:    { name:"Jakarta",    currency:"IDR bn", pop:32.6, area:661,  wards:44,  rainfall:20, runoff:0.75, hubs:130, hubCap:115000, storage:5000000, rPumps:180000, rPumpCap:10,  capexHub:52, scada:400, canalWorks:2400, contingency:0.16, opex:430, grossDamage:4200, riskRed:0.62, discRate:0.08, benefitGrowth:0.035, opexInfl:0.045 },
+  bangkok:    { name:"Bangkok",    currency:"THB m",  pop:11.2, area:1569, wards:50,  rainfall:18, runoff:0.69, hubs:110, hubCap:105000, storage:4200000, rPumps:130000, rPumpCap:10,  capexHub:48, scada:360, canalWorks:2100, contingency:0.15, opex:370, grossDamage:3300, riskRed:0.58, discRate:0.07, benefitGrowth:0.03, opexInfl:0.04 }
+};
+
+const SCENARIOS = {
+  'Light':         { mult:0.35, risk:'Low',      color:'#27AE60', riskClass:'risk-low' },
+  'Design Storm':  { mult:1.0,  risk:'Medium',   color:'#F39C12', riskClass:'risk-medium' },
+  'Severe':        { mult:1.4,  risk:'High',     color:'#E67E22', riskClass:'risk-high' },
+  'Extreme':       { mult:1.8,  risk:'Critical', color:'#E74C3C', riskClass:'risk-critical' },
+  'Climate Stress':{ mult:2.2,  risk:'Critical', color:'#C0392B', riskClass:'risk-critical' },
+  'Monsoon Peak':  { mult:1.6,  risk:'High',     color:'#D35400', riskClass:'risk-high' }
+};
+
+const PUMP_TYPES = [
+  { name:'Type A — 1.5 hp', hp:1.5, cap:30,  share:0.10, color:'#AED6F1' },
+  { name:'Type B — 10 hp',  hp:10,  cap:36,  share:0.20, color:'#5DADE2' },
+  { name:'Type C — 25 hp',  hp:25,  cap:60,  share:0.30, color:'#2E86C1' },
+  { name:'Type D — 100 hp', hp:100, cap:130, share:0.40, color:'#1F3864' }
+];
+
+const LAYER_DEFS = [
+  {
+    num:1, title:'Sequential Lake / Pond Drainage',
+    threshold: 0,
+    desc:'Water is routed from one lake or pond to another in sequential order, allowing large volumes of discharge in a regulated pattern around the city. This is the primary gravity-assisted drainage pathway, always active.',
+    infra:'Interconnected lake network · Gravity channels · Control sluice gates',
+    kpis:['Continuous operation','Gravity-assisted (no pumping cost)','City-wide coverage']
+  },
+  {
+    num:2, title:'Circular Underground Flow + Artificial Storage',
+    threshold: 1.0,
+    desc:'Water flows underground beneath the city in a circular fashion. At regular intervals, distributed pumping stations transfer water to artificial surface storage. Requires 10–20 large pumping stations per city to maintain system capacity.',
+    infra:'Underground circular drainage tunnels · Distributed pump stations · Surface storage reservoirs',
+    kpis:['Active when Design Storm+','Prevents surface overtopping','Feeds storage for controlled release']
+  },
+  {
+    num:3, title:'Unidirectional Canal Flow (Outskirts / Sea Connection)',
+    threshold: 1.4,
+    desc:'Water is directed in one unidirectional flow toward city outskirts and connected to a major canal or sea outlet. Based on the Buckingham Canal model for Indian cities; adapted to local waterway geography for global cities.',
+    infra:'Major canal infrastructure · Pumping stations at canal intake · Long-distance conveyance (up to 200km)',
+    kpis:['Active when Severe+','High-volume discharge pathway','Reduces city-wide storage pressure']
+  },
+  {
+    num:4, title:'Emergency Sea Discharge (Longest Flow Pathway)',
+    threshold: 1.8,
+    desc:'Emergency sea or river discharge pathway activated when all storage and canal systems are at capacity. Directs maximum flow to sea or major waterway outlet over a sustained 20–50 km stretch to maintain system safety during extreme events.',
+    infra:'Emergency pump escalation · Sea outfall infrastructure · Surge protection valves',
+    kpis:['Active when Extreme+','Last-resort discharge','System safety failsafe']
+  }
+];
+
+// ═══════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════
+let currentCity = 'coimbatore';
+let currentScenario = 'Design Storm';
+let charts = {};
+
+// ═══════════════════════════════════════════════
+// COMPUTATION ENGINE
+// ═══════════════════════════════════════════════
+function compute(cityKey, scenarioKey) {
+  const c = CITY_DB[cityKey];
+  const s = SCENARIOS[scenarioKey];
+
+  // L1 — Volume
+  const rainfallCm = c.rainfall * s.mult;
+  const volume = (rainfallCm / 100) * c.area * 1e6 * c.runoff;
+  const postStorage = Math.max(0, volume - c.storage);
+  const absorbPct = Math.min(100, (c.storage / volume) * 100);
+
+  // L2 — Clearance
+  const totalHubCap = c.hubs * c.hubCap;
+  const hubClearance = postStorage / totalHubCap;
+  const randomFleet = c.rPumps * c.rPumpCap;
+  const randomClearance = volume / randomFleet;
+  const clearanceSaving = (1 - hubClearance / randomClearance);
+
+  // L3 — Layer activation
+  const layers = LAYER_DEFS.map(l => ({ ...l, active: s.mult >= l.threshold }));
+
+  // L4 — Pump mix per hub
+  const pumpMix = PUMP_TYPES.map(pt => {
+    const capShare = c.hubCap * pt.share;
+    const unitsPerHub = Math.round(capShare / pt.cap);
+    return { ...pt, capShare, unitsPerHub, totalFleet: unitsPerHub * c.hubs };
+  });
+
+  // L5 — CAPEX & Financial
+  const hubCost = c.hubs * c.capexHub;
+  const baseCost = hubCost + c.scada + c.canalWorks;
+  const contingencyAmt = baseCost * c.contingency;
+  const capex = baseCost + contingencyAmt;
+  const grossBenefitY1 = c.grossDamage;
+  const netBenefit = grossBenefitY1 * c.riskRed - c.opex;
+  const payback = capex / netBenefit;
+
+  // 30-Year NPV
+  let npv = -capex;
+  const cashFlows = [];
+  let benefit = grossBenefitY1;
+  let opex = c.opex;
+  for (let yr = 1; yr <= 30; yr++) {
+    benefit *= (1 + c.benefitGrowth);
+    opex    *= (1 + c.opexInfl);
+    const net  = benefit * c.riskRed - opex;
+    const disc = Math.pow(1 + c.discRate, -yr);
+    npv += net * disc;
+    cashFlows.push({ yr, net, disc, dcf: net * disc, cumulNPV: npv });
+  }
+
+  // IRR — bisection
+  let lo = -0.5, hi = 5.0;
+  for (let i = 0; i < 100; i++) {
+    const mid = (lo + hi) / 2;
+    let testNPV = -capex;
+    let b2 = grossBenefitY1, o2 = c.opex;
+    for (let yr = 1; yr <= 30; yr++) {
+      b2 *= (1 + c.benefitGrowth);
+      o2 *= (1 + c.opexInfl);
+      testNPV += (b2 * c.riskRed - o2) / Math.pow(1 + mid, yr);
+    }
+    if (testNPV > 0) lo = mid; else hi = mid;
+  }
+  const irr = (lo + hi) / 2;
+
+  // Resilience Score
+  const hubScore   = Math.max(0, Math.min(100, 100 - hubClearance * 10));
+  const storeScore = Math.min(100, absorbPct);
+  const saveScore  = Math.max(0, Math.min(100, clearanceSaving * 100));
+  const riskScore  = c.riskRed * 100;
+  const resilience = hubScore * 0.30 + storeScore * 0.20 + saveScore * 0.25 + riskScore * 0.25;
+
+  // Investment rating
+  let rating, ratingClass, ratingMsg;
+  if (payback < 5 && npv > 0) {
+    rating='Excellent'; ratingClass='rec-excellent'; ratingMsg='Strong rollout candidate. Favourable payback and positive NPV — recommend phased implementation with immediate budget allocation.';
+  } else if (payback < 10 && npv > 0) {
+    rating='Strong'; ratingClass='rec-strong'; ratingMsg='Recommended with phased rollout. IRR exceeds discount rate — viable with standard government infrastructure financing.';
+  } else if (payback < 15 && npv > 0) {
+    rating='Moderate'; ratingClass='rec-moderate'; ratingMsg='Viable with co-funding. Consider blended finance with government grants or green bonds to improve project economics.';
+  } else {
+    rating='Marginal'; ratingClass='rec-marginal'; ratingMsg='Review assumptions and procurement strategy. Reduction in hub CAPEX or SCADA costs may unlock viability.';
+  }
+
+  return {
+    rainfallCm, volume, postStorage, absorbPct,
+    totalHubCap, hubClearance, randomFleet, randomClearance, clearanceSaving,
+    layers, pumpMix,
+    hubCost, baseCost, contingencyAmt, capex, netBenefit, payback, npv, irr, cashFlows,
+    hubScore, storeScore, saveScore, riskScore, resilience,
+    rating, ratingClass, ratingMsg
+  };
+}
+
+// ═══════════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════════
+function fmt(n, dec=1) {
+  if (n === null || n === undefined || isNaN(n)) return '—';
+  if (Math.abs(n) >= 1e9) return (n/1e9).toFixed(dec) + 'B';
+  if (Math.abs(n) >= 1e6) return (n/1e6).toFixed(dec) + 'M';
+  if (Math.abs(n) >= 1e3) return (n/1e3).toFixed(dec) + 'K';
+  return n.toFixed(dec);
+}
+function fmtN(n, dec=0) { return n !== undefined && !isNaN(n) ? n.toLocaleString(undefined,{maximumFractionDigits:dec}) : '—'; }
+function fmtPct(n) { return (n*100).toFixed(1) + '%'; }
+function resilBand(r) {
+  if (r >= 76) return { band:'Highly Resilient', color:'#27AE60' };
+  if (r >= 51) return { band:'Resilient', color:'#2E75B6' };
+  if (r >= 26) return { band:'Moderate', color:'#E67E22' };
+  return { band:'Vulnerable', color:'#E74C3C' };
+}
+function setText(id, val) { const el = document.getElementById(id); if (el) el.textContent = val; }
+
+function safeChart(id, config) {
+  if (charts[id]) { charts[id].destroy(); }
+  const ctx = document.getElementById(id);
+  if (!ctx) return;
+  charts[id] = new Chart(ctx, config);
+}
+
+// ═══════════════════════════════════════════════
+// RENDER
+// ═══════════════════════════════════════════════
+function render() {
+  const c   = CITY_DB[currentCity];
+  const s   = SCENARIOS[currentScenario];
+  const R   = compute(currentCity, currentScenario);
+  const rb  = resilBand(R.resilience);
+
+  // ── KPI Bar ──
+  setText('kpi-volume',    (R.volume/1e6).toFixed(2));
+  setText('kpi-hub-hrs',   R.hubClearance.toFixed(2));
+  setText('kpi-saving',    (R.clearanceSaving*100).toFixed(1)+'%');
+  setText('kpi-capex',     fmtN(Math.round(R.capex)));
+  setText('kpi-npv',       fmtN(Math.round(R.npv)));
+  setText('kpi-resilience',Math.round(R.resilience));
+  document.querySelectorAll('#kpi-currency,#kpi-currency2').forEach(el => el.textContent = c.currency);
+
+  // ── City Intelligence ──
+  setText('city-name', c.name);
+  setText('city-meta', `${c.currency} · ${c.pop}m population · Urban infrastructure model`);
+  setText('cp-pop',     c.pop + 'm');
+  setText('cp-area',    fmtN(c.area) + ' km²');
+  setText('cp-wards',   c.wards);
+  setText('cp-rain',    c.rainfall + ' cm (base)');
+  setText('cp-runoff',  c.runoff);
+  setText('cp-hubs',    c.hubs + ' hub stations');
+  setText('cp-hubcap',  fmtN(c.hubCap) + ' m³/hr per hub');
+  setText('cp-storage', fmtN(c.storage) + ' m³');
+
+  setText('ci-scenario', currentScenario);
+  const chip = document.getElementById('ci-risk-chip');
+  chip.innerHTML = `<span class="risk-chip ${s.riskClass}">${s.risk} Risk</span>`;
+
+  setText('ci-volume',   fmtN(Math.round(R.volume)));
+  setText('ci-poststore',fmtN(Math.round(R.postStorage)));
+  setText('ci-hubclear', R.hubClearance.toFixed(2) + ' hrs');
+  setText('ci-randclear',R.randomClearance.toFixed(2) + ' hrs');
+  setText('ci-rainfall-vol', R.rainfallCm.toFixed(1) + ' cm');
+  setText('ci-area-note', fmtN(c.area) + ' km² · runoff ' + c.runoff);
+
+  setText('ci-city-fin', c.name + ' — ' + c.currency);
+  document.querySelectorAll('.ci-curr-lbl').forEach(el => el.textContent = c.currency);
+  setText('ci-capex',   fmtN(Math.round(R.capex)));
+  setText('ci-netben',  fmtN(Math.round(R.netBenefit)));
+  setText('ci-payback', R.payback.toFixed(1));
+  setText('ci-irr',     fmtPct(R.irr));
+
+  // ── Flood Simulation ──
+  setText('fs-volume',        fmtN(Math.round(R.volume)));
+  setText('fs-volume-litres', fmtN(Math.round(R.volume * 1000)) + ' litres');
+  setText('fs-rain-cm',       R.rainfallCm.toFixed(1) + ' cm');
+  setText('fs-area',          fmtN(c.area) + ' km²');
+  setText('fs-runoff',        c.runoff);
+  setText('fs-storage',       fmtN(c.storage) + ' m³');
+  setText('fs-poststorage',   fmtN(Math.round(R.postStorage)) + ' m³');
+  setText('fs-absorb',        R.absorbPct.toFixed(1) + '%');
+  setText('fs-hub-hrs',       R.hubClearance.toFixed(2));
+  setText('fs-hub-cap',       fmtN(R.totalHubCap) + ' m³/hr total');
+  setText('fs-rand-hrs',      R.randomClearance.toFixed(2));
+  setText('fs-rand-fleet',    fmtN(R.randomFleet) + ' m³/hr fleet');
+  setText('fs-saving',        (R.clearanceSaving * 100).toFixed(1) + '% faster clearance');
+
+  setText('res-total',       Math.round(R.resilience));
+  document.getElementById('res-band').textContent = rb.band;
+  document.getElementById('res-band').style.color = rb.color;
+  setText('res-hub-score',   Math.round(R.hubScore));
+  setText('res-store-score', Math.round(R.storeScore));
+  setText('res-save-score',  Math.round(R.saveScore));
+  document.getElementById('res-hub-bar').style.width   = Math.min(100,R.hubScore) + '%';
+  document.getElementById('res-store-bar').style.width = Math.min(100,R.storeScore) + '%';
+  document.getElementById('res-save-bar').style.width  = Math.min(100,R.saveScore) + '%';
+
+  // Clearance chart
+  safeChart('clearance-chart', {
+    type: 'bar',
+    data: {
+      labels: ['Hub System', 'Distributed Pumps'],
+      datasets: [{
+        data: [R.hubClearance.toFixed(2), R.randomClearance.toFixed(2)],
+        backgroundColor: ['#1F3864', '#E67E22'],
+        borderRadius: 6
+      }]
+    },
+    options: {
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ctx.raw + ' hours' } } },
+      scales: {
+        y: { title: { display:true, text:'Clearance Hours', font:{size:10} }, beginAtZero:true, grid:{color:'#EEE'} },
+        x: { grid: { display:false } }
+      }
+    }
+  });
+
+  // ── Infrastructure Layers ──
+  const layerContainer = document.getElementById('layer-cards-container');
+  layerContainer.innerHTML = R.layers.map(l => `
+    <div class="layer-card ${l.active ? 'active-layer' : 'standby'}">
+      <div class="layer-header">
+        <div class="layer-num ${l.active ? '' : 'standby'}">${l.num}</div>
+        <div class="layer-title">${l.title}</div>
+        <span class="layer-badge ${l.active ? 'badge-active' : 'badge-standby'}">${l.active ? '✓ Active' : '⏸ Standby'}</span>
+      </div>
+      <div class="layer-desc">${l.desc}</div>
+      <div style="font-size:11px;color:#888;margin-top:8px;font-style:italic;">Infrastructure: ${l.infra}</div>
+      <div class="layer-kpis">
+        ${l.kpis.map(k => `<div class="layer-kpi"><strong style="color:${l.active?'#1F3864':'#aaa'}">${k}</strong></div>`).join('')}
+      </div>
+    </div>
+  `).join('');
+
+  // Pump mix table
+  const totalHubCap = c.hubs * c.hubCap;
+  const pumpBody = document.getElementById('pump-mix-body');
+  pumpBody.innerHTML = R.pumpMix.map(p => `
+    <tr>
+      <td><strong>${p.name}</strong></td>
+      <td>${p.cap} m³/hr</td>
+      <td>${(p.share*100).toFixed(0)}% of hub capacity</td>
+      <td>${fmtN(p.unitsPerHub)} units</td>
+      <td>${fmtN(p.totalFleet)} units total</td>
+      <td>
+        ${(p.share*100).toFixed(0)}%
+        <div class="pump-bar"><div class="pump-fill" style="width:${p.share*100}%;background:${p.color}"></div></div>
+      </td>
+    </tr>
+  `).join('');
+
+  // ── Financial ──
+  document.querySelectorAll('.fin-curr').forEach(el => el.textContent = c.currency);
+  setText('fin-capex',   fmtN(Math.round(R.capex)));
+  setText('fin-netben',  fmtN(Math.round(R.netBenefit)));
+  setText('fin-payback', R.payback.toFixed(1));
+  setText('fin-npv',     fmtN(Math.round(R.npv)));
+  setText('fin-irr',     fmtPct(R.irr));
+
+  // CAPEX donut
+  safeChart('capex-chart', {
+    type: 'doughnut',
+    data: {
+      labels: ['Hub Infrastructure', 'SCADA & Sensors', 'Canal/Lake Works', 'Contingency'],
+      datasets: [{
+        data: [c.hubs*c.capexHub, c.scada, c.canalWorks, R.contingencyAmt].map(v => Math.round(v)),
+        backgroundColor: ['#1F3864','#2E75B6','#5DADE2','#AED6F1'],
+        borderWidth: 2, borderColor: '#fff'
+      }]
+    },
+    options: {
+      cutout:'65%',
+      plugins: { legend: { position:'bottom', labels:{font:{size:11}} }, tooltip:{ callbacks:{ label: ctx => ctx.label + ': ' + fmtN(ctx.raw) + ' ' + c.currency } } }
+    }
+  });
+
+  // 30-year NPV chart
+  const cumNPV = [];
+  let running = -R.capex;
+  let b = c.grossDamage, op = c.opex;
+  for (let yr = 1; yr <= 30; yr++) {
+    b  *= (1 + c.benefitGrowth);
+    op *= (1 + c.opexInfl);
+    running += (b * c.riskRed - op) * Math.pow(1+c.discRate, -yr);
+    cumNPV.push(Math.round(running));
+  }
+  safeChart('npv-chart', {
+    type: 'line',
+    data: {
+      labels: Array.from({length:30},(_,i)=>'Y'+(i+1)),
+      datasets: [{
+        label: 'Cumulative NPV (' + c.currency + ')',
+        data: cumNPV,
+        borderColor: '#1F3864', backgroundColor: 'rgba(31,56,100,0.08)',
+        borderWidth: 2, fill: true, pointRadius: 0, tension: 0.4
+      }]
+    },
+    options: {
+      plugins: { legend:{display:false}, tooltip:{ callbacks:{ label: ctx => fmtN(ctx.raw) + ' ' + c.currency } } },
+      scales: {
+        y: { title:{display:true,text:c.currency,font:{size:10}}, grid:{color:'#EEE'} },
+        x: { grid:{display:false}, ticks:{maxTicksLimit:10} }
+      }
+    }
+  });
+
+  // CAPEX breakdown table
+  const cbody = document.getElementById('capex-breakdown-body');
+  const components = [
+    {name:'Hub Infrastructure',  base: c.hubs*c.capexHub, pct: c.contingency },
+    {name:'SCADA & Sensors',     base: c.scada,           pct: c.contingency },
+    {name:'Canal / Lake Works',  base: c.canalWorks,      pct: c.contingency },
+  ];
+  cbody.innerHTML = components.map(co => `
+    <tr>
+      <td style="padding:8px;border-bottom:1px solid #EEE;">${co.name}</td>
+      <td style="padding:8px;border-bottom:1px solid #EEE;text-align:right;">${fmtN(Math.round(co.base))}</td>
+      <td style="padding:8px;border-bottom:1px solid #EEE;text-align:right;">${fmtN(Math.round(co.base*co.pct))}</td>
+      <td style="padding:8px;border-bottom:1px solid #EEE;text-align:right;font-weight:bold;color:#1F3864;">${fmtN(Math.round(co.base*(1+co.pct)))}</td>
+    </tr>
+  `).join('') + `<tr style="background:#EBF3FB;font-weight:bold;">
+    <td style="padding:8px;">Total CAPEX</td>
+    <td style="padding:8px;text-align:right;">${fmtN(Math.round(R.baseCost))}</td>
+    <td style="padding:8px;text-align:right;">${fmtN(Math.round(R.contingencyAmt))}</td>
+    <td style="padding:8px;text-align:right;color:#1F3864;">${fmtN(Math.round(R.capex))} ${c.currency}</td>
+  </tr>`;
+
+  // Recommendation banner
+  document.getElementById('rec-banner').innerHTML = `
+    <div class="rec-banner ${R.ratingClass}">
+      <div class="rec-icon">${R.rating==='Excellent'?'🏆':R.rating==='Strong'?'✅':R.rating==='Moderate'?'⚠️':'🔶'}</div>
+      <div>
+        <div class="rec-title">Investment Rating: ${R.rating}</div>
+        <div class="rec-sub">${R.ratingMsg}</div>
+      </div>
+    </div>`;
+
+  // ── Urban Map ──
+  setText('map-city-name', c.name);
+  setText('map-scenario',  currentScenario);
+  setText('map-risk-label',s.risk);
+  renderMap(c, s, R);
+
+  // Layer status badges for map tab
+  document.getElementById('map-layer-status').innerHTML = R.layers.map(l => `
+    <div class="metric ${l.active?'green':''}">
+      <div style="font-size:13px;font-weight:bold;color:${l.active?'#27AE60':'#aaa'}">Layer ${l.num} ${l.active?'✓':'–'}</div>
+      <div class="metric-lbl">${l.title.split(' ')[0]}+${l.title.split(' ')[1]||''}</div>
+      <div class="metric-sub">${l.active?'Active':'Standby'}</div>
+    </div>
+  `).join('');
+}
+
+// ═══════════════════════════════════════════════
+// URBAN MAP RENDERER
+// ═══════════════════════════════════════════════
+function renderMap(c, s, R) {
+  const svg = document.getElementById('urban-map-svg');
+  const W = 900, H = 480;
+  const COLS = 12, ROWS = 8;
+  const cw = 54, ch = 44;
+  const ox = 30, oy = 30;
+
+  // Generate deterministic ward layout
+  let html = `<rect width="${W}" height="${H}" fill="#1A2A3A"/>`;
+
+  // Background grid / wards
+  const totalWards = c.wards;
+  const wardsOnMap = Math.min(COLS * ROWS, totalWards);
+
+  // Risk color based on scenario
+  const riskAlpha = { 'Light':0.2, 'Design Storm':0.4, 'Severe':0.6, 'Extreme':0.8, 'Climate Stress':1.0, 'Monsoon Peak':0.7 };
+  const alpha = riskAlpha[currentScenario] || 0.4;
+
+  // Hub positions (deterministic from hub count)
+  const hubPositions = [];
+  const hubStep = Math.max(1, Math.floor(wardsOnMap / Math.min(c.hubs, 20)));
+  for (let i = 0; i < COLS * ROWS; i += hubStep) {
+    if (hubPositions.length >= 20) break;
+    const col = i % COLS;
+    const row = Math.floor(i / COLS);
+    hubPositions.push({ col, row });
+  }
+
+  // Storage positions (3-4 storage nodes)
+  const storageNodes = [
+    { col:2, row:1 }, { col:9, row:2 }, { col:4, row:6 }, { col:10, row:5 }
+  ].slice(0, Math.max(2, Math.min(4, Math.floor(c.area / 300))));
+
+  // Ward cells
+  for (let row = 0; row < ROWS; row++) {
+    for (let col = 0; col < COLS; col++) {
+      const x = ox + col * cw;
+      const y = oy + row * ch;
+      const wardIdx = row * COLS + col;
+
+      const isHub     = hubPositions.some(h => h.col === col && h.row === row);
+      const isStorage = storageNodes.some(n => n.col === col && n.row === row);
+      const isHighRisk = !isHub && !isStorage && wardIdx % 7 < 2 && alpha > 0.5;
+      const isGreen   = wardIdx % 11 === 0 && !isHub && !isStorage && !isHighRisk;
+
+      let fillColor, stroke;
+      if (isHub) {
+        fillColor = '#1F3864'; stroke = '#5DADE2';
+      } else if (isStorage) {
+        fillColor = '#0D3B6E'; stroke = '#00A3E0';
+      } else if (isGreen) {
+        fillColor = `rgba(39,174,96,${alpha*0.4+0.1})`; stroke = '#27AE60';
+      } else if (isHighRisk && alpha > 0.5) {
+        const r = Math.min(255, Math.round(200 + alpha * 55));
+        const g = Math.round(50 * (1 - alpha));
+        fillColor = `rgba(${r},${g},30,${alpha})`; stroke = '#E74C3C';
+      } else {
+        const intensity = Math.round(40 + alpha * 60);
+        fillColor = `rgba(46,117,182,${alpha*0.3+0.05})`; stroke = `rgba(100,160,220,0.3)`;
+      }
+
+      html += `<rect x="${x+1}" y="${y+1}" width="${cw-2}" height="${ch-2}" rx="3" fill="${fillColor}" stroke="${stroke}" stroke-width="0.5"/>`;
+
+      // Ward number (small)
+      if (!isHub && !isStorage && wardIdx < c.wards) {
+        html += `<text x="${x+cw/2}" y="${y+ch/2+4}" text-anchor="middle" font-size="8" fill="rgba(255,255,255,0.4)" font-family="Arial">W${wardIdx+1}</text>`;
+      }
+
+      // Hub marker
+      if (isHub) {
+        html += `<circle cx="${x+cw/2}" cy="${y+ch/2}" r="10" fill="#2E75B6" stroke="#90CAF9" stroke-width="2"/>
+          <text x="${x+cw/2}" y="${y+ch/2+4}" text-anchor="middle" font-size="11" fill="white" font-weight="bold" font-family="Arial">●</text>`;
+      }
+
+      // Storage marker
+      if (isStorage) {
+        html += `<circle cx="${x+cw/2}" cy="${y+ch/2}" r="10" fill="#0D3B6E" stroke="#00A3E0" stroke-width="2.5"/>
+          <circle cx="${x+cw/2}" cy="${y+ch/2}" r="5" fill="none" stroke="#00A3E0" stroke-width="1.5"/>
+          <text x="${x+cw/2}" y="${y+ch/2+4}" text-anchor="middle" font-size="9" fill="#00A3E0" font-family="Arial">◯</text>`;
+      }
+    }
+  }
+
+  // Layer 1: Sequential lake flow arrows (horizontal blue lines across top)
+  html += `<line x1="${ox}" y1="${oy+ch/2}" x2="${ox+COLS*cw}" y2="${oy+ch/2}" stroke="#00A3E0" stroke-width="3" stroke-dasharray="8,4" opacity="0.8"/>
+    <text x="${ox+COLS*cw+5}" y="${oy+ch/2+4}" font-size="9" fill="#00A3E0" font-family="Arial">L1→</text>`;
+
+  // Layer 2: Circular flow (ellipse outline, visible when active)
+  const l2Active = SCENARIOS[currentScenario].mult >= 1.0;
+  if (l2Active) {
+    html += `<ellipse cx="${ox+COLS*cw/2}" cy="${oy+ROWS*ch/2}" rx="${COLS*cw/2-10}" ry="${ROWS*ch/2-10}" fill="none" stroke="#5DADE2" stroke-width="2" stroke-dasharray="12,6" opacity="0.6"/>
+      <text x="${ox+COLS*cw/2}" y="${oy+ROWS*ch+15}" text-anchor="middle" font-size="9" fill="#5DADE2" font-family="Arial">◌ Layer 2: Circular Underground Flow</text>`;
+  }
+
+  // Layer 3: Canal flow (diagonal line bottom-left to bottom-right)
+  const l3Active = SCENARIOS[currentScenario].mult >= 1.4;
+  if (l3Active) {
+    html += `<line x1="${ox}" y1="${oy+ROWS*ch}" x2="${ox+COLS*cw}" y2="${oy+ROWS*ch}" stroke="#27AE60" stroke-width="4" opacity="0.8"/>
+      <text x="${ox+COLS*cw/2}" y="${oy+ROWS*ch+25}" text-anchor="middle" font-size="9" fill="#27AE60" font-family="Arial">═══ Layer 3: Canal Flow ═══</text>`;
+  }
+
+  // Layer 4: Emergency sea discharge
+  const l4Active = SCENARIOS[currentScenario].mult >= 1.8;
+  if (l4Active) {
+    html += `<path d="M${ox+COLS*cw},${oy+ROWS*ch/2} Q${ox+COLS*cw+40},${oy+ROWS*ch/2} ${ox+COLS*cw+40},${oy+ROWS*ch}" stroke="#E74C3C" stroke-width="3" fill="none" opacity="0.9"/>
+      <text x="${ox+COLS*cw+10}" y="${oy+ROWS*ch/2-10}" font-size="9" fill="#E74C3C" font-family="Arial">L4↓</text>`;
+  }
+
+  // Scenario label
+  html += `<rect x="${W-170}" y="10" width="155" height="26" rx="5" fill="${s.color}" opacity="0.9"/>
+    <text x="${W-165}" y="28" font-size="12" fill="white" font-weight="bold" font-family="Arial">${currentScenario} — ${s.risk} Risk</text>`;
+
+  // Hub & Storage count labels
+  html += `<rect x="10" y="${H-28}" width="200" height="20" rx="3" fill="rgba(0,0,0,0.5)"/>
+    <text x="16" y="${H-14}" font-size="10" fill="#90CAF9" font-family="Arial">● ${Math.min(hubPositions.length, c.hubs)} Hub Stations · ◯ ${storageNodes.length} Storage Nodes · ${c.wards} Wards</text>`;
+
+  svg.innerHTML = html;
+}
+
+// ═══════════════════════════════════════════════
+// SELECTORS
+// ═══════════════════════════════════════════════
+function selectCity(el, cityKey) {
+  document.querySelectorAll('[data-city]').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  currentCity = cityKey;
+  render();
+}
+
+function selectScenario(el, scenarioKey) {
+  document.querySelectorAll('.pill.scenario-light, .pill.scenario-design, .pill.scenario-severe, .pill.scenario-extreme, .pill.scenario-stress, .pill.scenario-monsoon').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  currentScenario = scenarioKey;
+  render();
+}
+
+function showTab(tabId) {
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + tabId).classList.add('active');
+  event.target.classList.add('active');
+  // Re-render charts when switching to financial tab
+  if (tabId === 'financial' || tabId === 'flood' || tabId === 'map') {
+    setTimeout(render, 50);
+  }
+}
+
+// Initial render
+render();
+</script>
+</body>
+</html>
