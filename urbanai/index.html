@@ -158,6 +158,22 @@ body { font-family: Arial, sans-serif; background: #F0F4F8; color: #2C3E50; min-
 .risk-high { background: #FFE8D6; color: #D35400; }
 .risk-critical { background: #FDECEA; color: #E74C3C; }
 
+/* LOGIN OVERLAY */
+#login-overlay{position:fixed;inset:0;background:linear-gradient(135deg,#0c1a2e 0%,#1A3C5E 60%,#0f3460 100%);display:flex;align-items:center;justify-content:center;z-index:9999;}
+.login-box{background:rgba(255,255,255,0.06);border:1px solid rgba(56,189,248,0.25);border-radius:20px;padding:48px 44px;width:380px;text-align:center;backdrop-filter:blur(10px);}
+.login-logo{font-size:36px;font-weight:800;color:#fff;margin-bottom:6px;}
+.login-logo span{color:#38bdf8;}
+.login-by{font-size:12px;color:rgba(255,255,255,0.45);margin-bottom:32px;}
+.login-by a{color:rgba(255,255,255,0.45);text-decoration:none;}
+.login-label{font-size:12px;font-weight:600;color:rgba(255,255,255,0.6);text-align:left;margin-bottom:8px;display:block;}
+.login-input{width:100%;padding:12px 16px;border-radius:10px;border:1.5px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.08);color:#fff;font-family:inherit;font-size:15px;outline:none;transition:border-color 0.2s;margin-bottom:6px;}
+.login-input::placeholder{color:rgba(255,255,255,0.3);}
+.login-input:focus{border-color:#38bdf8;}
+.login-error{font-size:12px;color:#f87171;margin-bottom:12px;min-height:18px;text-align:left;}
+.login-btn{width:100%;padding:14px;border-radius:10px;border:none;cursor:pointer;background:linear-gradient(135deg,#0369a1,#0ea5e9);color:#fff;font-family:inherit;font-size:15px;font-weight:700;transition:opacity 0.2s;margin-top:4px;}
+.login-btn:hover{opacity:0.9;}
+.login-hint{font-size:11px;color:rgba(255,255,255,0.3);margin-top:16px;}
+
 /* ── Responsive tweaks ── */
 @media (max-width: 900px) {
   .fin-kpis { grid-template-columns: repeat(3, 1fr); }
@@ -168,6 +184,20 @@ body { font-family: Arial, sans-serif; background: #F0F4F8; color: #2C3E50; min-
 </style>
 </head>
 <body>
+
+<!-- LOGIN OVERLAY -->
+<div id="login-overlay">
+  <div class="login-box">
+    <div class="login-logo">Urban<span>AI</span></div>
+    <div class="login-by">by <a href="https://wellingtonai.in">Wellington AI</a></div>
+    <label class="login-label">Username</label>
+    <input class="login-input" id="login-user" type="text" placeholder="Enter your username" autocomplete="off"
+      onkeydown="if(event.key==='Enter')doLogin()">
+    <div class="login-error" id="login-err"></div>
+    <button class="login-btn" onclick="doLogin()">Sign In →</button>
+    <div class="login-hint">Contact Wellington AI for access credentials</div>
+  </div>
+</div>
 
 <!-- Header -->
 <div class="header">
@@ -1113,6 +1143,15 @@ function showTab(tabId) {
   if (tabId === 'financial' || tabId === 'flood' || tabId === 'map') {
     setTimeout(render, 50);
   }
+}
+
+// Login
+function doLogin(){
+  const val=document.getElementById('login-user').value.trim().toLowerCase();
+  const err=document.getElementById('login-err');
+  if(!val){err.textContent='Please enter your username.';return;}
+  if(val!=='wellingtonai'){err.textContent='Username not recognised. Please try again.';return;}
+  document.getElementById('login-overlay').style.display='none';
 }
 
 // Initial render
