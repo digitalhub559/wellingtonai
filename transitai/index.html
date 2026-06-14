@@ -1,0 +1,1209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TransitAI — Climate-Positive Urban Mobility | Wellington AI</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:Arial,sans-serif;background:#F0FDF4;color:#0F172A;min-height:100vh;}
+
+/* HEADER — forest green (distinct from navy used in other tools) */
+.site-header{background:linear-gradient(135deg,#14532D 0%,#166534 60%,#15803D 100%);padding:0;}
+.header-top{display:flex;align-items:center;justify-content:space-between;padding:16px 32px;border-bottom:1px solid rgba(255,255,255,0.12);}
+.header-brand{display:flex;align-items:center;gap:12px;}
+.brand-back{color:rgba(255,255,255,0.6);text-decoration:none;font-size:13px;letter-spacing:0.05em;transition:color 0.2s;}
+.brand-back:hover{color:#fff;}
+.brand-divider{color:rgba(255,255,255,0.3);font-size:14px;}
+.brand-logo{color:#fff;font-size:18px;font-weight:700;letter-spacing:-0.02em;}
+.header-main{text-align:center;padding:28px 32px 20px;}
+.header-icon{font-size:36px;display:block;margin-bottom:8px;}
+.header-title{font-size:42px;font-weight:800;color:#fff;letter-spacing:-0.03em;line-height:1;}
+.header-title span{color:#4ADE80;}
+.header-subtitle{color:rgba(255,255,255,0.7);font-size:14px;margin-top:8px;letter-spacing:0.08em;text-transform:uppercase;}
+.header-badges{display:flex;justify-content:center;gap:10px;margin-top:14px;flex-wrap:wrap;}
+.badge{background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.85);font-size:11px;padding:4px 12px;border-radius:20px;letter-spacing:0.04em;}
+.badge.green{background:rgba(74,222,128,0.15);border-color:rgba(74,222,128,0.3);color:#4ADE80;}
+
+/* SCENARIO BAR */
+.scenario-bar{background:#166534;border-top:1px solid rgba(255,255,255,0.08);padding:12px 32px;display:flex;align-items:center;gap:16px;justify-content:center;}
+.scenario-label{color:rgba(255,255,255,0.6);font-size:12px;text-transform:uppercase;letter-spacing:0.08em;}
+.scenario-pills{display:flex;gap:6px;}
+.s-pill{border:1px solid rgba(255,255,255,0.25);background:transparent;color:rgba(255,255,255,0.7);font-size:12px;padding:5px 16px;border-radius:20px;cursor:pointer;transition:all 0.2s;font-family:Arial,sans-serif;}
+.s-pill:hover{background:rgba(255,255,255,0.1);color:#fff;}
+.s-pill.active{background:#22C55E;border-color:#22C55E;color:#fff;font-weight:700;}
+
+/* CITY SELECTOR */
+.city-section{background:#fff;border-bottom:2px solid #DCFCE7;padding:16px 24px;}
+.region-tabs{display:flex;gap:4px;margin-bottom:12px;border-bottom:1px solid #E2E8F0;padding-bottom:12px;}
+.region-tab{background:transparent;border:1px solid #E2E8F0;color:#64748B;font-size:12px;padding:5px 14px;border-radius:6px;cursor:pointer;font-family:Arial,sans-serif;transition:all 0.2s;font-weight:600;letter-spacing:0.04em;}
+.region-tab:hover{background:#F0FDF4;color:#16A34A;border-color:#86EFAC;}
+.region-tab.active{background:#16A34A;border-color:#16A34A;color:#fff;}
+.city-grid{display:flex;flex-wrap:wrap;gap:6px;}
+.city-pill{display:flex;align-items:center;gap:6px;border:1px solid #E2E8F0;background:#F8FAFC;color:#475569;font-size:12px;padding:6px 14px;border-radius:24px;cursor:pointer;transition:all 0.2s;font-family:Arial,sans-serif;white-space:nowrap;}
+.city-pill:hover{border-color:#86EFAC;background:#F0FDF4;color:#15803D;}
+.city-pill.active{background:#16A34A;border-color:#16A34A;color:#fff;font-weight:700;box-shadow:0 2px 8px rgba(22,163,74,0.25);}
+.city-pill .flag{font-size:14px;}
+.city-pill .cname{font-weight:600;}
+.city-pill .ccountry{opacity:0.7;font-size:10px;}
+
+/* TAB NAVIGATION */
+.tab-nav{background:#0F172A;display:flex;overflow-x:auto;border-bottom:2px solid #22C55E;}
+.tab-btn{flex:1;min-width:140px;background:transparent;border:none;color:rgba(255,255,255,0.55);font-size:12px;font-family:Arial,sans-serif;padding:14px 10px;cursor:pointer;transition:all 0.2s;display:flex;flex-direction:column;align-items:center;gap:3px;letter-spacing:0.03em;position:relative;}
+.tab-btn .tab-icon{font-size:18px;}
+.tab-btn:hover{color:rgba(255,255,255,0.85);background:rgba(255,255,255,0.05);}
+.tab-btn.active{color:#22C55E;font-weight:700;}
+.tab-btn.active::after{content:'';position:absolute;bottom:-2px;left:0;right:0;height:2px;background:#22C55E;}
+
+/* MAIN CONTENT */
+.tab-panel{display:none;padding:24px 24px 40px;max-width:1200px;margin:0 auto;}
+.tab-panel.active{display:block;}
+
+/* CARDS */
+.metrics-row{display:grid;gap:14px;margin-bottom:20px;}
+.metrics-row.cols4{grid-template-columns:repeat(4,1fr);}
+.metrics-row.cols3{grid-template-columns:repeat(3,1fr);}
+.metrics-row.cols2{grid-template-columns:repeat(2,1fr);}
+.metric-card{background:#fff;border-radius:10px;padding:18px;box-shadow:0 1px 4px rgba(0,0,0,0.06);border-top:3px solid #22C55E;position:relative;}
+.metric-card.amber{border-top-color:#F59E0B;}
+.metric-card.blue{border-top-color:#3B82F6;}
+.metric-card.red{border-top-color:#EF4444;}
+.metric-card.slate{border-top-color:#64748B;}
+.metric-label{font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:#64748B;font-weight:700;margin-bottom:6px;}
+.metric-value{font-size:26px;font-weight:800;color:#0F172A;line-height:1;}
+.metric-unit{font-size:12px;color:#64748B;margin-top:4px;}
+.metric-sub{font-size:11px;color:#16A34A;margin-top:6px;font-weight:600;}
+
+/* PANELS */
+.panel{background:#fff;border-radius:10px;padding:20px;box-shadow:0 1px 4px rgba(0,0,0,0.06);margin-bottom:20px;}
+.panel-title{font-size:14px;font-weight:700;color:#0F172A;margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+.panel-title .dot{width:10px;height:10px;border-radius:50%;background:#22C55E;flex-shrink:0;}
+.chart-wrap{position:relative;}
+.chart-wrap canvas{max-height:280px;}
+
+/* GRID LAYOUTS */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;}
+
+/* DATA TABLES */
+.data-table{width:100%;border-collapse:collapse;font-size:13px;}
+.data-table th{background:#F0FDF4;color:#166534;font-weight:700;padding:10px 12px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:0.05em;border-bottom:2px solid #DCFCE7;}
+.data-table td{padding:10px 12px;border-bottom:1px solid #F1F5F9;color:#334155;}
+.data-table tr:hover td{background:#F0FDF4;}
+.data-table .num{text-align:right;font-weight:600;color:#0F172A;}
+.data-table .green{color:#16A34A;font-weight:700;}
+.data-table .amber{color:#D97706;}
+.data-table .red{color:#DC2626;}
+
+/* HIGHLIGHT BOX */
+.highlight-box{background:linear-gradient(135deg,#DCFCE7,#D1FAE5);border:1px solid #86EFAC;border-radius:8px;padding:14px 16px;margin-bottom:16px;}
+.highlight-box .hl-title{font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:#15803D;font-weight:700;margin-bottom:4px;}
+.highlight-box .hl-text{font-size:13px;color:#14532D;font-weight:600;}
+
+/* ROUTE LEGEND */
+.route-legend{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px;}
+.route-item{display:flex;align-items:center;gap:6px;font-size:12px;color:#334155;cursor:pointer;padding:5px 12px;border-radius:6px;border:1px solid #E2E8F0;background:#fff;transition:all 0.2s;}
+.route-item:hover{border-color:#86EFAC;background:#F0FDF4;}
+.route-item.active{border-color:currentColor;background:rgba(0,0,0,0.04);}
+.route-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0;}
+
+/* SVG MAP */
+#tram-map-svg{width:100%;height:auto;border-radius:8px;background:#F8FAFC;border:1px solid #E2E8F0;}
+
+/* ENERGY BAR */
+.energy-bar-wrap{margin-top:8px;}
+.energy-bar-bg{background:#E2E8F0;border-radius:4px;height:10px;overflow:hidden;}
+.energy-bar-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,#16A34A,#22C55E);transition:width 0.8s ease;}
+.energy-labels{display:flex;justify-content:space-between;font-size:10px;color:#64748B;margin-top:3px;}
+
+/* SUBSIDY NOTE */
+.subsidy-note{background:#FEF3C7;border:1px solid #FDE68A;border-radius:6px;padding:10px 14px;font-size:12px;color:#92400E;margin-top:12px;}
+
+/* CITY PROFILE */
+.city-profile{background:linear-gradient(135deg,#064E3B 0%,#14532D 100%);border-radius:10px;padding:20px;color:#fff;margin-bottom:20px;position:relative;overflow:hidden;}
+.city-profile::after{content:'🚋';position:absolute;right:20px;bottom:10px;font-size:64px;opacity:0.15;}
+.city-profile-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px;}
+.city-name-block .flag-big{font-size:32px;line-height:1;}
+.city-name-block .cname-big{font-size:22px;font-weight:800;color:#fff;}
+.city-name-block .ccountry{font-size:13px;color:rgba(255,255,255,0.6);}
+.city-highlight{font-size:13px;color:rgba(255,255,255,0.75);max-width:500px;line-height:1.5;}
+.city-stats-mini{display:flex;gap:16px;flex-wrap:wrap;}
+.cstat{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);border-radius:6px;padding:8px 14px;}
+.cstat-val{font-size:18px;font-weight:800;color:#fff;}
+.cstat-lbl{font-size:10px;color:rgba(255,255,255,0.6);text-transform:uppercase;letter-spacing:0.05em;}
+
+/* DIGITAL TWIN BADGE */
+.dt-badge{background:#22C55E;color:#fff;font-size:10px;font-weight:700;padding:3px 8px;border-radius:4px;display:inline-block;margin-top:4px;text-transform:uppercase;letter-spacing:0.06em;}
+
+/* IRR display */
+.irr-box{text-align:center;padding:20px;border-radius:8px;background:#F0FDF4;border:2px solid #BBF7D0;}
+.irr-value{font-size:32px;font-weight:800;color:#15803D;}
+.irr-label{font-size:11px;color:#64748B;text-transform:uppercase;letter-spacing:0.06em;margin-top:4px;}
+
+/* SUSTAINABILITY PILLARS */
+.sustain-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:20px;}
+.sustain-card{background:#fff;border-radius:10px;padding:18px;box-shadow:0 1px 4px rgba(0,0,0,0.06);border-left:4px solid #22C55E;}
+.sustain-card.amber{border-left-color:#F59E0B;}
+.sustain-card.blue{border-left-color:#3B82F6;}
+.sustain-card.emerald{border-left-color:#10B981;}
+.sustain-icon{font-size:24px;margin-bottom:8px;}
+.sustain-val{font-size:28px;font-weight:800;color:#0F172A;}
+.sustain-lbl{font-size:11px;color:#64748B;text-transform:uppercase;letter-spacing:0.06em;margin-top:4px;}
+.sustain-sub{font-size:12px;color:#16A34A;margin-top:6px;font-weight:600;}
+
+/* COIMBATORE SPECIAL */
+.coimbatore-only{display:none;}
+.coimbatore-only.show{display:block;}
+
+/* FOOTER */
+footer{background:#0F172A;color:rgba(255,255,255,0.5);text-align:center;padding:20px;font-size:12px;margin-top:40px;}
+footer a{color:#22C55E;text-decoration:none;}
+
+@media(max-width:768px){
+  .metrics-row.cols4{grid-template-columns:repeat(2,1fr);}
+  .metrics-row.cols3{grid-template-columns:repeat(2,1fr);}
+  .two-col,.three-col{grid-template-columns:1fr;}
+  .sustain-grid{grid-template-columns:1fr;}
+  .header-title{font-size:30px;}
+  .tab-panel{padding:16px;}
+  .city-stats-mini{gap:8px;}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="site-header">
+  <div class="header-top">
+    <div class="header-brand">
+      <a href="../index.html" class="brand-back">← Wellington AI</a>
+      <span class="brand-divider">/</span>
+      <span class="brand-logo">TransitAI</span>
+    </div>
+    <div style="font-size:11px;color:rgba(255,255,255,0.4);text-align:right;">
+      Tool 4 of 4 &nbsp;·&nbsp; HMRC R&amp;D Active
+    </div>
+  </div>
+  <div class="header-main">
+    <span class="header-icon">🚋</span>
+    <div class="header-title">Transit<span>AI</span></div>
+    <div class="header-subtitle">Climate-Positive Urban Mobility Intelligence Platform</div>
+    <div class="header-badges">
+      <span class="badge green">🌿 Climate-Positive</span>
+      <span class="badge">18 Global Cities</span>
+      <span class="badge">30-Year Financial Model</span>
+      <span class="badge">Coimbatore Digital Twin</span>
+      <span class="badge green">⚡ Nilgiris Hydro-Powered</span>
+    </div>
+  </div>
+  <div class="scenario-bar">
+    <span class="scenario-label">Scenario</span>
+    <div class="scenario-pills">
+      <button class="s-pill" data-scenario="conservative" onclick="setScenario('conservative')">Conservative</button>
+      <button class="s-pill active" data-scenario="base" onclick="setScenario('base')">Base Case</button>
+      <button class="s-pill" data-scenario="optimistic" onclick="setScenario('optimistic')">Optimistic</button>
+    </div>
+  </div>
+</header>
+
+<!-- CITY SELECTOR -->
+<div class="city-section">
+  <div class="region-tabs">
+    <button class="region-tab active" onclick="setRegion('india')">🇮🇳 India (6)</button>
+    <button class="region-tab" onclick="setRegion('europe')">🇪🇺 Europe (6)</button>
+    <button class="region-tab" onclick="setRegion('americas')">🌎 Americas (2)</button>
+    <button class="region-tab" onclick="setRegion('asiapac')">🌏 Asia-Pacific (4)</button>
+    <button class="region-tab" onclick="setRegion('all')">🌍 All Cities</button>
+  </div>
+  <div class="city-grid" id="city-grid"></div>
+</div>
+
+<!-- TAB NAVIGATION -->
+<nav class="tab-nav">
+  <button class="tab-btn active" data-tab="city" onclick="setTab('city')">
+    <span class="tab-icon">🏙️</span>City Intelligence
+  </button>
+  <button class="tab-btn" data-tab="ops" onclick="setTab('ops')">
+    <span class="tab-icon">⚙️</span>Operations Model
+  </button>
+  <button class="tab-btn" data-tab="fin" onclick="setTab('fin')">
+    <span class="tab-icon">📊</span>Financial Model
+  </button>
+  <button class="tab-btn" data-tab="sustain" onclick="setTab('sustain')">
+    <span class="tab-icon">🌿</span>Sustainability
+  </button>
+  <button class="tab-btn" data-tab="map" onclick="setTab('map')">
+    <span class="tab-icon">🗺️</span>Live Tram Map
+  </button>
+</nav>
+
+<!-- ═══════════════════════════════════════ TAB 1: CITY INTELLIGENCE -->
+<div id="tab-city" class="tab-panel active">
+  <div class="city-profile" id="city-profile">
+    <div class="city-profile-top">
+      <div class="city-name-block">
+        <div class="flag-big" id="cp-flag"></div>
+        <div class="cname-big" id="cp-name"></div>
+        <div class="ccountry" id="cp-country"></div>
+        <div id="cp-dt-badge"></div>
+      </div>
+      <div class="city-highlight" id="cp-highlight"></div>
+    </div>
+    <div class="city-stats-mini" id="cp-stats"></div>
+  </div>
+
+  <div class="metrics-row cols4">
+    <div class="metric-card">
+      <div class="metric-label">Daily Ridership</div>
+      <div class="metric-value" id="m-ridership">—</div>
+      <div class="metric-unit">passengers / day (adjusted)</div>
+      <div class="metric-sub" id="m-ridership-sub"></div>
+    </div>
+    <div class="metric-card blue">
+      <div class="metric-label">Annual Revenue</div>
+      <div class="metric-value" id="m-revenue">—</div>
+      <div class="metric-unit" id="m-revenue-unit">fare + advertising</div>
+      <div class="metric-sub" id="m-revenue-sub"></div>
+    </div>
+    <div class="metric-card amber">
+      <div class="metric-label">Annual OPEX</div>
+      <div class="metric-value" id="m-opex">—</div>
+      <div class="metric-unit" id="m-opex-unit">operating cost / year</div>
+    </div>
+    <div class="metric-card" id="m-surplus-card">
+      <div class="metric-label">Operating Surplus</div>
+      <div class="metric-value" id="m-surplus">—</div>
+      <div class="metric-unit" id="m-surplus-unit">revenue − OPEX</div>
+      <div class="metric-sub" id="m-surplus-sub"></div>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="panel">
+      <div class="panel-title"><span class="dot"></span>Revenue vs OPEX — Scenario Comparison</div>
+      <div class="chart-wrap"><canvas id="revenue-chart"></canvas></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title"><span class="dot"></span>City Profile</div>
+      <table class="data-table" id="city-profile-table"></table>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════ TAB 2: OPERATIONS MODEL -->
+<div id="tab-ops" class="tab-panel">
+  <div class="metrics-row cols3">
+    <div class="metric-card">
+      <div class="metric-label">One-Way Travel Time</div>
+      <div class="metric-value" id="op-oneway">—</div>
+      <div class="metric-unit">minutes</div>
+    </div>
+    <div class="metric-card blue">
+      <div class="metric-label">Round-Trip Cycle Time</div>
+      <div class="metric-value" id="op-cycle">—</div>
+      <div class="metric-unit">minutes (incl. 10 min terminal dwell)</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Service Headway</div>
+      <div class="metric-value" id="op-headway">—</div>
+      <div class="metric-unit">minutes between trams</div>
+    </div>
+  </div>
+  <div class="metrics-row cols4">
+    <div class="metric-card">
+      <div class="metric-label">Active Fleet</div>
+      <div class="metric-value" id="op-active">—</div>
+      <div class="metric-unit">trams in service</div>
+    </div>
+    <div class="metric-card amber">
+      <div class="metric-label">Reserve Fleet</div>
+      <div class="metric-value" id="op-reserve">—</div>
+      <div class="metric-unit">maintenance & contingency</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Total Fleet</div>
+      <div class="metric-value" id="op-fleet">—</div>
+      <div class="metric-unit">trams required</div>
+    </div>
+    <div class="metric-card blue">
+      <div class="metric-label">Peak Capacity</div>
+      <div class="metric-value" id="op-peak">—</div>
+      <div class="metric-unit">passengers / hr / direction</div>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="panel">
+      <div class="panel-title"><span class="dot"></span>Fleet Composition</div>
+      <div class="chart-wrap"><canvas id="fleet-chart"></canvas></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title"><span class="dot"></span>Operations Parameters</div>
+      <table class="data-table" id="ops-table"></table>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title"><span class="dot"></span>AI-Driven Operations — R&D Components</div>
+    <div class="three-col">
+      <div style="padding:12px;background:#F0FDF4;border-radius:8px;border:1px solid #DCFCE7;">
+        <div style="font-size:18px;margin-bottom:8px;">🤖</div>
+        <div style="font-weight:700;font-size:13px;color:#14532D;margin-bottom:6px;">Passenger Demand Prediction</div>
+        <div style="font-size:12px;color:#4B5563;line-height:1.5;">ML-based forecasting adjusts headway dynamically based on real-time boarding data and historical demand patterns.</div>
+      </div>
+      <div style="padding:12px;background:#F0FDF4;border-radius:8px;border:1px solid #DCFCE7;">
+        <div style="font-size:18px;margin-bottom:8px;">⚡</div>
+        <div style="font-weight:700;font-size:13px;color:#14532D;margin-bottom:6px;">Collector Network Optimisation</div>
+        <div style="font-size:12px;color:#4B5563;line-height:1.5;">Pantograph + overhead wire efficiency modelling vs battery storage for energy recovery at regenerative braking points.</div>
+      </div>
+      <div style="padding:12px;background:#F0FDF4;border-radius:8px;border:1px solid #DCFCE7;">
+        <div style="font-size:18px;margin-bottom:8px;">🔄</div>
+        <div style="font-weight:700;font-size:13px;color:#14532D;margin-bottom:6px;">Predictive Maintenance</div>
+        <div style="font-size:12px;color:#4B5563;line-height:1.5;">Sensor data from rolling stock triggers proactive maintenance scheduling, reducing reserve fleet requirement over time.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════ TAB 3: FINANCIAL MODEL -->
+<div id="tab-fin" class="tab-panel">
+  <div class="metrics-row cols4">
+    <div class="metric-card">
+      <div class="metric-label">Total CAPEX</div>
+      <div class="metric-value" id="fin-capex">—</div>
+      <div class="metric-unit" id="fin-capex-unit">incl. fleet + contingency</div>
+    </div>
+    <div class="metric-card blue">
+      <div class="metric-label">30-Year NPV</div>
+      <div class="metric-value" id="fin-npv">—</div>
+      <div class="metric-unit" id="fin-npv-unit">net present value</div>
+    </div>
+    <div class="metric-card amber">
+      <div class="metric-label">Project IRR</div>
+      <div class="metric-value" id="fin-irr">—</div>
+      <div class="metric-unit">internal rate of return</div>
+    </div>
+    <div class="metric-card slate">
+      <div class="metric-label">Payback Period</div>
+      <div class="metric-value" id="fin-payback">—</div>
+      <div class="metric-unit">years to break-even</div>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="panel">
+      <div class="panel-title"><span class="dot"></span>CAPEX Breakdown</div>
+      <div class="chart-wrap"><canvas id="capex-chart"></canvas></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title"><span class="dot"></span>CAPEX Components</div>
+      <table class="data-table" id="capex-table"></table>
+      <div class="subsidy-note" id="subsidy-note" style="display:none;">
+        ⚠️ Transit infrastructure typically requires public CAPEX funding (government grants, bonds, or PPP structures). Revenue model demonstrates <strong>operational viability</strong> — operating surpluses cover OPEX and contribute to partial debt service. Suitable for Innovate UK Smart Grant and HMRC R&D Tax Credit.
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title"><span class="dot"></span>30-Year Cumulative Cash Flow</div>
+    <div class="chart-wrap"><canvas id="npv-chart"></canvas></div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title"><span class="dot"></span>Revenue Model Detail</div>
+    <table class="data-table" id="revenue-table"></table>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════ TAB 4: SUSTAINABILITY -->
+<div id="tab-sustain" class="tab-panel">
+  <div id="coimbatore-banner" class="coimbatore-only">
+    <div class="highlight-box" style="margin-bottom:20px;">
+      <div class="hl-title">🌿 Coimbatore — Climate-Positive Transit System</div>
+      <div class="hl-text">78% of tram energy sourced from Nilgiris hydroelectric network · Digital Twin city simulation active · Net-negative carbon lifecycle over 30 years</div>
+    </div>
+  </div>
+
+  <div class="sustain-grid">
+    <div class="sustain-card">
+      <div class="sustain-icon">🚗</div>
+      <div class="sustain-val" id="s-cars">—</div>
+      <div class="sustain-lbl">Cars Removed from Roads / Day</div>
+      <div class="sustain-sub" id="s-cars-sub"></div>
+    </div>
+    <div class="sustain-card amber">
+      <div class="sustain-icon">🛵</div>
+      <div class="sustain-val" id="s-2w">—</div>
+      <div class="sustain-lbl">Two-Wheelers Off Road / Day</div>
+      <div class="sustain-sub" id="s-2w-sub"></div>
+    </div>
+    <div class="sustain-card emerald">
+      <div class="sustain-icon">🌍</div>
+      <div class="sustain-val" id="s-co2">—</div>
+      <div class="sustain-lbl">CO₂ Reduction (tonnes / year)</div>
+      <div class="sustain-sub" id="s-co2-sub"></div>
+    </div>
+    <div class="sustain-card blue">
+      <div class="sustain-icon">⛽</div>
+      <div class="sustain-val" id="s-fuel">—</div>
+      <div class="sustain-lbl">Annual Fuel Cost Savings</div>
+      <div class="sustain-sub" id="s-fuel-sub"></div>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="panel">
+      <div class="panel-title"><span class="dot"></span>Sustainability Impact — Scenario Comparison</div>
+      <div class="chart-wrap"><canvas id="sustain-chart"></canvas></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title"><span class="dot"></span>Energy &amp; Climate Profile</div>
+      <div style="margin-bottom:16px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+          <span style="font-size:13px;font-weight:600;color:#0F172A;">Renewable Energy Share</span>
+          <span style="font-size:20px;font-weight:800;color:#16A34A;" id="s-renew">—%</span>
+        </div>
+        <div class="energy-bar-wrap">
+          <div class="energy-bar-bg"><div class="energy-bar-fill" id="s-renew-bar" style="width:0%"></div></div>
+          <div class="energy-labels"><span>0%</span><span>Fossil</span><span id="s-renew-source">Grid</span><span>Renewable</span><span>100%</span></div>
+        </div>
+      </div>
+      <table class="data-table" id="sustain-table"></table>
+    </div>
+  </div>
+
+  <div class="coimbatore-only" id="coimbatore-energy-panel">
+    <div class="panel">
+      <div class="panel-title"><span class="dot"></span>Coimbatore Energy Ecosystem — Nilgiris Integration</div>
+      <div class="three-col">
+        <div style="padding:14px;background:#F0FDF4;border-radius:8px;border:1px solid #DCFCE7;text-align:center;">
+          <div style="font-size:28px;margin-bottom:6px;">💧</div>
+          <div style="font-weight:800;font-size:20px;color:#16A34A;">78%</div>
+          <div style="font-size:12px;color:#64748B;margin-top:4px;">Nilgiris Hydroelectric Power</div>
+          <div style="font-size:11px;color:#4B5563;margin-top:6px;line-height:1.4;">Kundah, Pillur &amp; Pykara hydro stations supply clean base-load power to tram collector network</div>
+        </div>
+        <div style="padding:14px;background:#FFFBEB;border-radius:8px;border:1px solid #FDE68A;text-align:center;">
+          <div style="font-size:28px;margin-bottom:6px;">☀️</div>
+          <div style="font-weight:800;font-size:20px;color:#D97706;">14%</div>
+          <div style="font-size:12px;color:#64748B;margin-top:4px;">Rooftop Solar (TOD Nodes)</div>
+          <div style="font-size:11px;color:#4B5563;margin-top:6px;line-height:1.4;">Transit-oriented development nodes generate solar power at 10 interchange stations</div>
+        </div>
+        <div style="padding:14px;background:#EFF6FF;border-radius:8px;border:1px solid #BFDBFE;text-align:center;">
+          <div style="font-size:28px;margin-bottom:6px;">⚡</div>
+          <div style="font-weight:800;font-size:20px;color:#2563EB;">8%</div>
+          <div style="font-size:12px;color:#64748B;margin-top:4px;">Regenerative Braking Recovery</div>
+          <div style="font-size:11px;color:#4B5563;margin-top:6px;line-height:1.4;">Kinetic energy recovery at 4 tram route terminal points feeds back to overhead wire network</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title"><span class="dot"></span>Digital Twin &amp; AI Operations</div>
+    <div class="three-col">
+      <div style="padding:12px;background:#F0FDF4;border-radius:8px;border:1px solid #DCFCE7;">
+        <div style="font-size:16px;margin-bottom:6px;">🔮</div>
+        <div style="font-weight:700;font-size:13px;color:#14532D;margin-bottom:4px;">Digital Twin Simulation</div>
+        <div style="font-size:12px;color:#4B5563;line-height:1.4;" id="dt-text">Real-time city model enables transit-oriented development planning and passenger flow simulation.</div>
+      </div>
+      <div style="padding:12px;background:#F0FDF4;border-radius:8px;border:1px solid #DCFCE7;">
+        <div style="font-size:16px;margin-bottom:6px;">📡</div>
+        <div style="font-weight:700;font-size:13px;color:#14532D;margin-bottom:4px;">Transit-Oriented Development</div>
+        <div style="font-size:12px;color:#4B5563;line-height:1.4;">Mixed-use development zones within 500m of tram stops increase ridership catchment and land value uplift.</div>
+      </div>
+      <div style="padding:12px;background:#F0FDF4;border-radius:8px;border:1px solid #DCFCE7;">
+        <div style="font-size:16px;margin-bottom:6px;">🎓</div>
+        <div style="font-weight:700;font-size:13px;color:#14532D;margin-bottom:4px;" id="social-title">Social Impact</div>
+        <div style="font-size:12px;color:#4B5563;line-height:1.4;" id="social-text">Tram network connects employment, education and healthcare corridors, reducing mobility inequality.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════ TAB 5: LIVE TRAM MAP -->
+<div id="tab-map" class="tab-panel">
+  <div id="map-header-cbr" class="coimbatore-only">
+    <div class="highlight-box" style="margin-bottom:16px;">
+      <div class="hl-title">🗺️ Coimbatore City — 4 Tram Route Network (75 km total)</div>
+      <div class="hl-text">Interactive route map · Click a route to highlight · European-style tram corridors serving 350,000+ passengers daily</div>
+    </div>
+    <div class="route-legend" id="route-legend">
+      <div class="route-item" onclick="toggleRoute(1)" id="rl-1">
+        <div class="route-dot" style="background:#2563EB;"></div>
+        <strong>Route 1</strong> — South Corridor (Ukkadam ↔ Airport)
+      </div>
+      <div class="route-item" onclick="toggleRoute(2)" id="rl-2">
+        <div class="route-dot" style="background:#16A34A;"></div>
+        <strong>Route 2</strong> — IT Corridor (Airport ↔ Neelambur)
+      </div>
+      <div class="route-item" onclick="toggleRoute(3)" id="rl-3">
+        <div class="route-dot" style="background:#EA580C;"></div>
+        <strong>Route 3</strong> — West Corridor (Thondamuthur ↔ Madukkarai)
+      </div>
+      <div class="route-item" onclick="toggleRoute(4)" id="rl-4">
+        <div class="route-dot" style="background:#DC2626;"></div>
+        <strong>Route 4</strong> — East Corridor (Railway Station ↔ Vellalore)
+      </div>
+    </div>
+  </div>
+
+  <div id="map-header-other" style="display:none;">
+    <div class="highlight-box" style="margin-bottom:16px;">
+      <div class="hl-title" id="map-other-title">🗺️ City Tram Schematic</div>
+      <div class="hl-text" id="map-other-sub">Illustrative route diagram based on system parameters</div>
+    </div>
+  </div>
+
+  <svg id="tram-map-svg" viewBox="0 0 900 560" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+        <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.15"/>
+      </filter>
+    </defs>
+    <!-- Background grid -->
+    <rect width="900" height="560" fill="#F8FAFC"/>
+    <g id="map-grid-lines"></g>
+    <!-- Route lines and stops rendered by JS -->
+    <g id="map-routes"></g>
+    <g id="map-stops"></g>
+    <g id="map-labels"></g>
+    <g id="map-legend-svg"></g>
+  </svg>
+
+  <div class="two-col" style="margin-top:20px;">
+    <div class="panel">
+      <div class="panel-title"><span class="dot"></span>Route Summary</div>
+      <table class="data-table" id="route-table"></table>
+    </div>
+    <div class="panel">
+      <div class="panel-title"><span class="dot"></span>Key Interchange Stations</div>
+      <table class="data-table" id="interchange-table"></table>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <strong style="color:#4ADE80;">TransitAI</strong> · Wellington AI Limited · UK R&amp;D Tax Credit Active ·
+  <a href="../index.html">Wellington AI Home</a> ·
+  <a href="mailto:digitalhub559@gmail.com">Contact</a>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+// ═══════════════════════════════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════════════════════════════
+const CITY_DB = {
+  coimbatore:{name:'Coimbatore',country:'India',region:'india',flag:'🇮🇳',
+    cu:'₹',unit:'INR Cr',scale:1e7,fuel:6500,
+    pop:2.5,area:260,routeKm:75,riders:350000,fare:20,
+    cpkm:75,opkm:2.4,ad:25,speed:28,hw:4,cap:300,res:0.10,
+    gr:0.05,oi:0.05,dr:0.10,tuc:15,renew:78,dt:true,
+    routes:4,corridors:10,
+    hl:'Nilgiris hydro-powered tram with Digital Twin city simulation',
+    social:'10 colleges (30k students), 20 schools (60k), Gandhipuram CBD connectivity'},
+  chennai:{name:'Chennai',country:'India',region:'india',flag:'🇮🇳',
+    cu:'₹',unit:'INR Cr',scale:1e7,fuel:7000,
+    pop:11.5,area:1189,routeKm:120,riders:900000,fare:25,
+    cpkm:95,opkm:3.0,ad:45,speed:30,hw:3,cap:350,res:0.10,
+    gr:0.05,oi:0.05,dr:0.10,tuc:18,renew:40,dt:false,
+    routes:6,corridors:15,hl:'High-density coastal corridor tram network',social:'Major IT parks and port connectivity'},
+  bengaluru:{name:'Bengaluru',country:'India',region:'india',flag:'🇮🇳',
+    cu:'₹',unit:'INR Cr',scale:1e7,fuel:7500,
+    pop:13,area:741,routeKm:110,riders:850000,fare:28,
+    cpkm:100,opkm:3.2,ad:50,speed:29,hw:3,cap:350,res:0.10,
+    gr:0.06,oi:0.05,dr:0.10,tuc:20,renew:55,dt:false,
+    routes:5,corridors:12,hl:'Tech corridor integration with smart city infrastructure',social:'Electronic City and Whitefield IT corridor access'},
+  hyderabad:{name:'Hyderabad',country:'India',region:'india',flag:'🇮🇳',
+    cu:'₹',unit:'INR Cr',scale:1e7,fuel:7000,
+    pop:10.5,area:650,routeKm:105,riders:750000,fare:27,
+    cpkm:92,opkm:2.9,ad:42,speed:28,hw:4,cap:320,res:0.10,
+    gr:0.05,oi:0.05,dr:0.10,tuc:17,renew:42,dt:false,
+    routes:5,corridors:11,hl:'HITEC City connectivity with heritage corridor integration',social:'Old City and Cyberabad connectivity'},
+  mumbai:{name:'Mumbai',country:'India',region:'india',flag:'🇮🇳',
+    cu:'₹',unit:'INR Cr',scale:1e7,fuel:8000,
+    pop:21,area:603,routeKm:140,riders:1500000,fare:30,
+    cpkm:120,opkm:3.8,ad:65,speed:25,hw:2,cap:400,res:0.12,
+    gr:0.04,oi:0.06,dr:0.09,tuc:22,renew:38,dt:false,
+    routes:8,corridors:18,hl:'Island city coastal tram revival with heritage routes',social:'BKC financial district and Dharavi connectivity'},
+  delhi:{name:'Delhi',country:'India',region:'india',flag:'🇮🇳',
+    cu:'₹',unit:'INR Cr',scale:1e7,fuel:7500,
+    pop:32,area:1484,routeKm:160,riders:1700000,fare:30,
+    cpkm:115,opkm:3.6,ad:75,speed:27,hw:2,cap:400,res:0.12,
+    gr:0.04,oi:0.06,dr:0.09,tuc:22,renew:35,dt:false,
+    routes:8,corridors:20,hl:'Capital city integrated multimodal transit hub',social:'Lutyens zone and outer ring road connectivity'},
+  london:{name:'London',country:'UK',region:'europe',flag:'🇬🇧',
+    cu:'£',unit:'GBP m',scale:1e6,fuel:150,
+    pop:9,area:1572,routeKm:150,riders:900000,fare:2.8,
+    cpkm:90,opkm:2.1,ad:18,speed:22,hw:5,cap:250,res:0.12,
+    gr:0.03,oi:0.03,dr:0.08,tuc:3.5,renew:82,dt:true,
+    routes:6,corridors:14,hl:'TfL Tramlink expansion with zero-emission rolling stock',social:'Croydon and Wimbledon connectivity'},
+  manchester:{name:'Manchester',country:'UK',region:'europe',flag:'🇬🇧',
+    cu:'£',unit:'GBP m',scale:1e6,fuel:140,
+    pop:2.8,area:630,routeKm:100,riders:450000,fare:2.2,
+    cpkm:70,opkm:1.6,ad:8,speed:24,hw:6,cap:220,res:0.10,
+    gr:0.03,oi:0.03,dr:0.08,tuc:3.2,renew:75,dt:true,
+    routes:4,corridors:9,hl:'Metrolink extension to Greater Manchester boroughs',social:'Airport and MediaCityUK connectivity'},
+  paris:{name:'Paris',country:'France',region:'europe',flag:'🇫🇷',
+    cu:'€',unit:'EUR m',scale:1e6,fuel:160,
+    pop:11,area:2845,routeKm:180,riders:1200000,fare:2.3,
+    cpkm:95,opkm:2.2,ad:22,speed:20,hw:4,cap:300,res:0.12,
+    gr:0.02,oi:0.02,dr:0.07,tuc:3.8,renew:90,dt:true,
+    routes:9,corridors:20,hl:'RATP T-line network with 100% renewable electricity',social:'Ring boulevard connectivity across all arrondissements'},
+  amsterdam:{name:'Amsterdam',country:'Netherlands',region:'europe',flag:'🇳🇱',
+    cu:'€',unit:'EUR m',scale:1e6,fuel:155,
+    pop:1.2,area:219,routeKm:85,riders:420000,fare:2.1,
+    cpkm:75,opkm:1.7,ad:9,speed:18,hw:5,cap:200,res:0.10,
+    gr:0.02,oi:0.02,dr:0.07,tuc:3.0,renew:95,dt:true,
+    routes:5,corridors:12,hl:'GVB integrated tram-canal transport with AI scheduling',social:'Centraal Station to Zuidas business district'},
+  berlin:{name:'Berlin',country:'Germany',region:'europe',flag:'🇩🇪',
+    cu:'€',unit:'EUR m',scale:1e6,fuel:165,
+    pop:3.7,area:891,routeKm:130,riders:650000,fare:2.4,
+    cpkm:80,opkm:1.8,ad:13,speed:20,hw:5,cap:230,res:0.10,
+    gr:0.02,oi:0.02,dr:0.07,tuc:3.2,renew:88,dt:true,
+    routes:6,corridors:15,hl:'BVG Strassenbahn digital twin with predictive maintenance',social:'East Berlin heritage tram through Mitte and Prenzlauer Berg'},
+  madrid:{name:'Madrid',country:'Spain',region:'europe',flag:'🇪🇸',
+    cu:'€',unit:'EUR m',scale:1e6,fuel:145,
+    pop:6.7,area:604,routeKm:115,riders:520000,fare:1.8,
+    cpkm:75,opkm:1.5,ad:10,speed:22,hw:6,cap:220,res:0.10,
+    gr:0.02,oi:0.02,dr:0.07,tuc:3.0,renew:82,dt:false,
+    routes:4,corridors:10,hl:'Metro Ligero integration with solar-powered substations',social:'Pozuelo and Boadilla orbital connector'},
+  newyork:{name:'New York',country:'USA',region:'americas',flag:'🇺🇸',
+    cu:'$',unit:'USD m',scale:1e6,fuel:200,
+    pop:8.5,area:783,routeKm:200,riders:1500000,fare:3.0,
+    cpkm:110,opkm:2.8,ad:35,speed:20,hw:4,cap:300,res:0.12,
+    gr:0.03,oi:0.03,dr:0.08,tuc:4.0,renew:60,dt:true,
+    routes:8,corridors:18,hl:'NYC streetcar revival — Brooklyn-Queens connector',social:'Waterfront access for underserved transit deserts'},
+  toronto:{name:'Toronto',country:'Canada',region:'americas',flag:'🇨🇦',
+    cu:'C$',unit:'CAD m',scale:1e6,fuel:250,
+    pop:6.3,area:630,routeKm:120,riders:700000,fare:3.2,
+    cpkm:95,opkm:2.4,ad:18,speed:18,hw:5,cap:250,res:0.10,
+    gr:0.03,oi:0.03,dr:0.07,tuc:4.5,renew:72,dt:false,
+    routes:5,corridors:12,hl:'TTC streetcar modernisation with Waterfront LRT',social:'King Street and Bathurst corridor reconstruction'},
+  melbourne:{name:'Melbourne',country:'Australia',region:'asiapac',flag:'🇦🇺',
+    cu:'A$',unit:'AUD m',scale:1e6,fuel:220,
+    pop:5.2,area:9992,routeKm:150,riders:800000,fare:4.6,
+    cpkm:85,opkm:2.2,ad:22,speed:16,hw:5,cap:220,res:0.12,
+    gr:0.03,oi:0.03,dr:0.07,tuc:5.5,renew:65,dt:false,
+    routes:5,corridors:16,hl:"World's largest tram network — zero-emission transition",social:'CBD free tram zone and St Kilda beachfront access'},
+  sydney:{name:'Sydney',country:'Australia',region:'asiapac',flag:'🇦🇺',
+    cu:'A$',unit:'AUD m',scale:1e6,fuel:225,
+    pop:5.3,area:12367,routeKm:120,riders:650000,fare:4.0,
+    cpkm:95,opkm:2.4,ad:18,speed:18,hw:6,cap:200,res:0.12,
+    gr:0.03,oi:0.03,dr:0.07,tuc:5.5,renew:68,dt:false,
+    routes:3,corridors:8,hl:'CBD & SE Light Rail expansion with renewable energy',social:'Circular Quay to Randwick health precinct'},
+  singapore:{name:'Singapore',country:'Singapore',region:'asiapac',flag:'🇸🇬',
+    cu:'S$',unit:'SGD m',scale:1e6,fuel:200,
+    pop:5.6,area:734,routeKm:100,riders:650000,fare:2.1,
+    cpkm:70,opkm:1.5,ad:15,speed:22,hw:4,cap:230,res:0.10,
+    gr:0.03,oi:0.02,dr:0.07,tuc:4.2,renew:85,dt:true,
+    routes:4,corridors:10,hl:'Smart Nation AI tram with contactless payments',social:'Marina Bay and Jurong Lake District connectivity'},
+  dubai:{name:'Dubai',country:'UAE',region:'asiapac',flag:'🇦🇪',
+    cu:'AED',unit:'AED m',scale:1e6,fuel:700,
+    pop:3.6,area:4114,routeKm:90,riders:520000,fare:4.0,
+    cpkm:85,opkm:1.8,ad:20,speed:24,hw:5,cap:240,res:0.10,
+    gr:0.04,oi:0.03,dr:0.07,tuc:12,renew:70,dt:true,
+    routes:3,corridors:8,hl:'Al Sufouh Tram solar expansion with AI optimisation',social:'Dubai Marina and Jumeirah Beach Residence connectivity'}
+};
+
+const SCENARIOS={
+  conservative:{name:'Conservative',rf:0.85,cf:1.10,of:1.05,color:'#F59E0B'},
+  base:{name:'Base Case',rf:1.0,cf:1.0,of:1.0,color:'#22C55E'},
+  optimistic:{name:'Optimistic',rf:1.15,cf:0.95,of:0.95,color:'#3B82F6'}
+};
+
+let currentCity='coimbatore';
+let currentScenario='base';
+let currentRegion='india';
+let activeRoutes={1:true,2:true,3:true,4:true};
+const chartInstances={};
+
+// ═══════════════════════════════════════════════════════════════════
+// COMPUTATION ENGINE
+// ═══════════════════════════════════════════════════════════════════
+function compute(ck,sk){
+  const c=CITY_DB[ck], s=SCENARIOS[sk];
+  // Operations
+  const owt=Math.round((c.routeKm/c.speed)*60*10)/10;
+  const cyc=Math.round((2*owt+10)*10)/10;
+  const af=Math.ceil(cyc/c.hw);
+  const rf=Math.ceil(af*c.res);
+  const tf=af+rf;
+  const peak=Math.round((60/c.hw)*c.cap);
+  // Ridership
+  const adjR=Math.round(c.riders*s.rf);
+  // CAPEX
+  const ri=c.routeKm*c.cpkm*s.cf;
+  const fc=tf*c.tuc;
+  const lu=0.12*ri;
+  const sub=ri+fc+lu;
+  const cont=0.12*sub;
+  const totCap=Math.round((sub+cont)*10)/10;
+  // Revenue
+  const fare=Math.round((adjR*c.fare*365/c.scale)*100)/100;
+  const totRev=Math.round((fare+c.ad)*100)/100;
+  const opex=Math.round((c.routeKm*c.opkm*s.of)*100)/100;
+  const surplus=Math.round((totRev-opex)*100)/100;
+  // 30yr cash flows
+  const cf=[-totCap];
+  for(let t=1;t<=30;t++) cf.push(Math.round(surplus*Math.pow(1+c.gr,t-1)*100)/100);
+  // NPV
+  let npv=cf[0];
+  for(let t=1;t<=30;t++) npv+=cf[t]/Math.pow(1+c.dr,t);
+  npv=Math.round(npv*10)/10;
+  // IRR bisection
+  function npvAt(r){let v=cf[0];for(let t=1;t<=30;t++)v+=cf[t]/Math.pow(1+r,t);return v;}
+  let lo=-0.5,hi=5.0,irr=null;
+  if(npvAt(lo)*npvAt(hi)<0){for(let i=0;i<100;i++){const m=(lo+hi)/2;if(npvAt(m)>0)lo=m;else hi=m;}irr=(lo+hi)/2;}
+  // Payback
+  let cum=cf[0],payback=null;
+  for(let t=1;t<=30;t++){const prev=cum;cum+=cf[t];if(prev<0&&cum>=0){payback=Math.round((t-1+(-prev/cf[t]))*10)/10;break;}}
+  // Sustainability
+  const vRem=Math.round(adjR*0.065);
+  const cars=Math.round(vRem*0.214);
+  const tw=Math.round(vRem*0.786);
+  const co2=Math.round(cars*2.3+tw*0.5);
+  const fuelSav=Math.round((vRem*c.fuel*12/c.scale)*100)/100;
+  return{owt,cyc,af,rf,tf,peak,adjR,
+    ri:Math.round(ri*10)/10,fc:Math.round(fc*10)/10,lu:Math.round(lu*10)/10,
+    cont:Math.round(cont*10)/10,totCap,
+    fare,totRev,opex,surplus,
+    cf,npv,irr,payback,
+    cars,tw,co2,fuelSav,vRem};
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// SAFE CHART
+// ═══════════════════════════════════════════════════════════════════
+function safeChart(id,type,data,opts){
+  if(chartInstances[id]){chartInstances[id].destroy();}
+  const ctx=document.getElementById(id).getContext('2d');
+  chartInstances[id]=new Chart(ctx,{type,data,options:{responsive:true,plugins:{legend:{position:'bottom',labels:{font:{family:'Arial',size:11},boxWidth:12,padding:10}}},scales:type==='bar'||type==='line'?{x:{grid:{color:'#F1F5F9'},ticks:{font:{family:'Arial',size:10}}},y:{grid:{color:'#F1F5F9'},ticks:{font:{family:'Arial',size:10}}}}:{},...opts}});
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// FMT HELPERS
+// ═══════════════════════════════════════════════════════════════════
+function fmtN(n){if(Math.abs(n)>=1000)return(n/1000).toFixed(1)+'k';return n.toLocaleString();}
+function fmtVal(n,c,dec=1){if(Math.abs(n)>=1000)return c.cu+(n/1000).toFixed(dec)+'k';return c.cu+n.toFixed(dec);}
+function pct(n){return n!==null?(n*100).toFixed(1)+'%':'< 0%';}
+
+// ═══════════════════════════════════════════════════════════════════
+// RENDER
+// ═══════════════════════════════════════════════════════════════════
+function render(){
+  const c=CITY_DB[currentCity];
+  const d=compute(currentCity,currentScenario);
+  const isCbr=currentCity==='coimbatore';
+  // Coimbatore-only elements
+  document.querySelectorAll('.coimbatore-only').forEach(el=>{el.classList.toggle('show',isCbr);});
+
+  // ─── TAB 1: CITY INTELLIGENCE ───
+  document.getElementById('cp-flag').textContent=c.flag;
+  document.getElementById('cp-name').textContent=c.name;
+  document.getElementById('cp-country').textContent=c.country+' · '+c.routeKm+'km route · '+c.routes+' lines';
+  document.getElementById('cp-dt-badge').innerHTML=c.dt?'<span class="dt-badge">Digital Twin</span>':'';
+  document.getElementById('cp-highlight').textContent=c.hl;
+  document.getElementById('cp-stats').innerHTML=`
+    <div class="cstat"><div class="cstat-val">${c.pop}M</div><div class="cstat-lbl">Population</div></div>
+    <div class="cstat"><div class="cstat-val">${c.routeKm}km</div><div class="cstat-lbl">Route Length</div></div>
+    <div class="cstat"><div class="cstat-val">${(c.riders/1000).toFixed(0)}k</div><div class="cstat-lbl">Riders/day</div></div>
+    <div class="cstat"><div class="cstat-val">${c.cu}${c.fare}</div><div class="cstat-lbl">Avg Fare</div></div>
+    <div class="cstat"><div class="cstat-val">${(c.dr*100).toFixed(0)}%</div><div class="cstat-lbl">Discount Rate</div></div>
+    <div class="cstat"><div class="cstat-val">${c.renew}%</div><div class="cstat-lbl">Renewable Energy</div></div>`;
+
+  document.getElementById('m-ridership').textContent=fmtN(d.adjR);
+  document.getElementById('m-ridership-sub').textContent=SCENARIOS[currentScenario].name+' scenario';
+  document.getElementById('m-revenue').textContent=fmtVal(d.totRev,c);
+  document.getElementById('m-revenue-unit').textContent=c.unit+' / year';
+  document.getElementById('m-opex').textContent=fmtVal(d.opex,c);
+  document.getElementById('m-opex-unit').textContent=c.unit+' / year';
+  document.getElementById('m-surplus').textContent=fmtVal(Math.abs(d.surplus),c);
+  document.getElementById('m-surplus-unit').textContent=c.unit+' / year';
+  document.getElementById('m-surplus-card').className='metric-card'+(d.surplus>=0?' ':' red');
+  document.getElementById('m-surplus-sub').textContent=d.surplus>=0?'Operational surplus':'Revenue shortfall';
+
+  // Revenue vs OPEX chart
+  const scKeys=Object.keys(SCENARIOS);
+  const revData=scKeys.map(sk=>compute(currentCity,sk).totRev);
+  const opexData=scKeys.map(sk=>compute(currentCity,sk).opex);
+  safeChart('revenue-chart','bar',{
+    labels:scKeys.map(k=>SCENARIOS[k].name),
+    datasets:[
+      {label:'Total Revenue',data:revData,backgroundColor:'#22C55E',borderRadius:4},
+      {label:'Annual OPEX',data:opexData,backgroundColor:'#F59E0B',borderRadius:4}
+    ]
+  },{plugins:{tooltip:{callbacks:{label:ctx=>c.cu+ctx.raw.toFixed(1)+' '+c.unit}}}});
+
+  // City profile table
+  document.getElementById('city-profile-table').innerHTML=`
+    <tr><th>Parameter</th><th>Value</th></tr>
+    <tr><td>Population</td><td class="num">${c.pop}M</td></tr>
+    <tr><td>Area</td><td class="num">${c.area.toLocaleString()} km²</td></tr>
+    <tr><td>Route Length</td><td class="num">${c.routeKm} km</td></tr>
+    <tr><td>Tram Routes</td><td class="num">${c.routes}</td></tr>
+    <tr><td>Corridors</td><td class="num">${c.corridors}</td></tr>
+    <tr><td>Commercial Speed</td><td class="num">${c.speed} km/h</td></tr>
+    <tr><td>Service Headway</td><td class="num">${c.hw} min</td></tr>
+    <tr><td>Tram Capacity</td><td class="num">${c.cap} pax</td></tr>
+    <tr><td>Growth Rate (ridership)</td><td class="num">${(c.gr*100).toFixed(0)}%/yr</td></tr>
+    <tr><td>Discount Rate</td><td class="num">${(c.dr*100).toFixed(0)}%</td></tr>
+    <tr><td>Digital Twin</td><td class="num ${c.dt?'green':''}">${c.dt?'Active':'Not deployed'}</td></tr>`;
+
+  // ─── TAB 2: OPERATIONS ───
+  document.getElementById('op-oneway').textContent=d.owt+' min';
+  document.getElementById('op-cycle').textContent=d.cyc+' min';
+  document.getElementById('op-headway').textContent=c.hw+' min';
+  document.getElementById('op-active').textContent=d.af;
+  document.getElementById('op-reserve').textContent=d.rf;
+  document.getElementById('op-fleet').textContent=d.tf;
+  document.getElementById('op-peak').textContent=d.peak.toLocaleString();
+
+  safeChart('fleet-chart','doughnut',{
+    labels:['Active Fleet','Reserve Fleet'],
+    datasets:[{data:[d.af,d.rf],backgroundColor:['#22C55E','#FCA5A5'],borderWidth:0}]
+  },{});
+
+  document.getElementById('ops-table').innerHTML=`
+    <tr><th>Parameter</th><th>Formula</th><th>Result</th></tr>
+    <tr><td>One-way travel time</td><td style="font-size:11px;color:#64748B;">${c.routeKm}km ÷ ${c.speed}km/h × 60</td><td class="num">${d.owt} min</td></tr>
+    <tr><td>Round-trip cycle time</td><td style="font-size:11px;color:#64748B;">2 × ${d.owt} + 10 dwell</td><td class="num">${d.cyc} min</td></tr>
+    <tr><td>Active fleet required</td><td style="font-size:11px;color:#64748B;">⌈${d.cyc} ÷ ${c.hw}⌉</td><td class="num green">${d.af} trams</td></tr>
+    <tr><td>Reserve fleet (${(c.res*100).toFixed(0)}%)</td><td style="font-size:11px;color:#64748B;">⌈${d.af} × ${c.res}⌉</td><td class="num">${d.rf} trams</td></tr>
+    <tr><td>Total fleet size</td><td style="font-size:11px;color:#64748B;">${d.af} + ${d.rf}</td><td class="num green">${d.tf} trams</td></tr>
+    <tr><td>Tram unit cost</td><td style="font-size:11px;color:#64748B;">procurement + integration</td><td class="num">${c.cu}${c.tuc} ${c.unit}</td></tr>
+    <tr><td>Fleet CAPEX</td><td style="font-size:11px;color:#64748B;">${d.tf} × ${c.cu}${c.tuc}</td><td class="num">${c.cu}${d.fc.toFixed(1)} ${c.unit}</td></tr>
+    <tr><td>Peak capacity (pphpd)</td><td style="font-size:11px;color:#64748B;">(60÷${c.hw}) × ${c.cap}</td><td class="num green">${d.peak.toLocaleString()}</td></tr>`;
+
+  // ─── TAB 3: FINANCIAL ───
+  document.getElementById('fin-capex').textContent=fmtVal(d.totCap,c);
+  document.getElementById('fin-capex-unit').textContent=c.unit;
+  document.getElementById('fin-npv').textContent=(d.npv<0?'-':'')+c.cu+Math.abs(d.npv).toFixed(0);
+  document.getElementById('fin-npv-unit').textContent=c.unit+' ('+currentScenario+')';
+  document.getElementById('fin-irr').textContent=d.irr!==null?pct(d.irr):'< 0%';
+  document.getElementById('fin-payback').textContent=d.payback!==null?d.payback.toFixed(1)+' yrs':'30+ yrs';
+
+  safeChart('capex-chart','doughnut',{
+    labels:['Route Infrastructure','Fleet Cost','Land & Utilities','Contingency (12%)'],
+    datasets:[{data:[d.ri,d.fc,d.lu,d.cont],
+      backgroundColor:['#16A34A','#22C55E','#4ADE80','#86EFAC'],borderWidth:0}]
+  },{});
+
+  document.getElementById('capex-table').innerHTML=`
+    <tr><th>CAPEX Component</th><th class="num">Amount (${c.unit})</th><th class="num">% of Total</th></tr>
+    <tr><td>Route Infrastructure</td><td class="num">${c.cu}${d.ri.toFixed(1)}</td><td class="num">${(d.ri/d.totCap*100).toFixed(1)}%</td></tr>
+    <tr><td>Fleet (${d.tf} trams)</td><td class="num">${c.cu}${d.fc.toFixed(1)}</td><td class="num">${(d.fc/d.totCap*100).toFixed(1)}%</td></tr>
+    <tr><td>Land & Utilities (12%)</td><td class="num">${c.cu}${d.lu.toFixed(1)}</td><td class="num">${(d.lu/d.totCap*100).toFixed(1)}%</td></tr>
+    <tr><td>Contingency (12%)</td><td class="num">${c.cu}${d.cont.toFixed(1)}</td><td class="num">${(d.cont/d.totCap*100).toFixed(1)}%</td></tr>
+    <tr style="font-weight:700;"><td>TOTAL CAPEX</td><td class="num green">${c.cu}${d.totCap.toFixed(1)}</td><td class="num">100%</td></tr>`;
+
+  document.getElementById('subsidy-note').style.display=d.npv<0?'block':'none';
+
+  // 30yr cumulative cash flow
+  const cumCF=[d.cf[0]];
+  for(let t=1;t<=30;t++) cumCF.push(Math.round((cumCF[t-1]+d.cf[t])*10)/10);
+  const yrs=Array.from({length:31},(_,i)=>'Y'+i);
+  safeChart('npv-chart','line',{
+    labels:yrs,
+    datasets:[{
+      label:'Cumulative Cash Flow ('+c.unit+')',
+      data:cumCF,
+      borderColor:'#22C55E',backgroundColor:'rgba(34,197,94,0.08)',
+      fill:true,tension:0.3,pointRadius:0,pointHoverRadius:4
+    },{
+      label:'Break-even',
+      data:Array(31).fill(0),
+      borderColor:'#DC2626',borderDash:[4,4],pointRadius:0,borderWidth:1
+    }]
+  },{plugins:{tooltip:{callbacks:{label:ctx=>c.cu+ctx.raw.toFixed(1)+' '+c.unit}}}});
+
+  document.getElementById('revenue-table').innerHTML=`
+    <tr><th>Revenue / Cost Item</th><th class="num">Annual (${c.unit})</th><th class="num">Monthly (${c.unit})</th></tr>
+    <tr><td>Fare Revenue</td><td class="num green">${c.cu}${d.fare.toFixed(1)}</td><td class="num">${c.cu}${(d.fare/12).toFixed(2)}</td></tr>
+    <tr><td>Advertising Revenue</td><td class="num green">${c.cu}${c.ad.toFixed(1)}</td><td class="num">${c.cu}${(c.ad/12).toFixed(2)}</td></tr>
+    <tr style="font-weight:700;"><td>Total Revenue</td><td class="num green">${c.cu}${d.totRev.toFixed(1)}</td><td class="num green">${c.cu}${(d.totRev/12).toFixed(2)}</td></tr>
+    <tr><td>Annual OPEX</td><td class="num red">(${c.cu}${d.opex.toFixed(1)})</td><td class="num red">(${c.cu}${(d.opex/12).toFixed(2)})</td></tr>
+    <tr style="font-weight:700;"><td>Operating Surplus</td><td class="num ${d.surplus>=0?'green':'red'}">${d.surplus>=0?c.cu:'('+c.cu}${Math.abs(d.surplus).toFixed(1)}${d.surplus<0?')':''}</td><td class="num ${d.surplus>=0?'green':'red'}">${(Math.abs(d.surplus)/12).toFixed(2)}</td></tr>
+    <tr><td>NPV (30yr @ ${(c.dr*100).toFixed(0)}%)</td><td class="num ${d.npv>=0?'green':'amber'}">${d.npv<0?'-':''} ${c.cu}${Math.abs(d.npv).toFixed(0)}</td><td class="num">—</td></tr>
+    <tr><td>IRR</td><td class="num">${d.irr!==null?pct(d.irr):'< 0%'}</td><td class="num">—</td></tr>
+    <tr><td>Payback Period</td><td class="num">${d.payback!==null?d.payback.toFixed(1)+' years':'30+ years'}</td><td class="num">—</td></tr>`;
+
+  // ─── TAB 4: SUSTAINABILITY ───
+  document.getElementById('s-cars').textContent=d.cars.toLocaleString();
+  document.getElementById('s-cars-sub').textContent='per day (Base: ~5,000 for Coimbatore)';
+  document.getElementById('s-2w').textContent=d.tw.toLocaleString();
+  document.getElementById('s-2w-sub').textContent='per day (Base: ~18,000 for Coimbatore)';
+  document.getElementById('s-co2').textContent=d.co2.toLocaleString()+' t';
+  document.getElementById('s-co2-sub').textContent='= '+(d.co2/1000).toFixed(2)+'k tonnes/year';
+  document.getElementById('s-fuel').textContent=fmtVal(d.fuelSav,c,2);
+  document.getElementById('s-fuel-sub').textContent=c.unit+' / year fuel saved to economy';
+
+  document.getElementById('s-renew').textContent=c.renew+'%';
+  document.getElementById('s-renew-bar').style.width=c.renew+'%';
+  document.getElementById('s-renew-source').textContent=isCbr?'Nilgiris Hydro':'Renewable Grid';
+
+  // Sustainability scenario comparison
+  const sKeys=Object.keys(SCENARIOS);
+  const carsData=sKeys.map(sk=>compute(currentCity,sk).cars);
+  const co2Data=sKeys.map(sk=>compute(currentCity,sk).co2);
+  safeChart('sustain-chart','bar',{
+    labels:sKeys.map(k=>SCENARIOS[k].name),
+    datasets:[
+      {label:'Cars Removed / Day',data:carsData,backgroundColor:'#22C55E',borderRadius:4,yAxisID:'y'},
+      {label:'CO₂ Reduction (tonnes/yr)',data:co2Data,backgroundColor:'#86EFAC',borderRadius:4,yAxisID:'y1'}
+    ]
+  },{scales:{y:{position:'left',grid:{color:'#F1F5F9'},ticks:{font:{family:'Arial',size:10}}},y1:{position:'right',grid:{drawOnChartArea:false},ticks:{font:{family:'Arial',size:10}}}}});
+
+  document.getElementById('sustain-table').innerHTML=`
+    <tr><th>Indicator</th><th class="num">Value</th></tr>
+    <tr><td>Vehicles removed/day</td><td class="num green">${d.vRem.toLocaleString()}</td></tr>
+    <tr><td>Cars off road/day</td><td class="num green">${d.cars.toLocaleString()}</td></tr>
+    <tr><td>Two-wheelers off road/day</td><td class="num green">${d.tw.toLocaleString()}</td></tr>
+    <tr><td>CO₂ avoided (t/year)</td><td class="num green">${d.co2.toLocaleString()}</td></tr>
+    <tr><td>Annual fuel savings</td><td class="num green">${c.cu}${d.fuelSav.toFixed(2)} ${c.unit}</td></tr>
+    <tr><td>Renewable energy share</td><td class="num ${c.renew>=70?'green':'amber'}">${c.renew}%</td></tr>
+    <tr><td>Transit efficiency (pax/km/day)</td><td class="num">${(d.adjR/c.routeKm).toFixed(0)}</td></tr>
+    <tr><td>Digital Twin status</td><td class="num ${c.dt?'green':''}">${c.dt?'Active':'Not deployed'}</td></tr>`;
+
+  if(isCbr){
+    document.getElementById('dt-text').textContent='Real-time Coimbatore city model enables transit-oriented development planning across 10 corridors and passenger flow simulation.';
+    document.getElementById('social-title').textContent='Education & Social Impact';
+    document.getElementById('social-text').textContent='10 colleges (30k students) + 20 schools (60k) + 5 technical colleges (15k) served by 4 tram routes through Gandhipuram, Peelamedu and IT corridor.';
+  } else {
+    document.getElementById('dt-text').textContent=c.dt?'Digital twin active — real-time operations monitoring and predictive scheduling.':'Digital twin not yet deployed in this city.';
+    document.getElementById('social-title').textContent='Social Impact';
+    document.getElementById('social-text').textContent=c.social;
+  }
+
+  // ─── TAB 5: MAP ───
+  renderMap();
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// MAP RENDERER
+// ═══════════════════════════════════════════════════════════════════
+const CBR_STOPS={
+  airport:{x:760,y:120,name:'Airport',type:'terminal'},
+  itcorridor:{x:650,y:85,name:'IT Corridor',type:'station'},
+  saravanampatti:{x:570,y:60,name:'Saravanampatti',type:'station'},
+  neelambur:{x:700,y:40,name:'Neelambur',type:'terminal'},
+  peelamedu:{x:630,y:160,name:'Peelamedu',type:'interchange'},
+  avinashi:{x:710,y:100,name:'Avinashi Road',type:'station'},
+  gandhipuram:{x:380,y:240,name:'Gandhipuram',type:'interchange'},
+  railway:{x:420,y:310,name:'Railway Station',type:'interchange'},
+  rspuram:{x:280,y:310,name:'RS Puram',type:'station'},
+  thondamuthur:{x:120,y:310,name:'Thondamuthur',type:'terminal'},
+  ukkadam:{x:320,y:450,name:'Ukkadam',type:'interchange'},
+  kuniyamuthur:{x:230,y:450,name:'Kuniyamuthur',type:'station'},
+  madukkarai:{x:160,y:470,name:'Madukkarai',type:'terminal'},
+  singanallur:{x:570,y:370,name:'Singanallur',type:'station'},
+  ondipudur:{x:690,y:420,name:'Ondipudur',type:'station'},
+  eachanari:{x:660,y:470,name:'Eachanari',type:'station'},
+  vellalore:{x:600,y:510,name:'Vellalore',type:'terminal'},
+  depot:{x:760,y:280,name:'Depot / OCC',type:'depot'}
+};
+
+const CBR_ROUTES=[
+  {id:1,color:'#2563EB',name:'South Corridor',
+   stops:['ukkadam','railway','gandhipuram','peelamedu','avinashi','airport']},
+  {id:2,color:'#16A34A',name:'IT Corridor',
+   stops:['airport','itcorridor','saravanampatti','neelambur']},
+  {id:3,color:'#EA580C',name:'West Corridor',
+   stops:['thondamuthur','rspuram','gandhipuram','railway','ukkadam','kuniyamuthur','madukkarai']},
+  {id:4,color:'#DC2626',name:'East Corridor',
+   stops:['railway','singanallur','ondipudur','eachanari','vellalore']}
+];
+
+function renderMap(){
+  const isCbr=currentCity==='coimbatore';
+  document.getElementById('map-header-cbr').classList.toggle('show',isCbr);
+  document.getElementById('map-header-other').style.display=isCbr?'none':'block';
+
+  if(!isCbr){
+    renderSchematic();
+    return;
+  }
+
+  const routesG=document.getElementById('map-routes');
+  const stopsG=document.getElementById('map-stops');
+  const labelsG=document.getElementById('map-labels');
+  routesG.innerHTML=''; stopsG.innerHTML=''; labelsG.innerHTML='';
+
+  // Grid lines
+  const gridG=document.getElementById('map-grid-lines');
+  let gridSVG='';
+  for(let x=50;x<900;x+=80) gridSVG+=`<line x1="${x}" y1="0" x2="${x}" y2="560" stroke="#E2E8F0" stroke-width="0.5"/>`;
+  for(let y=40;y<560;y+=60) gridSVG+=`<line x1="0" y1="${y}" x2="900" y2="${y}" stroke="#E2E8F0" stroke-width="0.5"/>`;
+  gridG.innerHTML=gridSVG;
+
+  // Routes
+  CBR_ROUTES.forEach(route=>{
+    if(!activeRoutes[route.id]) return;
+    const pts=route.stops.map(s=>`${CBR_STOPS[s].x},${CBR_STOPS[s].y}`).join(' ');
+    const offsetMap={1:0,2:3,3:-3,4:3};
+    const off=offsetMap[route.id]||0;
+    const ptsOffset=route.stops.map(s=>`${CBR_STOPS[s].x+off},${CBR_STOPS[s].y+off}`).join(' ');
+    routesG.innerHTML+=`<polyline points="${ptsOffset}" fill="none" stroke="${route.color}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" opacity="0.85"/>`;
+  });
+
+  // Stops
+  const allStopKeys=new Set();
+  CBR_ROUTES.forEach(r=>{if(activeRoutes[r.id]) r.stops.forEach(s=>allStopKeys.add(s));});
+
+  allStopKeys.forEach(sk=>{
+    const st=CBR_STOPS[sk];
+    const isInter=st.type==='interchange';
+    const isTerm=st.type==='terminal';
+    const isDepot=st.type==='depot';
+
+    // Determine which routes pass through this stop
+    const rColors=CBR_ROUTES.filter(r=>r.stops.includes(sk)&&activeRoutes[r.id]).map(r=>r.color);
+
+    if(isDepot){
+      stopsG.innerHTML+=`<rect x="${st.x-8}" y="${st.y-8}" width="16" height="16" fill="#64748B" rx="2"/>`;
+    } else if(isInter){
+      stopsG.innerHTML+=`<circle cx="${st.x}" cy="${st.y}" r="9" fill="#fff" stroke="${rColors[0]||'#64748B'}" stroke-width="3"/>
+        <circle cx="${st.x}" cy="${st.y}" r="4" fill="${rColors[0]||'#64748B'}"/>`;
+    } else if(isTerm){
+      stopsG.innerHTML+=`<circle cx="${st.x}" cy="${st.y}" r="8" fill="${rColors[0]||'#64748B'}" stroke="#fff" stroke-width="2"/>`;
+    } else {
+      stopsG.innerHTML+=`<circle cx="${st.x}" cy="${st.y}" r="5" fill="#fff" stroke="${rColors[0]||'#64748B'}" stroke-width="2.5"/>`;
+    }
+
+    // Labels
+    const lx=st.x>500?st.x-8:st.x+8;
+    const anchor=st.x>500?'end':'start';
+    const ly=st.y<80?st.y+14:st.y-8;
+    labelsG.innerHTML+=`<text x="${lx}" y="${ly}" font-family="Arial" font-size="10" fill="#1E293B" text-anchor="${anchor}" font-weight="${isInter||isTerm?'700':'400'}">${st.name}</text>`;
+  });
+
+  // Legend top-right
+  const lgx=15,lgy=15;
+  document.getElementById('map-legend-svg').innerHTML=`
+    <rect x="${lgx}" y="${lgy}" width="180" height="75" rx="6" fill="white" stroke="#E2E8F0"/>
+    <text x="${lgx+8}" y="${lgy+14}" font-family="Arial" font-size="9" font-weight="700" fill="#0F172A">COIMBATORE TRAM NETWORK</text>
+    ${CBR_ROUTES.map((r,i)=>`<line x1="${lgx+8}" y1="${lgy+24+i*13}" x2="${lgx+28}" y2="${lgy+24+i*13}" stroke="${r.color}" stroke-width="3"/>
+      <text x="${lgx+34}" y="${lgy+28+i*13}" font-family="Arial" font-size="9" fill="#334155">R${r.id} ${r.name}</text>`).join('')}`;
+
+  // Route table
+  document.getElementById('route-table').innerHTML=`
+    <tr><th>Route</th><th>Name</th><th>Stops</th><th>Length</th></tr>
+    ${CBR_ROUTES.map(r=>`<tr>
+      <td><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${r.color};margin-right:6px;"></span>R${r.id}</td>
+      <td>${r.name}</td><td>${r.stops.length}</td>
+      <td>~${Math.round(r.stops.length*3.5)}km</td></tr>`).join('')}`;
+
+  document.getElementById('interchange-table').innerHTML=`
+    <tr><th>Station</th><th>Type</th><th>Routes</th></tr>
+    ${Object.entries(CBR_STOPS).filter(([,v])=>v.type==='interchange'||v.type==='terminal').map(([k,v])=>{
+      const routes=CBR_ROUTES.filter(r=>r.stops.includes(k)).map(r=>r.id);
+      return `<tr><td>${v.name}</td><td>${v.type==='interchange'?'🔄 Interchange':'🚉 Terminal'}</td><td>${routes.map(id=>`<span style="font-size:10px;padding:1px 5px;border-radius:3px;background:${CBR_ROUTES[id-1].color};color:white;">R${id}</span>`).join(' ')}</td></tr>`;
+    }).join('')}`;
+}
+
+function renderSchematic(){
+  const c=CITY_DB[currentCity];
+  const d=compute(currentCity,currentScenario);
+  document.getElementById('map-other-title').textContent=`🗺️ ${c.name} — Tram System Schematic`;
+  document.getElementById('map-other-sub').textContent=`${c.routeKm}km route · ${c.routes} lines · ${(c.riders/1000).toFixed(0)}k riders/day`;
+
+  const routesG=document.getElementById('map-routes');
+  const stopsG=document.getElementById('map-stops');
+  const labelsG=document.getElementById('map-labels');
+  document.getElementById('map-grid-lines').innerHTML='';
+  document.getElementById('map-legend-svg').innerHTML='';
+  routesG.innerHTML=''; stopsG.innerHTML=''; labelsG.innerHTML='';
+
+  // Generate schematic lines based on number of routes
+  const colors=['#2563EB','#16A34A','#EA580C','#DC2626','#7C3AED','#0891B2','#BE185D','#B45309'];
+  const stopsPerRoute=Math.max(4,Math.round(c.routeKm/c.routes/8));
+  const routeSpacing=Math.min(100,440/Math.max(c.routes-1,1));
+
+  for(let r=0;r<Math.min(c.routes,8);r++){
+    const y=60+r*routeSpacing;
+    const x0=80,x1=820;
+    const col=colors[r%colors.length];
+    routesG.innerHTML+=`<line x1="${x0}" y1="${y}" x2="${x1}" y2="${y}" stroke="${col}" stroke-width="4" stroke-linecap="round" opacity="0.8"/>`;
+    // Terminal stops
+    [x0,x1].forEach(x=>{
+      stopsG.innerHTML+=`<circle cx="${x}" cy="${y}" r="8" fill="${col}" stroke="#fff" stroke-width="2"/>`;
+    });
+    // Intermediate stops
+    for(let s=1;s<stopsPerRoute-1;s++){
+      const sx=x0+s*(x1-x0)/(stopsPerRoute-1);
+      stopsG.innerHTML+=`<circle cx="${sx}" cy="${y}" r="5" fill="#fff" stroke="${col}" stroke-width="2.5"/>`;
+    }
+    labelsG.innerHTML+=`<text x="${x0-6}" y="${y+4}" font-family="Arial" font-size="10" fill="${col}" text-anchor="end" font-weight="700">L${r+1}</text>`;
+  }
+
+  // City label
+  labelsG.innerHTML+=`<text x="450" y="530" font-family="Arial" font-size="14" font-weight="700" fill="#0F172A" text-anchor="middle">${c.name} Tram Network — ${c.routeKm}km System</text>`;
+  labelsG.innerHTML+=`<text x="450" y="548" font-family="Arial" font-size="10" fill="#64748B" text-anchor="middle">${c.routes} routes · ${(c.riders/1000).toFixed(0)}k daily riders · ${c.renew}% renewable energy</text>`;
+
+  document.getElementById('route-table').innerHTML=`
+    <tr><th>Line</th><th>Est. Length</th><th>Daily Capacity</th><th>Renewable%</th></tr>
+    ${Array.from({length:c.routes},(_,i)=>`<tr>
+      <td><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${colors[i%8]};margin-right:6px;"></span>Line ${i+1}</td>
+      <td>${Math.round(c.routeKm/c.routes)} km</td>
+      <td>${Math.round(d.adjR/c.routes/1000)}k pax/day</td>
+      <td>${c.renew}%</td></tr>`).join('')}`;
+
+  document.getElementById('interchange-table').innerHTML=`
+    <tr><th>Metric</th><th>Value</th></tr>
+    <tr><td>Total route length</td><td class="num">${c.routeKm} km</td></tr>
+    <tr><td>Number of lines</td><td class="num">${c.routes}</td></tr>
+    <tr><td>Total fleet required</td><td class="num">${d.tf} trams</td></tr>
+    <tr><td>Daily ridership (adj)</td><td class="num">${(d.adjR/1000).toFixed(0)}k</td></tr>
+    <tr><td>Renewable energy</td><td class="num green">${c.renew}%</td></tr>
+    <tr><td>Digital twin</td><td class="num ${c.dt?'green':''}">${c.dt?'Active':'Not deployed'}</td></tr>`;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// UI CONTROLLERS
+// ═══════════════════════════════════════════════════════════════════
+function setScenario(sk){
+  currentScenario=sk;
+  document.querySelectorAll('.s-pill').forEach(p=>p.classList.toggle('active',p.dataset.scenario===sk));
+  render();
+}
+function setTab(t){
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active',b.dataset.tab===t));
+  document.getElementById('tab-'+t).classList.add('active');
+}
+function toggleRoute(id){
+  activeRoutes[id]=!activeRoutes[id];
+  document.getElementById('rl-'+id).style.opacity=activeRoutes[id]?'1':'0.4';
+  renderMap();
+}
+function setRegion(r){
+  currentRegion=r;
+  document.querySelectorAll('.region-tab').forEach(t=>t.classList.toggle('active',t.textContent.toLowerCase().includes(r.toLowerCase())||r==='all'));
+  buildCityGrid();
+}
+function buildCityGrid(){
+  const grid=document.getElementById('city-grid');
+  const keys=Object.keys(CITY_DB).filter(k=>currentRegion==='all'||CITY_DB[k].region===currentRegion);
+  grid.innerHTML=keys.map(k=>{
+    const c=CITY_DB[k];
+    return `<button class="city-pill${k===currentCity?' active':''}" onclick="selectCity('${k}')">
+      <span class="flag">${c.flag}</span>
+      <span class="cname">${c.name}</span>
+      <span class="ccountry">${c.country}</span>
+    </button>`;
+  }).join('');
+}
+function selectCity(ck){
+  currentCity=ck;
+  buildCityGrid();
+  render();
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════════════
+buildCityGrid();
+render();
+</script>
+</body>
+</html>

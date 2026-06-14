@@ -14,7 +14,7 @@ Building AI-powered intelligence platforms for workforce and trade sectors.
 | EmployAI | `employai/` | `employai/index.html` | Live — UK grant approved |
 | TradeAI | `tradeai/` | `tradeai/index.html` | Live — UK grant approved |
 | UrbanAI | `urbanai/` | `urbanai/index.html` | MVP complete — HMRC R&D report prepared |
-| Tool 4 | TBD | TBD | Planning |
+| TransitAI | `transitai/` | `transitai/index.html` | MVP complete — 18 cities, Coimbatore Digital Twin |
 
 **Read each tool's `CONTEXT.md` before working on it.**
 
@@ -39,6 +39,9 @@ wellingtonAi/
 ├── urbanai/
 │   ├── CONTEXT.md                   ← UrbanAI context (read before working on it)
 │   └── index.html                   ← UrbanAI platform (14 cities, 5 tabs, 30-yr financial model)
+├── transitai/
+│   ├── CONTEXT.md                   ← TransitAI context (read before working on it)
+│   └── index.html                   ← TransitAI platform (18 cities, 5 tabs, Coimbatore Digital Twin)
 ├── EI-Index/                        ← legacy EmployAI files (older version)
 │   ├── employability-index.html
 │   ├── ei-rubric.json
