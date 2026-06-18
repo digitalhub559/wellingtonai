@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HydelAI — Wellington Marketers</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0a0f1e; --blue: #2563eb; --blue-light: #3b82f6; --purple: #7c3aed;
+    --teal: #00BCD4; --teal-light: #4DD0E1; --cyan: #00E5FF;
+    --green: #00C853; --green-soft: #69F0AE; --amber: #FFB300;
+    --white: #ffffff; --w70: rgba(255,255,255,0.7); --w40: rgba(255,255,255,0.4); --w10: rgba(255,255,255,0.1);
+    --card-bg: rgba(255,255,255,0.06); --card-border: rgba(0,229,255,0.15);
+    --grad-main: linear-gradient(135deg,#2563eb,#7c3aed);
+    --grad-teal: linear-gradient(135deg,#00BCD4,#2563eb);
+    --grad-dark: linear-gradient(160deg,#0a1628 0%,#0d2545 50%,#061020 100%);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Inter',system-ui,sans-serif;background:var(--navy);color:var(--white);line-height:1.6;}
+
+  /* ───── LOGIN GATE ───── */
+  #login-gate {
+    position:fixed;inset:0;z-index:9999;
+    background: radial-gradient(ellipse at 25% 40%,rgba(37,99,235,.25) 0%,transparent 55%),
+                radial-gradient(ellipse at 75% 70%,rgba(0,188,212,.15) 0%,transparent 50%),
+                linear-gradient(160deg,#0a1628,#0d2545,#061020);
+    display:flex;align-items:center;justify-content:center;
+    transition:opacity .4s ease;
+  }
+  #login-gate::before{
+    content:'';position:absolute;inset:0;
+    background-image:radial-gradient(circle at 1px 1px,rgba(0,229,255,.05) 1px,transparent 0);
+    background-size:40px 40px;
+  }
+  .login-box {
+    position:relative;z-index:1;
+    background:rgba(255,255,255,.06);
+    border:1px solid rgba(0,229,255,.2);
+    border-radius:24px;padding:48px 44px;
+    width:100%;max-width:420px;
+    backdrop-filter:blur(16px);
+    text-align:center;
+  }
+  .login-brand { margin-bottom:32px; }
+  .login-brand .wm { font-size:13px;letter-spacing:2px;text-transform:uppercase;color:var(--w40);margin-bottom:10px; }
+  .login-logo {
+    display:inline-flex;align-items:center;gap:10px;
+    background:var(--grad-teal);-webkit-background-clip:text;-webkit-text-fill-color:transparent;
+    font-size:2.2rem;font-weight:800;letter-spacing:-1px;
+  }
+  .login-tagline { font-size:.85rem;color:var(--w40);margin-top:8px; }
+  .login-label { font-size:.82rem;color:var(--w70);margin-bottom:8px;text-align:left;display:block; }
+  .login-input {
+    width:100%;background:rgba(255,255,255,.08);
+    border:1px solid rgba(255,255,255,.15);border-radius:10px;
+    padding:13px 18px;color:white;font-size:1rem;font-family:inherit;
+    transition:border-color .2s;margin-bottom:8px;
+  }
+  .login-input:focus{outline:none;border-color:var(--cyan);}
+  .login-input::placeholder{color:var(--w40);}
+  .login-btn {
+    width:100%;background:var(--grad-teal);color:white;
+    border:none;border-radius:10px;padding:14px;
+    font-size:1rem;font-weight:700;cursor:pointer;
+    margin-top:8px;transition:all .2s;font-family:inherit;
+  }
+  .login-btn:hover{opacity:.9;transform:translateY(-1px);box-shadow:0 8px 24px rgba(0,188,212,.3);}
+  .login-error{
+    color:#f87171;font-size:.82rem;margin-top:8px;
+    display:none;
+  }
+  .login-back {
+    margin-top:20px;font-size:.82rem;color:var(--w40);
+  }
+  .login-back a{color:var(--teal-light);text-decoration:none;}
+  .login-back a:hover{text-decoration:underline;}
+  .login-lock { font-size:2.5rem;margin-bottom:16px; }
+
+  /* ───── MAIN PLATFORM (hidden until login) ───── */
+  #platform { display:none; }
+
+  /* ───── NAVIGATION ───── */
+  nav {
+    position:sticky;top:0;z-index:100;
+    background:rgba(10,22,40,.96);backdrop-filter:blur(12px);
+    border-bottom:1px solid var(--card-border);
+    display:flex;align-items:center;justify-content:space-between;
+    padding:0 40px;height:64px;
+  }
+  .nav-brand{display:flex;align-items:center;gap:10px;}
+  .nav-wm{font-size:13px;color:var(--w40);font-weight:500;}
+  .nav-sep{color:var(--w40);font-size:16px;margin:0 4px;}
+  .nav-name{font-size:18px;font-weight:800;background:var(--grad-teal);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+  .nav-links{display:flex;gap:24px;}
+  .nav-links a{color:var(--w70);text-decoration:none;font-size:14px;cursor:pointer;transition:color .2s;}
+  .nav-links a:hover{color:var(--cyan);}
+  .nav-right{display:flex;gap:12px;align-items:center;}
+  .nav-badge{background:var(--grad-teal);color:white;padding:5px 14px;border-radius:20px;font-size:12px;font-weight:600;}
+  .nav-logout{background:none;border:1px solid rgba(255,255,255,.15);color:var(--w70);padding:5px 14px;border-radius:20px;font-size:12px;cursor:pointer;transition:all .2s;}
+  .nav-logout:hover{border-color:var(--w40);color:white;}
+
+  /* ───── HERO ───── */
+  .hero {
+    min-height:88vh;
+    background:
+      radial-gradient(ellipse at 20% 50%,rgba(21,101,192,.25) 0%,transparent 60%),
+      radial-gradient(ellipse at 80% 20%,rgba(0,188,212,.15) 0%,transparent 50%),
+      radial-gradient(ellipse at 60% 80%,rgba(0,200,83,.08) 0%,transparent 40%),
+      linear-gradient(160deg,#0a1628 0%,#0d2545 50%,#061020 100%);
+    display:flex;align-items:center;justify-content:center;
+    padding:80px 40px 60px;position:relative;overflow:hidden;
+  }
+  .hero::before{
+    content:'';position:absolute;inset:0;
+    background-image:radial-gradient(circle at 1px 1px,rgba(0,229,255,.06) 1px,transparent 0);
+    background-size:40px 40px;
+  }
+  .hero-content{max-width:900px;text-align:center;position:relative;z-index:1;}
+  .hero-badge{display:inline-block;background:rgba(0,229,255,.1);border:1px solid rgba(0,229,255,.3);border-radius:20px;padding:6px 18px;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--cyan);margin-bottom:28px;}
+  .hero h1{font-size:clamp(2.2rem,5vw,4rem);font-weight:800;line-height:1.15;margin-bottom:20px;background:linear-gradient(135deg,#ffffff 0%,#4DD0E1 50%,#00E5FF 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+  .hero-sub{font-size:1.1rem;color:var(--w70);max-width:680px;margin:0 auto 16px;}
+  .hero-mission{font-size:1.25rem;font-weight:600;color:var(--cyan);margin-bottom:40px;font-style:italic;}
+  .hero-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-bottom:44px;}
+  .hero-stat{background:var(--card-bg);border:1px solid var(--card-border);border-radius:16px;padding:20px 16px;backdrop-filter:blur(8px);}
+  .hero-stat-val{font-size:1.9rem;font-weight:800;color:var(--cyan);}
+  .hero-stat-label{font-size:.75rem;color:var(--w70);margin-top:4px;text-transform:uppercase;letter-spacing:.5px;}
+  .hero-cta{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;}
+  .btn-p{background:var(--grad-teal);color:white;border:none;padding:13px 28px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit;}
+  .btn-p:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,188,212,.35);}
+  .btn-o{background:transparent;color:var(--cyan);border:1px solid rgba(0,229,255,.4);padding:13px 28px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit;}
+  .btn-o:hover{background:rgba(0,229,255,.08);}
+
+  /* ───── SECTIONS ───── */
+  .sec{padding:72px 40px;max-width:1200px;margin:0 auto;}
+  .sec-label{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--cyan);margin-bottom:12px;}
+  .sec-title{font-size:clamp(1.7rem,3vw,2.4rem);font-weight:800;margin-bottom:14px;line-height:1.2;}
+  .sec-sub{color:var(--w70);max-width:620px;font-size:.97rem;margin-bottom:44px;}
+  .divider{height:1px;background:var(--card-border);}
+
+  /* ───── CARDS ───── */
+  .card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:16px;padding:26px;backdrop-filter:blur(8px);transition:border-color .2s,transform .2s;}
+  .card:hover{border-color:rgba(0,229,255,.35);transform:translateY(-3px);}
+  .card-title{font-size:1rem;font-weight:700;margin-bottom:8px;}
+  .card-body{font-size:.88rem;color:var(--w70);}
+
+  /* ───── FLOW CHAIN ───── */
+  .flow-chain{display:flex;align-items:stretch;gap:0;overflow-x:auto;padding-bottom:12px;}
+  .flow-node{flex:1;min-width:130px;background:var(--card-bg);border:1px solid var(--card-border);padding:18px 14px;text-align:center;position:relative;}
+  .flow-node:first-child{border-radius:16px 0 0 16px;}
+  .flow-node:last-child{border-radius:0 16px 16px 0;}
+  .flow-node-num{width:26px;height:26px;border-radius:50%;background:var(--grad-teal);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;margin:0 auto 8px;}
+  .flow-node-icon{font-size:1.6rem;margin-bottom:6px;}
+  .flow-node-title{font-size:.78rem;font-weight:700;color:var(--cyan);margin-bottom:3px;}
+  .flow-node-detail{font-size:.68rem;color:var(--w70);}
+  .flow-arrow{display:flex;align-items:center;padding:0 3px;color:var(--teal-light);font-size:1.3rem;flex-shrink:0;}
+
+  /* ───── GRIDS ───── */
+  .g2{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
+  .g3{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;}
+  .g4{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;}
+
+  /* ───── CALCULATOR ───── */
+  .calc-wrap{background:var(--card-bg);border:1px solid var(--card-border);border-radius:20px;padding:34px;backdrop-filter:blur(12px);}
+  .calc-title{font-size:1.2rem;font-weight:700;margin-bottom:22px;}
+  .calc-grid{display:grid;grid-template-columns:1fr 1fr;gap:28px;}
+  .ig{margin-bottom:18px;}
+  .il{font-size:.8rem;color:var(--w70);margin-bottom:7px;display:block;}
+  .ifield{width:100%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:8px;padding:10px 13px;color:white;font-size:.88rem;transition:border-color .2s;font-family:inherit;}
+  .ifield:focus{outline:none;border-color:var(--cyan);}
+  input[type=range]{width:100%;-webkit-appearance:none;height:6px;background:rgba(255,255,255,.15);border-radius:3px;outline:none;}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:17px;height:17px;border-radius:50%;background:var(--cyan);cursor:pointer;box-shadow:0 0 8px rgba(0,229,255,.5);}
+  .rv{text-align:right;font-size:.78rem;color:var(--cyan);margin-top:3px;}
+  .res-box{background:linear-gradient(135deg,rgba(0,188,212,.12),rgba(21,101,192,.12));border:1px solid rgba(0,229,255,.25);border-radius:12px;padding:18px;}
+  .res-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.07);}
+  .res-row:last-child{border-bottom:none;}
+  .res-lbl{font-size:.82rem;color:var(--w70);}
+  .res-val{font-size:1.05rem;font-weight:700;color:var(--cyan);}
+  .res-val.g{color:var(--green-soft);}
+  .res-val.a{color:var(--amber);}
+
+  /* ───── BADGES ───── */
+  .badge{display:inline-block;padding:3px 10px;border-radius:12px;font-size:.73rem;font-weight:600;}
+  .bg{background:rgba(0,200,83,.15);color:var(--green-soft);border:1px solid rgba(0,200,83,.3);}
+  .bb{background:rgba(0,188,212,.15);color:var(--teal-light);border:1px solid rgba(0,188,212,.3);}
+  .ba{background:rgba(255,179,0,.15);color:var(--amber);border:1px solid rgba(255,179,0,.3);}
+
+  /* ───── FINANCIAL ───── */
+  .fin-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;}
+  .fin-card{border-radius:20px;padding:28px 22px;position:relative;overflow:hidden;}
+  .fin-card.fa{background:linear-gradient(135deg,rgba(0,200,83,.15),rgba(0,188,212,.1));border:1px solid rgba(0,200,83,.3);}
+  .fin-card.fb{background:linear-gradient(135deg,rgba(21,101,192,.2),rgba(0,188,212,.1));border:1px solid rgba(0,188,212,.3);}
+  .fin-card.fc{background:linear-gradient(135deg,rgba(255,179,0,.1),rgba(21,101,192,.15));border:1px solid rgba(255,179,0,.25);}
+  .fin-opt{font-size:11px;letter-spacing:2px;text-transform:uppercase;opacity:.7;margin-bottom:6px;}
+  .fin-nm{font-size:1.1rem;font-weight:700;margin-bottom:16px;}
+  .fin-inv{font-size:1.8rem;font-weight:800;margin-bottom:3px;}
+  .fin-pb{font-size:.82rem;color:var(--w70);margin-bottom:16px;}
+  .fin-bl{font-size:.8rem;color:var(--w70);margin:5px 0;display:flex;gap:7px;}
+  .fin-bl::before{content:'→';color:var(--cyan);flex-shrink:0;}
+
+  /* ───── CARBON TABLE ───── */
+  .ctbl{width:100%;border-collapse:collapse;}
+  .ctbl th{background:rgba(0,229,255,.1);padding:11px 14px;text-align:left;font-size:.78rem;text-transform:uppercase;letter-spacing:1px;color:var(--cyan);border-bottom:1px solid var(--card-border);}
+  .ctbl td{padding:12px 14px;border-bottom:1px solid rgba(255,255,255,.06);font-size:.87rem;color:var(--w70);}
+  .ctbl tr:hover td{background:rgba(0,229,255,.04);color:white;}
+
+  /* ───── ROADMAP ───── */
+  .rmap{display:flex;flex-direction:column;gap:0;}
+  .rmap-item{display:flex;gap:0;}
+  .rmap-lft{width:110px;flex-shrink:0;text-align:right;padding:18px 20px 18px 0;}
+  .rmap-ph{font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--cyan);font-weight:700;}
+  .rmap-ctr{display:flex;flex-direction:column;align-items:center;}
+  .rmap-dot{width:15px;height:15px;border-radius:50%;flex-shrink:0;margin-top:20px;background:var(--cyan);box-shadow:0 0 10px rgba(0,229,255,.5);}
+  .rmap-line{flex:1;width:2px;background:rgba(0,229,255,.2);margin-top:2px;}
+  .rmap-rt{flex:1;padding:14px 0 14px 20px;}
+  .rmap-title{font-size:.95rem;font-weight:700;margin-bottom:3px;}
+  .rmap-desc{font-size:.82rem;color:var(--w70);}
+
+  /* ───── ASSETS GRID ───── */
+  .asset-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;}
+  .asset-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:18px 14px;text-align:center;}
+  .asset-name{font-size:.85rem;font-weight:700;color:var(--cyan);margin-bottom:7px;}
+  .asset-mw{font-size:1.7rem;font-weight:800;margin-bottom:3px;}
+  .asset-detail{font-size:.72rem;color:var(--w70);}
+
+  /* ───── EFF BARS ───── */
+  .eff-row{margin-bottom:14px;}
+  .eff-lbl{display:flex;justify-content:space-between;font-size:.82rem;margin-bottom:5px;}
+  .eff-lbl span:first-child{color:var(--w70);}
+  .eff-lbl span:last-child{color:var(--cyan);font-weight:700;}
+  .eff-bar{height:7px;background:rgba(255,255,255,.1);border-radius:4px;overflow:hidden;}
+  .eff-fill{height:100%;border-radius:4px;}
+
+  /* ───── FOOTER ───── */
+  footer{background:rgba(0,0,0,.3);border-top:1px solid var(--card-border);padding:36px;text-align:center;color:var(--w40);font-size:.82rem;}
+  footer strong{color:var(--cyan);}
+
+  /* ───── RESPONSIVE ───── */
+  @media(max-width:900px){
+    .hero-stats{grid-template-columns:repeat(2,1fr);}
+    .g2,.g3,.g4,.fin-grid,.asset-grid{grid-template-columns:1fr;}
+    .calc-grid{grid-template-columns:1fr;}
+    nav{padding:0 20px;}
+    .nav-links{display:none;}
+    .sec{padding:56px 20px;}
+    .hero{padding:80px 20px 50px;}
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════
+     LOGIN GATE
+══════════════════════════════════════════ -->
+<div id="login-gate">
+  <div class="login-box">
+    <div class="login-lock">🔒</div>
+    <div class="login-brand">
+      <div class="wm">Wellington Marketers</div>
+      <div class="login-logo">Hydel<span>AI</span></div>
+      <div class="login-tagline">Intelligent Hydroelectric Dispatch Platform</div>
+    </div>
+    <label class="login-label">Access Password</label>
+    <input type="password" class="login-input" id="pwd-input" placeholder="Enter password to access HydelAI" autocomplete="off">
+    <div class="login-error" id="login-error">Incorrect password. Please try again.</div>
+    <button class="login-btn" onclick="doLogin()">Unlock HydelAI →</button>
+    <div class="login-back">
+      <a href="https://wellingtonai.in">← Back to Wellington Marketers</a>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     MAIN PLATFORM
+══════════════════════════════════════════ -->
+<div id="platform">
+
+<!-- NAVIGATION -->
+<nav>
+  <div class="nav-brand">
+    <span class="nav-wm">Wellington Marketers</span>
+    <span class="nav-sep">/</span>
+    <span class="nav-name">HydelAI</span>
+  </div>
+  <div class="nav-links">
+    <a onclick="scrollTo('sec-overview')">Overview</a>
+    <a onclick="scrollTo('sec-system')">System</a>
+    <a onclick="scrollTo('sec-calc')">Calculator</a>
+    <a onclick="scrollTo('sec-fin')">Financial</a>
+    <a onclick="scrollTo('sec-carbon')">Carbon</a>
+    <a onclick="scrollTo('sec-roadmap')">Roadmap</a>
+  </div>
+  <div class="nav-right">
+    <div class="nav-badge">R&amp;D Phase 2025–26</div>
+    <button class="nav-logout" onclick="doLogout()">Logout</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-content">
+    <div class="hero-badge">Nilgiris Hydroelectric Cascade · Tamil Nadu · India</div>
+    <h1>Intelligent Hydel Dispatch<br>&amp; Collector Network</h1>
+    <p class="hero-sub">Transforming the Nilgiris Hydroelectric Cascade from isolated power stations into a single AI-optimised renewable energy fleet — without building a single new dam.</p>
+    <p class="hero-mission">"Use the same water better. Deliver more clean energy."</p>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="hero-stat-val">840 MW</div><div class="hero-stat-label">Installed Hydel Capacity</div></div>
+      <div class="hero-stat"><div class="hero-stat-val">3.31 TWh</div><div class="hero-stat-label">Annual Energy (45% CF)</div></div>
+      <div class="hero-stat"><div class="hero-stat-val">+15%</div><div class="hero-stat-label">Max Optimisation Gain</div></div>
+      <div class="hero-stat"><div class="hero-stat-val">₹249 Cr</div><div class="hero-stat-label">Annual Revenue Potential</div></div>
+    </div>
+    <div class="hero-cta">
+      <button class="btn-p" onclick="scrollTo('sec-calc')">🔢 Open Scenario Calculator</button>
+      <button class="btn-o" onclick="scrollTo('sec-system')">⚡ View System Architecture</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── OVERVIEW ── -->
+<div class="divider"></div>
+<div class="sec" id="sec-overview">
+  <div class="sec-label">The Opportunity</div>
+  <h2 class="sec-title">Why the Nilgiris Cascade Is Underperforming</h2>
+  <p class="sec-sub">Despite 840 MW of installed capacity, the cascade operates as isolated independent stations with no system-wide optimisation — leaving hundreds of GWh of clean energy unrealised every year.</p>
+  <div class="g3">
+    <div class="card"><div style="font-size:1.8rem;margin-bottom:10px">🔌</div><div class="card-title">Fragmented Operation</div><div class="card-body">Kundah, Pykara and Moyar operate independently. No shared optimisation platform exists to coordinate transmission, generation and reservoir operations simultaneously.</div></div>
+    <div class="card"><div style="font-size:1.8rem;margin-bottom:10px">💧</div><div class="card-title">Reservoir Inefficiency</div><div class="card-body">Reservoir management relies on localised forecasting. Water spills in wet seasons, is under-utilised in dry periods. Coordinated scheduling recovers significant additional energy from the same water.</div></div>
+    <div class="card"><div style="font-size:1.8rem;margin-bottom:10px">⚡</div><div class="card-title">Transmission Losses</div><div class="card-body">Each station evacuates power separately with higher losses. A shared 400 kV collector backbone plus modern low-loss transformers delivers immediate efficiency gains of 1–6%.</div></div>
+  </div>
+  <div style="margin-top:36px">
+    <div class="sec-label">Installed Fleet</div>
+    <h3 style="font-size:1.2rem;font-weight:700;margin-bottom:20px">Nilgiris Hydroelectric Assets</h3>
+    <div class="asset-grid">
+      <div class="asset-card"><div class="asset-name">Kundah Complex</div><div class="asset-mw" style="color:var(--cyan)">585 MW</div><div class="asset-detail">220 kV · CF 0.45 · Primary asset</div></div>
+      <div class="asset-card"><div class="asset-name">Pykara Complex</div><div class="asset-mw" style="color:var(--teal-light)">209 MW</div><div class="asset-detail">220 kV · CF 0.45 · Collector candidate</div></div>
+      <div class="asset-card"><div class="asset-name">Moyar System</div><div class="asset-mw" style="color:var(--green-soft)">36 MW</div><div class="asset-detail">Regional grid · CF 0.45</div></div>
+      <div class="asset-card"><div class="asset-name">Valparai / Kadamparai</div><div class="asset-mw" style="color:var(--amber)">560 MW</div><div class="asset-detail">220 kV · CF 0.40 · Valparai cluster</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── SYSTEM ARCHITECTURE ── -->
+<div class="divider"></div>
+<div class="sec" id="sec-system">
+  <div class="sec-label">5-Layer Architecture</div>
+  <h2 class="sec-title">Integrated Collector &amp; Dispatch System</h2>
+  <p class="sec-sub" style="margin-bottom:36px">HydelAI layers generation, collection, control, optimisation and grid integration into a single coordinated platform.</p>
+  <div class="flow-chain">
+    <div class="flow-node"><div class="flow-node-num">1</div><div class="flow-node-icon">🏔️</div><div class="flow-node-title">Generation</div><div class="flow-node-detail">Kundah · Pykara · Moyar · Valparai<br>840 MW hydel fleet</div></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node"><div class="flow-node-num">2</div><div class="flow-node-icon">🔌</div><div class="flow-node-title">Collection</div><div class="flow-node-detail">Step-up transformers<br>400 kV collector ring<br>Central pooling station</div></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node"><div class="flow-node-num">3</div><div class="flow-node-icon">🖥️</div><div class="flow-node-title">Control</div><div class="flow-node-detail">SCADA control centre<br>Auto Generation Control<br>Remote terminal units</div></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node"><div class="flow-node-num">4</div><div class="flow-node-icon">🤖</div><div class="flow-node-title">Optimisation</div><div class="flow-node-detail">AI dispatch algorithms<br>Reservoir optimisation<br>Digital twin · Carbon AI</div></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node"><div class="flow-node-num">5</div><div class="flow-node-icon">🏙️</div><div class="flow-node-title">Grid Integration</div><div class="flow-node-detail">Tamil Nadu grid<br>Coimbatore load centres<br>Western Tamil Nadu</div></div>
+  </div>
+  <div style="margin-top:40px;" class="g2">
+    <div class="card">
+      <div class="card-title" style="margin-bottom:18px">⚙️ Efficiency Improvement Stack</div>
+      <div class="eff-row"><div class="eff-lbl"><span>Modern low-loss transformers</span><span>0.2–1%</span></div><div class="eff-bar"><div class="eff-fill" style="width:8%;background:linear-gradient(90deg,var(--green),var(--teal))"></div></div></div>
+      <div class="eff-row"><div class="eff-lbl"><span>Higher transmission voltage</span><span>1–5%+</span></div><div class="eff-bar"><div class="eff-fill" style="width:35%;background:linear-gradient(90deg,var(--teal),#2563eb)"></div></div></div>
+      <div class="eff-row"><div class="eff-lbl"><span>Reactive power optimisation</span><span>0.5–3%</span></div><div class="eff-bar"><div class="eff-fill" style="width:22%;background:linear-gradient(90deg,#2563eb,var(--teal))"></div></div></div>
+      <div class="eff-row"><div class="eff-lbl"><span>SCADA dispatch coordination</span><span>1–10%</span></div><div class="eff-bar"><div class="eff-fill" style="width:55%;background:linear-gradient(90deg,var(--cyan),var(--green))"></div></div></div>
+      <div class="eff-row"><div class="eff-lbl"><span>Reservoir coordination / spill reduction</span><span>Significant</span></div><div class="eff-bar"><div class="eff-fill" style="width:72%;background:linear-gradient(90deg,var(--amber),var(--green))"></div></div></div>
+      <div style="margin-top:14px;padding-top:14px;border-top:1px solid rgba(255,255,255,.1);font-size:.83rem;color:var(--cyan);font-weight:700">Total stacked gain target: 6–15%</div>
+    </div>
+    <div class="card">
+      <div class="card-title" style="margin-bottom:16px">🔬 Technological Uncertainties Resolved</div>
+      <div style="display:flex;flex-direction:column;gap:11px">
+        <div style="display:flex;gap:10px;align-items:flex-start"><span class="badge bb">TU-01</span><span style="font-size:.8rem;color:var(--w70)">Multi-asset coordination without voltage instability or reactive power imbalances</span></div>
+        <div style="display:flex;gap:10px;align-items:flex-start"><span class="badge bg">TU-02</span><span style="font-size:.8rem;color:var(--w70)">Real-time algorithms satisfying grid demand, water availability, env. flows &amp; transmission constraints</span></div>
+        <div style="display:flex;gap:10px;align-items:flex-start"><span class="badge bb">TU-03</span><span style="font-size:.8rem;color:var(--w70)">Collector-network topology reducing aggregate transmission losses sufficiently to justify deployment</span></div>
+        <div style="display:flex;gap:10px;align-items:flex-start"><span class="badge bg">TU-04</span><span style="font-size:.8rem;color:var(--w70)">Predictive dispatch increasing annual recoverable energy through reduced spillage</span></div>
+        <div style="display:flex;gap:10px;align-items:flex-start"><span class="badge ba">TU-05</span><span style="font-size:.8rem;color:var(--w70)">Centralised SCADA/EMS operating effectively across geographically distributed hydel facilities</span></div>
+        <div style="display:flex;gap:10px;align-items:flex-start"><span class="badge ba">TU-06</span><span style="font-size:.8rem;color:var(--w70)">Advanced control systems improving energy recovery without increasing installed capacity</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── CALCULATOR ── -->
+<div class="divider"></div>
+<div class="sec" id="sec-calc">
+  <div class="sec-label">Interactive Modelling</div>
+  <h2 class="sec-title">Energy Yield &amp; Revenue Calculator</h2>
+  <p class="sec-sub">Adjust parameters to model HydelAI's energy recovery, equivalent new hydel capacity and annual revenue potential.</p>
+  <div class="calc-wrap">
+    <div class="calc-title">⚡ Nilgiris Cascade Scenario Modeller</div>
+    <div class="calc-grid">
+      <div>
+        <div class="ig"><label class="il">Installed Capacity (MW)</label><input type="number" class="ifield" id="inp-mw" value="840" oninput="calc()"></div>
+        <div class="ig"><label class="il">Capacity Factor: <span id="lbl-cf">0.45</span></label><input type="range" id="inp-cf" min=".30" max=".70" step=".01" value=".45" oninput="document.getElementById('lbl-cf').textContent=this.value;calc()"></div>
+        <div class="ig"><label class="il">Optimisation Gain: <span id="lbl-gain">10</span>%</label><input type="range" id="inp-gain" min="0" max="20" step="1" value="10" oninput="document.getElementById('lbl-gain').textContent=this.value;calc()"></div>
+        <div class="ig"><label class="il">Tariff (₹/kWh): <span id="lbl-tar">5.0</span></label><input type="range" id="inp-tar" min="3.0" max="8.0" step=".1" value="5.0" oninput="document.getElementById('lbl-tar').textContent=parseFloat(this.value).toFixed(1);calc()"></div>
+        <div class="ig"><label class="il">CO₂ Factor (kgCO₂/kWh): <span id="lbl-co2">0.70</span></label><input type="range" id="inp-co2" min=".30" max=".90" step=".01" value=".70" oninput="document.getElementById('lbl-co2').textContent=parseFloat(this.value).toFixed(2);calc()"></div>
+      </div>
+      <div>
+        <div class="res-box">
+          <div class="res-row"><span class="res-lbl">Base Annual Energy</span><span class="res-val" id="r-base">3,311 GWh</span></div>
+          <div class="res-row"><span class="res-lbl">Additional Energy (Gain)</span><span class="res-val g" id="r-gain">+331 GWh/yr</span></div>
+          <div class="res-row"><span class="res-lbl">Equivalent New Hydel Capacity</span><span class="res-val" id="r-equiv">~84 MW</span></div>
+          <div class="res-row"><span class="res-lbl">Annual Revenue (from gain)</span><span class="res-val a" id="r-rev">₹166 Cr/yr</span></div>
+          <div class="res-row"><span class="res-lbl">CO₂ Avoided per Year</span><span class="res-val g" id="r-co2">231,700 tonnes</span></div>
+          <div class="res-row"><span class="res-lbl">Carbon Value (@€50/t)</span><span class="res-val" id="r-cval">€11.6 M</span></div>
+          <div style="margin-top:14px;padding:12px;background:rgba(0,229,255,.06);border-radius:8px;font-size:.78rem;color:var(--w70)">
+            💡 Coimbatore daily demand ≈ 60 GWh — this gain supports ~<strong id="r-days" style="color:var(--cyan)">6 days</strong> of city-scale electricity.
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:20px">
+          <div onclick="setS(0)" style="cursor:pointer;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:12px;text-align:center"><div style="font-size:1.3rem;font-weight:800;color:var(--w70)">0%</div><div style="font-size:.7rem;color:var(--w40);margin-top:3px">Base</div></div>
+          <div onclick="setS(6)" style="cursor:pointer;background:rgba(0,188,212,.07);border:1px solid rgba(0,188,212,.2);border-radius:10px;padding:12px;text-align:center"><div style="font-size:1.3rem;font-weight:800;color:var(--teal-light)">6%</div><div style="font-size:.7rem;color:var(--w40);margin-top:3px">SCADA</div></div>
+          <div onclick="setS(10)" style="cursor:pointer;background:rgba(0,229,255,.08);border:1px solid rgba(0,229,255,.25);border-radius:10px;padding:12px;text-align:center"><div style="font-size:1.3rem;font-weight:800;color:var(--cyan)">10%</div><div style="font-size:.7rem;color:var(--w40);margin-top:3px">Collector</div></div>
+          <div onclick="setS(15)" style="cursor:pointer;background:rgba(0,200,83,.08);border:1px solid rgba(0,200,83,.25);border-radius:10px;padding:12px;text-align:center"><div style="font-size:1.3rem;font-weight:800;color:var(--green-soft)">15%</div><div style="font-size:.7rem;color:var(--w40);margin-top:3px">Full Opt.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── FINANCIAL ── -->
+<div class="divider"></div>
+<div class="sec" id="sec-fin">
+  <div class="sec-label">Investment Options</div>
+  <h2 class="sec-title">Three Deployment Pathways</h2>
+  <p class="sec-sub">From a rapid-payback software platform to full regional grid integration.</p>
+  <div class="fin-grid">
+    <div class="fin-card fa">
+      <div class="fin-opt">Option A</div><div class="fin-nm">Optimisation Platform</div>
+      <div class="fin-inv" style="color:var(--green-soft)">₹60–145 Cr</div>
+      <div class="fin-pb">Payback: 1–3 Years</div>
+      <div class="fin-bl">SCADA/EMS software deployment</div>
+      <div class="fin-bl">Digital twin environment</div>
+      <div class="fin-bl">Predictive dispatch algorithms</div>
+      <div class="fin-bl">Reservoir optimisation modules</div>
+      <div style="margin-top:14px"><span class="badge bg">Recommended Entry Point</span></div>
+    </div>
+    <div class="fin-card fb">
+      <div class="fin-opt">Option B</div><div class="fin-nm">Full Collector Network</div>
+      <div class="fin-inv" style="color:var(--teal-light)">₹375–925 Cr</div>
+      <div class="fin-pb">Payback: 3–6 Years</div>
+      <div class="fin-bl">400 kV collector ring deployment</div>
+      <div class="fin-bl">New step-up transformers</div>
+      <div class="fin-bl">Central pooling station</div>
+      <div class="fin-bl">Full SCADA/EMS + Option A</div>
+      <div style="margin-top:14px"><span class="badge bb">Maximum Energy Recovery</span></div>
+    </div>
+    <div class="fin-card fc">
+      <div class="fin-opt">Option C</div><div class="fin-nm">Strategic Regional Integration</div>
+      <div class="fin-inv" style="color:var(--amber)">₹1,200 Cr</div>
+      <div class="fin-pb">Payback: 4–6 Years</div>
+      <div class="fin-bl">Full Option B infrastructure</div>
+      <div class="fin-bl">Valparai/Sholayar cluster integration</div>
+      <div class="fin-bl">Western Tamil Nadu grid support</div>
+      <div class="fin-bl">Full hill-area development programme</div>
+      <div style="margin-top:14px"><span class="badge ba">Strategic Platform</span></div>
+    </div>
+  </div>
+  <div style="margin-top:32px" class="card">
+    <div class="card-title" style="margin-bottom:16px">📊 Annual Revenue by Gain Scenario</div>
+    <table class="ctbl">
+      <thead><tr><th>Additional Energy</th><th>@ ₹4/kWh</th><th>@ ₹5/kWh</th><th>@ ₹6/kWh</th><th>Equivalent Capacity</th></tr></thead>
+      <tbody>
+        <tr><td>166 GWh/yr (5% gain)</td><td>₹66 Cr/yr</td><td style="color:var(--cyan)">₹83 Cr/yr</td><td>₹100 Cr/yr</td><td>~40–45 MW new hydel</td></tr>
+        <tr><td>331 GWh/yr (10% gain)</td><td>₹132 Cr/yr</td><td style="color:var(--cyan)">₹166 Cr/yr</td><td>₹199 Cr/yr</td><td>~80–85 MW new hydel</td></tr>
+        <tr><td>497 GWh/yr (15% gain)</td><td>₹199 Cr/yr</td><td style="color:var(--cyan)">₹249 Cr/yr</td><td>₹298 Cr/yr</td><td>~120–125 MW new hydel</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ── CARBON ── -->
+<div class="divider"></div>
+<div class="sec" id="sec-carbon">
+  <div class="sec-label">NIHIP Carbon Intelligence Module</div>
+  <h2 class="sec-title">Carbon Savings &amp; Climate Value</h2>
+  <p class="sec-sub">HydelAI's Carbon Intelligence Module converts additional renewable energy generation into CO₂ avoidance and carbon market values.</p>
+  <div class="g2">
+    <div class="card">
+      <div class="card-title" style="margin-bottom:14px">🌿 Methodology</div>
+      <div class="card-body">CO₂ Reduction (t/yr) = Additional Energy (kWh) × Grid Emission Factor (kgCO₂/kWh) ÷ 1000</div>
+      <div style="background:rgba(0,229,255,.07);border:1px solid rgba(0,229,255,.15);border-radius:8px;padding:12px;margin-top:12px">
+        <div style="font-size:.78rem;color:var(--w70);margin-bottom:7px">Reference parameters:</div>
+        <div style="font-size:.8rem;display:grid;grid-template-columns:1fr 1fr;gap:5px">
+          <span style="color:var(--w70)">Installed capacity:</span><span style="color:var(--cyan)">840 MW</span>
+          <span style="color:var(--w70)">Annual generation:</span><span style="color:var(--cyan)">3.31 TWh</span>
+          <span style="color:var(--w70)">Grid emission factor:</span><span style="color:var(--cyan)">0.70 kgCO₂/kWh</span>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title" style="margin-bottom:14px">📋 Carbon Avoidance Scenarios</div>
+      <table class="ctbl" style="width:100%">
+        <thead><tr><th>Scenario</th><th>Extra GWh</th><th>CO₂ Avoided</th><th>@€50/t</th><th>@€100/t</th></tr></thead>
+        <tbody>
+          <tr><td><span class="badge bg">5% Gain</span></td><td>166</td><td>116,200 t</td><td>€5.81 M</td><td>€11.62 M</td></tr>
+          <tr><td><span class="badge bb">10% Gain</span></td><td>331</td><td>231,700 t</td><td>€11.58 M</td><td>€23.17 M</td></tr>
+          <tr><td><span class="badge ba">15% Gain</span></td><td>497</td><td>347,900 t</td><td>€17.40 M</td><td>€34.80 M</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ── ROADMAP ── -->
+<div class="divider"></div>
+<div class="sec" id="sec-roadmap">
+  <div class="sec-label">Development Plan</div>
+  <h2 class="sec-title">7-Phase Deployment Roadmap</h2>
+  <p class="sec-sub">From asset mapping through pilot deployment to full investment case preparation.</p>
+  <div class="g2" style="gap:36px;align-items:start">
+    <div class="rmap">
+      <div class="rmap-item"><div class="rmap-lft"><div class="rmap-ph">Phase 1</div></div><div class="rmap-ctr"><div class="rmap-dot"></div><div class="rmap-line"></div></div><div class="rmap-rt"><div class="rmap-title">Asset Mapping</div><div class="rmap-desc">Map all reservoirs, plants, tunnels, lines, substations and catchments across the Nilgiris cascade.</div></div></div>
+      <div class="rmap-item"><div class="rmap-lft"><div class="rmap-ph">Phase 2</div></div><div class="rmap-ctr"><div class="rmap-dot" style="background:var(--teal-light)"></div><div class="rmap-line"></div></div><div class="rmap-rt"><div class="rmap-title">Data Collection</div><div class="rmap-desc">Rainfall records, reservoir storage curves, generation output and transmission loss data from TANGEDCO and PWD.</div></div></div>
+      <div class="rmap-item"><div class="rmap-lft"><div class="rmap-ph">Phase 3</div></div><div class="rmap-ctr"><div class="rmap-dot" style="background:var(--green-soft)"></div><div class="rmap-line"></div></div><div class="rmap-rt"><div class="rmap-title">Energy Model</div><div class="rmap-desc">Validated MW, GWh and TWh scenarios using actual plant data. Replace discussion-level estimates with DPR-grade figures.</div></div></div>
+      <div class="rmap-item"><div class="rmap-lft"><div class="rmap-ph">Phase 4</div></div><div class="rmap-ctr"><div class="rmap-dot" style="background:var(--amber)"></div></div><div class="rmap-rt"><div class="rmap-title">Collector Study</div><div class="rmap-desc">Identify clusters that justify a common collector network. Compare 220 kV, 400 kV and hybrid architectures.</div></div></div>
+    </div>
+    <div class="rmap">
+      <div class="rmap-item"><div class="rmap-lft"><div class="rmap-ph">Phase 5</div></div><div class="rmap-ctr"><div class="rmap-dot" style="background:#3b82f6"></div><div class="rmap-line"></div></div><div class="rmap-rt"><div class="rmap-title">SCADA / Digital Twin</div><div class="rmap-desc">Design the centralised control architecture. Build the digital twin. Develop and test predictive dispatch algorithms for real-time reservoir coordination.</div></div></div>
+      <div class="rmap-item"><div class="rmap-lft"><div class="rmap-ph">Phase 6</div></div><div class="rmap-ctr"><div class="rmap-dot" style="background:var(--teal)"></div><div class="rmap-line"></div></div><div class="rmap-rt"><div class="rmap-title">Pilot Project</div><div class="rmap-desc">Select one cluster — recommended: Kundah Complex — for trial HydelAI deployment. Measure actual vs. modelled performance.</div></div></div>
+      <div class="rmap-item"><div class="rmap-lft"><div class="rmap-ph">Phase 7</div></div><div class="rmap-ctr"><div class="rmap-dot" style="background:var(--green)"></div></div><div class="rmap-rt"><div class="rmap-title">Investment Case</div><div class="rmap-desc">Full DPR, revenue model, payback analysis and investor presentation for Options A, B or C at full cascade scale.</div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div style="font-size:1.2rem;font-weight:800;margin-bottom:6px">Hydel<strong>AI</strong></div>
+  <div>Integrated High-Voltage Collector Network &amp; Intelligent Hydroelectric Dispatch System</div>
+  <div style="margin-top:6px">Nilgiris Hydroelectric Cascade · Tamil Nadu · India</div>
+  <div style="margin-top:14px;font-size:.76rem">
+    Prepared for <strong>Wellington Marketers</strong> · FY 2025–26 ·
+    All figures are discussion-level feasibility estimates. Validate against TANGEDCO, PWD, CEA and DPR data before investment decisions.
+  </div>
+  <div style="margin-top:12px"><a href="https://wellingtonai.in" style="color:var(--teal-light);text-decoration:none;font-size:.82rem;">← Back to Wellington Marketers</a></div>
+</footer>
+
+</div><!-- end #platform -->
+
+<script>
+const PASS = 'wellingtonai';
+const SK = 'hydel_auth';
+
+function doLogin() {
+  const v = document.getElementById('pwd-input').value;
+  if (v === PASS) {
+    sessionStorage.setItem(SK,'1');
+    const gate = document.getElementById('login-gate');
+    gate.style.opacity = '0';
+    setTimeout(() => { gate.style.display='none'; document.getElementById('platform').style.display='block'; }, 400);
+  } else {
+    document.getElementById('login-error').style.display='block';
+    document.getElementById('pwd-input').style.borderColor='#f87171';
+    setTimeout(()=>{ document.getElementById('pwd-input').style.borderColor='rgba(255,255,255,.15)'; },1500);
+  }
+}
+
+function doLogout() {
+  sessionStorage.removeItem(SK);
+  document.getElementById('platform').style.display='none';
+  const gate = document.getElementById('login-gate');
+  gate.style.opacity='0'; gate.style.display='flex';
+  setTimeout(()=>{ gate.style.opacity='1'; },10);
+  document.getElementById('pwd-input').value='';
+  document.getElementById('login-error').style.display='none';
+}
+
+// Check session on load
+if (sessionStorage.getItem(SK)==='1') {
+  document.getElementById('login-gate').style.display='none';
+  document.getElementById('platform').style.display='block';
+}
+
+// Enter key on password field
+document.getElementById('pwd-input').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
+
+function scrollTo(id) { document.getElementById(id).scrollIntoView({behavior:'smooth'}); }
+
+function calc() {
+  const mw=parseFloat(document.getElementById('inp-mw').value)||840;
+  const cf=parseFloat(document.getElementById('inp-cf').value);
+  const gp=parseFloat(document.getElementById('inp-gain').value);
+  const tar=parseFloat(document.getElementById('inp-tar').value);
+  const co2=parseFloat(document.getElementById('inp-co2').value);
+  const base=mw*8760*cf/1000;
+  const gain=base*gp/100;
+  const gainMWh=gain*1000;
+  const equiv=gainMWh/(8760*cf);
+  const rev=gain*tar*10;
+  const co2t=gainMWh*co2;
+  const cval=co2t*50/1000000;
+  const days=gain/60;
+  document.getElementById('r-base').textContent=base.toLocaleString('en-IN',{maximumFractionDigits:0})+' GWh';
+  document.getElementById('r-gain').textContent='+'+gain.toLocaleString('en-IN',{maximumFractionDigits:0})+' GWh/yr';
+  document.getElementById('r-equiv').textContent='~'+Math.round(equiv)+' MW';
+  document.getElementById('r-rev').textContent='₹'+rev.toLocaleString('en-IN',{maximumFractionDigits:0})+' Cr/yr';
+  document.getElementById('r-co2').textContent=Math.round(co2t).toLocaleString('en-IN')+' tonnes';
+  document.getElementById('r-cval').textContent='€'+cval.toFixed(1)+' M';
+  document.getElementById('r-days').textContent='~'+days.toFixed(1)+' days';
+}
+
+function setS(g) {
+  document.getElementById('inp-gain').value=g;
+  document.getElementById('lbl-gain').textContent=g;
+  calc();
+}
+
+calc();
+</script>
+</body>
+</html>
