@@ -46,7 +46,7 @@ Specific goals:
 
 ```
 LAYER 1 — GENERATION
-Kundah Complex (~585 MW) | Pykara Complex (~209 MW) | Moyar (~36 MW) | Valparai/Kadamparai (~560 MW)
+Kundah Complex (~585 MW) | Pykara Complex (~209 MW) | Moyar (~36 MW)  ··  Valparai/Kadamparai (~530 MW · separate, supports Coimbatore demand)
         ↓
 LAYER 2 — COLLECTION
 Generator Step-Up Transformers → 400 kV Collector Ring → Central Pooling Station
@@ -77,8 +77,8 @@ Tamil Nadu Grid → Coimbatore Load Centres → Western Tamil Nadu Demand
 | Kundah Complex | ~585 MW | 0.45 | 220 kV |
 | Pykara Complex | ~209 MW | 0.45 | 220 kV |
 | Moyar | ~36 MW | 0.45 | Regional grid |
-| Valparai/Kadamparai | ~560 MW | 0.40 | 220 kV |
-| **Total Nilgiris Hydel** | **~840 MW** | **0.45** | — |
+| **Total Nilgiris Cascade** | **~840 MW** | **0.45** | — |
+| Valparai/Kadamparai *(separate · Coimbatore demand)* | ~530 MW | 0.40 | 220 kV |
 
 ### Annual Energy Scenarios (840 MW reference)
 | Capacity Factor | Annual Energy | Conditions |

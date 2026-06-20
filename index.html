@@ -105,6 +105,15 @@
         }
         .dropdown-item-text strong { display: block; font-size: 0.85rem; color: #fff; font-weight: 600; }
         .dropdown-item-text span { font-size: 0.75rem; color: var(--gray-400); }
+        .dropdown-eco {
+            font-size: 0.68rem; color: var(--gray-400); line-height: 1.45; padding: 6px 12px 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.08); margin-bottom: 4px;
+        }
+        .dropdown-eco strong { color: #fff; font-weight: 600; }
+        .dropdown-cat {
+            font-size: 0.62rem; text-transform: uppercase; letter-spacing: 1.2px;
+            color: #38bdf8; font-weight: 700; padding: 10px 12px 4px;
+        }
 
         /* ---- HERO ---- */
         .hero {
@@ -292,6 +301,8 @@
         .footer-col h4 { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--gray-400); margin-bottom: 1rem; }
         .footer-col a { display: block; color: var(--gray-500); text-decoration: none; font-size: 0.9rem; padding: 3px 0; }
         .footer-col a:hover { color: white; }
+        .footer-subcat { display: block; font-size: 0.62rem; text-transform: uppercase; letter-spacing: 1px; color: #38bdf8; font-weight: 700; margin: 12px 0 3px; }
+        .footer-subcat:first-of-type { margin-top: 4px; }
         .footer-bottom {
             max-width: 1100px; margin: 2rem auto 0; padding-top: 1.5rem;
             border-top: 1px solid rgba(255,255,255,0.06);
@@ -335,18 +346,22 @@
             <li class="nav-dropdown">
                 <a href="#products">Products</a>
                 <div class="dropdown-menu">
-                    <a href="https://soarai.in" target="_blank" class="dropdown-item">
-                        <div class="dropdown-item-icon" style="background:#eff6ff;">🚀</div>
-                        <div class="dropdown-item-text"><strong>SoarAI</strong><span>AI Marketing Intelligence</span></div>
-                    </a>
+                    <div class="dropdown-eco"><strong>WellingtonAI</strong> — An Infrastructure, Sustainability &amp; Operational Intelligence Ecosystem</div>
+                    <div class="dropdown-cat">People &amp; Enterprise</div>
                     <a href="https://wellingtonai.in/employai/" class="dropdown-item">
                         <div class="dropdown-item-icon" style="background:#f5f3ff;">👥</div>
                         <div class="dropdown-item-text"><strong>EmployAI</strong><span>Workforce Risk Scoring</span></div>
                     </a>
+                    <a href="https://soarai.in" target="_blank" class="dropdown-item">
+                        <div class="dropdown-item-icon" style="background:#eff6ff;">🚀</div>
+                        <div class="dropdown-item-text"><strong>SoarAI</strong><span>AI Marketing Intelligence</span></div>
+                    </a>
+                    <div class="dropdown-cat">Trade &amp; Commerce</div>
                     <a href="https://wellingtonai.in/tradeai/" class="dropdown-item">
                         <div class="dropdown-item-icon" style="background:#ecfdf5;">📦</div>
                         <div class="dropdown-item-text"><strong>TradeAI</strong><span>Global Trade Intelligence</span></div>
                     </a>
+                    <div class="dropdown-cat">Urban Systems</div>
                     <a href="https://wellingtonai.in/urbanai/" class="dropdown-item">
                         <div class="dropdown-item-icon" style="background:#e0f2fe;">🌊</div>
                         <div class="dropdown-item-text"><strong>UrbanAI</strong><span>Urban Flood Resilience</span></div>
@@ -355,6 +370,7 @@
                         <div class="dropdown-item-icon" style="background:#f0fdf4;">🚋</div>
                         <div class="dropdown-item-text"><strong>TransitAI</strong><span>Climate-Positive Urban Mobility</span></div>
                     </a>
+                    <div class="dropdown-cat">Renewable Intelligence</div>
                     <a href="https://wellingtonai.in/hydelai/" class="dropdown-item">
                         <div class="dropdown-item-icon" style="background:#e0f7fa;">💧</div>
                         <div class="dropdown-item-text"><strong>HydelAI</strong><span>Intelligent Hydroelectric Dispatch</span></div>
@@ -597,7 +613,7 @@
         <div class="product-hero" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(56,189,248,0.2);">
             <div>
                 <h3 style="color: #fff;">UrbanAI — Urban Flood Resilience Platform</h3>
-                <p style="color: rgba(255,255,255,0.75);">UrbanAI models an adaptive four-layer infrastructure system for extreme rainfall events across 14 global cities. Select a city and rainfall scenario — the platform instantly computes floodwater volume, hub clearance time, optimal pump mix, infrastructure layer activation, and a full 30-year NPV/IRR financial model. Built on empirical flood engineering data and HMRC-qualifying R&D.</p>
+                <p style="color: rgba(255,255,255,0.75);">UrbanAI models an adaptive four-layer infrastructure system for extreme rainfall events across 14 global cities. Select a city and rainfall scenario — the platform instantly computes floodwater volume, hub clearance time, optimal pump mix, infrastructure layer activation, and a full 30-year NPV/IRR financial model. Built on empirical flood engineering data and rigorous R&D.</p>
                 <ul class="product-features" style="color: rgba(255,255,255,0.8);">
                     <li>14 global cities — India, Europe, Americas, Asia</li>
                     <li>6 rainfall scenarios from Light to Climate Stress</li>
@@ -664,12 +680,14 @@
         <div class="product-hero" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(0,229,255,0.2);">
             <div>
                 <h3 style="color: #fff;">HydelAI — Intelligent Hydel Dispatch Platform</h3>
-                <p style="color: rgba(255,255,255,0.75);">HydelAI transforms the 840 MW Nilgiris Hydroelectric Cascade — comprising Kundah, Pykara, Moyar and Valparai assets — from isolated independent stations into a single coordinated, AI-optimised renewable energy fleet. A shared 400 kV collector ring, centralised SCADA/EMS, predictive dispatch algorithms and a digital twin deliver 6–15% efficiency gains, generating up to 497 GWh of additional clean energy per year.</p>
+                <p style="color: rgba(255,255,255,0.75);">HydelAI transforms the 840 MW Nilgiris Hydroelectric Cascade — comprising the Kundah, Pykara and Moyar assets — from isolated independent stations into a single coordinated, AI-optimised renewable energy fleet, and similarly integrates the 530 MW Valparai/Kadamparai complex to help fulfil Coimbatore demand. A shared 400 kV collector ring, centralised SCADA/EMS, predictive dispatch algorithms and a digital twin deliver 6–15% efficiency gains, generating up to 497 GWh of additional clean energy per year.</p>
                 <ul class="product-features" style="color: rgba(255,255,255,0.8);">
-                    <li>840 MW hydel fleet — Kundah, Pykara, Moyar, Valparai/Kadamparai</li>
+                    <li>840 MW Nilgiris fleet — Kundah, Pykara, Moyar</li>
+                    <li>530 MW Valparai/Kadamparai integrated to support Coimbatore demand</li>
                     <li>5-layer architecture: Generation → Collection → Control → Optimisation → Grid</li>
                     <li>400 kV collector ring reducing aggregate transmission losses</li>
                     <li>AI dispatch &amp; reservoir optimisation — up to 15% efficiency gain</li>
+                    <li>Global simulator to model gains across hydel projects worldwide — Alpine, Canadian Mountain Hydro, Norway Fjord, US Small Hydro, Himalayan Run-of-River &amp; more</li>
                     <li>NIHIP Carbon Intelligence: up to 347,900 t CO₂ avoided/yr</li>
                     <li>Investment options ₹60–1,200 Cr | Payback 1–6 Years</li>
                 </ul>
@@ -760,11 +778,15 @@
         </div>
         <div class="footer-col">
             <h4>Products</h4>
-            <a href="https://soarai.in" target="_blank">SoarAI</a>
+            <span class="footer-subcat">People &amp; Enterprise</span>
             <a href="https://wellingtonai.in/employai/">EmployAI</a>
+            <a href="https://soarai.in" target="_blank">SoarAI</a>
+            <span class="footer-subcat">Trade &amp; Commerce</span>
             <a href="https://wellingtonai.in/tradeai/">TradeAI</a>
+            <span class="footer-subcat">Urban Systems</span>
             <a href="https://wellingtonai.in/urbanai/">UrbanAI</a>
             <a href="https://wellingtonai.in/transitai/">TransitAI</a>
+            <span class="footer-subcat">Renewable Intelligence</span>
             <a href="https://wellingtonai.in/hydelai/">HydelAI</a>
         </div>
         <div class="footer-col">
