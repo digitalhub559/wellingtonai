@@ -6,6 +6,7 @@
 <title>HydelAI — Wellington Marketers</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
   :root {
     --navy: #0a0f1e; --blue: #2563eb; --blue-light: #3b82f6; --purple: #7c3aed;
@@ -236,11 +237,51 @@
   footer{background:rgba(0,0,0,.3);border-top:1px solid var(--card-border);padding:36px;text-align:center;color:var(--w40);font-size:.82rem;}
   footer strong{color:var(--cyan);}
 
+  /* ───── GLOBAL SITE SIMULATOR ───── */
+  .gsim-wrap{background:var(--card-bg);border:1px solid var(--card-border);border-radius:20px;padding:34px;backdrop-filter:blur(12px);}
+  .gsim-ctrls{display:grid;grid-template-columns:2fr 1.4fr;gap:20px;margin-bottom:26px;}
+  .gsel-lbl{font-size:.78rem;letter-spacing:1px;text-transform:uppercase;color:var(--cyan);margin-bottom:8px;display:block;}
+  .gsel{width:100%;background:rgba(255,255,255,.08);border:1px solid rgba(0,229,255,.25);border-radius:10px;padding:13px 16px;color:white;font-size:.95rem;font-family:inherit;font-weight:600;cursor:pointer;transition:border-color .2s;}
+  .gsel:focus{outline:none;border-color:var(--cyan);}
+  .gsel option{background:#0d2545;color:white;}
+  .gsim-body{display:grid;grid-template-columns:0.92fr 1.08fr;gap:24px;align-items:start;}
+  .param-panel{background:linear-gradient(135deg,rgba(0,188,212,.08),rgba(21,101,192,.08));border:1px solid rgba(0,229,255,.18);border-radius:14px;padding:20px;}
+  .param-head{display:flex;align-items:center;gap:9px;margin-bottom:6px;}
+  .param-flag{font-size:1.5rem;}
+  .param-site{font-size:1.05rem;font-weight:700;color:white;}
+  .param-region{font-size:.74rem;color:var(--w40);margin-bottom:16px;}
+  .param-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px 14px;}
+  .param-chip{display:flex;justify-content:space-between;align-items:baseline;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.06);}
+  .param-chip .pk{font-size:.74rem;color:var(--w70);}
+  .param-chip .pv{font-size:.82rem;color:var(--teal-light);font-weight:700;}
+  .scen-pill{display:inline-block;margin-top:14px;padding:6px 14px;border-radius:20px;font-size:.76rem;font-weight:600;background:rgba(0,229,255,.1);border:1px solid rgba(0,229,255,.3);color:var(--cyan);}
+  .kpi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+  .kpi-card{background:rgba(255,255,255,.05);border:1px solid var(--card-border);border-radius:12px;padding:15px 14px;}
+  .kpi-card.hl{background:linear-gradient(135deg,rgba(0,200,83,.12),rgba(0,188,212,.08));border-color:rgba(0,200,83,.3);}
+  .kpi-lbl{font-size:.68rem;text-transform:uppercase;letter-spacing:.5px;color:var(--w40);margin-bottom:5px;line-height:1.3;}
+  .kpi-val{font-size:1.32rem;font-weight:800;color:var(--cyan);line-height:1.1;}
+  .kpi-val.g{color:var(--green-soft);}
+  .kpi-val.a{color:var(--amber);}
+  .kpi-unit{font-size:.66rem;color:var(--w40);margin-top:2px;}
+  .reco-bar{margin-top:18px;padding:14px 18px;border-radius:12px;display:flex;align-items:center;gap:12px;font-size:.9rem;font-weight:600;}
+  .reco-bar.good{background:rgba(0,200,83,.12);border:1px solid rgba(0,200,83,.3);color:var(--green-soft);}
+  .reco-bar.mid{background:rgba(255,179,0,.1);border:1px solid rgba(255,179,0,.3);color:var(--amber);}
+  .reco-bar.low{background:rgba(248,113,113,.1);border:1px solid rgba(248,113,113,.3);color:#fca5a5;}
+  .chart-box{background:var(--card-bg);border:1px solid var(--card-border);border-radius:16px;padding:22px;margin-top:24px;}
+  .chart-box-title{font-size:.95rem;font-weight:700;margin-bottom:4px;}
+  .chart-box-sub{font-size:.78rem;color:var(--w40);margin-bottom:16px;}
+  .chart-h{position:relative;height:300px;}
+  .chart-h-sm{position:relative;height:260px;}
+
   /* ───── RESPONSIVE ───── */
   @media(max-width:900px){
     .hero-stats{grid-template-columns:repeat(2,1fr);}
     .g2,.g3,.g4,.fin-grid,.asset-grid{grid-template-columns:1fr;}
     .calc-grid{grid-template-columns:1fr;}
+    .gsim-ctrls{grid-template-columns:1fr;}
+    .gsim-body{grid-template-columns:1fr;}
+    .kpi-grid{grid-template-columns:repeat(2,1fr);}
+    .param-grid{grid-template-columns:1fr 1fr;}
     nav{padding:0 20px;}
     .nav-links{display:none;}
     .sec{padding:56px 20px;}
@@ -287,6 +328,7 @@
     <a onclick="scrollTo('sec-overview')">Overview</a>
     <a onclick="scrollTo('sec-system')">System</a>
     <a onclick="scrollTo('sec-calc')">Calculator</a>
+    <a onclick="scrollTo('sec-global')">Global Sites</a>
     <a onclick="scrollTo('sec-fin')">Financial</a>
     <a onclick="scrollTo('sec-carbon')">Carbon</a>
     <a onclick="scrollTo('sec-roadmap')">Roadmap</a>
@@ -416,6 +458,81 @@
           <div onclick="setS(15)" style="cursor:pointer;background:rgba(0,200,83,.08);border:1px solid rgba(0,200,83,.25);border-radius:10px;padding:12px;text-align:center"><div style="font-size:1.3rem;font-weight:800;color:var(--green-soft)">15%</div><div style="font-size:.7rem;color:var(--w40);margin-top:3px">Full Opt.</div></div>
         </div>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── GLOBAL SITE SIMULATOR ── -->
+<div class="divider"></div>
+<div class="sec" id="sec-global">
+  <div class="sec-label">Global Feasibility Engine</div>
+  <h2 class="sec-title">Global Hydel Site Simulator</h2>
+  <p class="sec-sub">Selector-driven feasibility model across 13 global hydel sites. Choose a site and hydrology scenario to compute power output, annual generation, revenue, CAPEX, payback, NPV, IRR and carbon avoidance — in each site's native currency.</p>
+  <div class="gsim-wrap">
+    <div class="gsim-ctrls">
+      <div>
+        <label class="gsel-lbl">🌍 Selected Site</label>
+        <select class="gsel" id="g-site" onchange="renderGlobal()"></select>
+      </div>
+      <div>
+        <label class="gsel-lbl">💧 Hydrology Scenario</label>
+        <select class="gsel" id="g-scen" onchange="renderGlobal()"></select>
+      </div>
+    </div>
+    <div class="gsim-body">
+      <!-- LEFT: site parameters -->
+      <div class="param-panel">
+        <div class="param-head"><span class="param-flag" id="g-flag">🏔️</span><span class="param-site" id="g-name">—</span></div>
+        <div class="param-region" id="g-region">—</div>
+        <div class="param-grid">
+          <div class="param-chip"><span class="pk">Design Flow</span><span class="pv" id="g-flow">—</span></div>
+          <div class="param-chip"><span class="pk">Gross Head</span><span class="pv" id="g-head">—</span></div>
+          <div class="param-chip"><span class="pk">Efficiency</span><span class="pv" id="g-eff">—</span></div>
+          <div class="param-chip"><span class="pk">Capacity Factor</span><span class="pv" id="g-cf">—</span></div>
+          <div class="param-chip"><span class="pk">Tariff</span><span class="pv" id="g-tar">—</span></div>
+          <div class="param-chip"><span class="pk">CAPEX / MW</span><span class="pv" id="g-cpx">—</span></div>
+          <div class="param-chip"><span class="pk">O&amp;M % CAPEX</span><span class="pv" id="g-om">—</span></div>
+          <div class="param-chip"><span class="pk">Project Life</span><span class="pv" id="g-life">—</span></div>
+          <div class="param-chip"><span class="pk">Discount Rate</span><span class="pv" id="g-disc">—</span></div>
+          <div class="param-chip"><span class="pk">Seasonality Risk</span><span class="pv" id="g-seas">—</span></div>
+          <div class="param-chip"><span class="pk">Aux Loss</span><span class="pv" id="g-aux">—</span></div>
+          <div class="param-chip"><span class="pk">CO₂ Factor</span><span class="pv" id="g-co2f">—</span></div>
+        </div>
+        <div class="scen-pill" id="g-dispatch">Normal dispatch</div>
+      </div>
+      <!-- RIGHT: KPI results -->
+      <div>
+        <div class="kpi-grid">
+          <div class="kpi-card hl"><div class="kpi-lbl">Installed Capacity</div><div class="kpi-val" id="k-mw">—</div><div class="kpi-unit">MW</div></div>
+          <div class="kpi-card"><div class="kpi-lbl">Firm / Risk-Adj.</div><div class="kpi-val" id="k-firm">—</div><div class="kpi-unit">MW</div></div>
+          <div class="kpi-card"><div class="kpi-lbl">Annual Generation</div><div class="kpi-val" id="k-gen">—</div><div class="kpi-unit">GWh/yr</div></div>
+          <div class="kpi-card"><div class="kpi-lbl">Net Exported</div><div class="kpi-val" id="k-net">—</div><div class="kpi-unit">GWh/yr</div></div>
+          <div class="kpi-card"><div class="kpi-lbl">Annual Revenue</div><div class="kpi-val a" id="k-rev">—</div><div class="kpi-unit" id="k-rev-u">—</div></div>
+          <div class="kpi-card"><div class="kpi-lbl">Total CAPEX</div><div class="kpi-val" id="k-capex">—</div><div class="kpi-unit" id="k-capex-u">—</div></div>
+          <div class="kpi-card"><div class="kpi-lbl">OPEX + Royalty</div><div class="kpi-val" id="k-opex">—</div><div class="kpi-unit" id="k-opex-u">—</div></div>
+          <div class="kpi-card"><div class="kpi-lbl">Operating Surplus</div><div class="kpi-val g" id="k-surp">—</div><div class="kpi-unit" id="k-surp-u">—</div></div>
+          <div class="kpi-card"><div class="kpi-lbl">Simple Payback</div><div class="kpi-val" id="k-pay">—</div><div class="kpi-unit">years</div></div>
+          <div class="kpi-card hl"><div class="kpi-lbl">NPV (30-yr)</div><div class="kpi-val g" id="k-npv">—</div><div class="kpi-unit" id="k-npv-u">—</div></div>
+          <div class="kpi-card hl"><div class="kpi-lbl">IRR</div><div class="kpi-val g" id="k-irr">—</div><div class="kpi-unit">vs <span id="k-irr-d">—</span> discount</div></div>
+          <div class="kpi-card"><div class="kpi-lbl">CO₂ Avoided</div><div class="kpi-val g" id="k-co2">—</div><div class="kpi-unit">tonnes/yr</div></div>
+        </div>
+        <div class="reco-bar good" id="g-reco"><span id="g-reco-icon">✅</span><span id="g-reco-txt">Financially attractive</span></div>
+      </div>
+    </div>
+    <div class="g2" style="margin-top:24px;gap:24px">
+      <div class="chart-box" style="margin-top:0">
+        <div class="chart-box-title">📉 30-Year Discounted Cash Flow</div>
+        <div class="chart-box-sub">Net cash flow per year and cumulative discounted position (revenue +2.5%/yr, OPEX +3.5%/yr, discounted at site rate).</div>
+        <div class="chart-h"><canvas id="chart-dcf"></canvas></div>
+      </div>
+      <div class="chart-box" style="margin-top:0">
+        <div class="chart-box-title">💧 Hydrology Scenario Spread</div>
+        <div class="chart-box-sub">Installed MW and annual generation for this site across all six hydrology cases (P90 Dry → P10 High Flow).</div>
+        <div class="chart-h"><canvas id="chart-scen"></canvas></div>
+      </div>
+    </div>
+    <div style="margin-top:14px;font-size:.74rem;color:var(--w40);text-align:center">
+      Conceptual feasibility model — replace with measured flow-duration curves, head survey, OEM quotes and PPA terms before investment. Financial values shown in each site's native currency unit.
     </div>
   </div>
 </div>
@@ -588,7 +705,7 @@ function calc() {
   const gain=base*gp/100;
   const gainMWh=gain*1000;
   const equiv=gainMWh/(8760*cf);
-  const rev=gain*tar*10;
+  const rev=gain*tar/10;  // GWh × ₹/kWh ÷ 10 = ₹Cr  (e.g. 331 GWh × ₹5 ÷ 10 = ₹166 Cr)
   const co2t=gainMWh*co2;
   const cval=co2t*50/1000000;
   const days=gain/60;
@@ -608,6 +725,198 @@ function setS(g) {
 }
 
 calc();
+
+/* ═══════════════════════════════════════════════
+   GLOBAL HYDEL SITE SIMULATOR
+   Faithful re-implementation of the Excel model
+   (Global_Hydel_Project_Carbon_Updated.xlsx)
+   ═══════════════════════════════════════════════ */
+
+// Site Database — columns mirror the spreadsheet 'Site Database' sheet
+// [name, currency, flow(m³/s), head(m), eff, cf, tariff(/kWh), capexPerMW,
+//  om%, constrYrs, projLife, discount, txCapex, royalty%, auxLoss%, seasRisk%, co2(t/MWh)]
+const SITES = [
+  {n:"Nilgiris Hydro Cascade", flag:"🇮🇳", region:"Nilgiris, Tamil Nadu · India (HydelAI home asset)", cur:"INR Cr", q:48,  h:680, eff:0.89, cf:0.46, tar:5.1,  cpx:10.8, om:0.026, cyr:5, life:35, disc:0.10, tx:140, roy:0.02,  aux:0.015, seas:0.14, co2:0.70},
+  {n:"Valparai / Aliyar",      flag:"🇮🇳", region:"Anamalai Hills, Tamil Nadu · India",            cur:"INR Cr", q:55,  h:220, eff:0.88, cf:0.48, tar:5.0,  cpx:9.5,  om:0.025, cyr:4, life:30, disc:0.10, tx:120, roy:0.02,  aux:0.015, seas:0.15, co2:0.70},
+  {n:"Bhavani Basin",          flag:"🇮🇳", region:"Bhavani River, Tamil Nadu · India",             cur:"INR Cr", q:65,  h:140, eff:0.87, cf:0.44, tar:4.8,  cpx:8.8,  om:0.026, cyr:4, life:30, disc:0.10, tx:100, roy:0.02,  aux:0.015, seas:0.18, co2:0.70},
+  {n:"Himalayan Run-of-River", flag:"🏔️", region:"Himalayas · Northern India",                    cur:"INR Cr", q:140, h:320, eff:0.90, cf:0.52, tar:4.6,  cpx:10.5, om:0.024, cyr:5, life:35, disc:0.10, tx:250, roy:0.025, aux:0.015, seas:0.22, co2:0.70},
+  {n:"Western Ghats Storage",  flag:"🇮🇳", region:"Western Ghats · India",                         cur:"INR Cr", q:90,  h:260, eff:0.89, cf:0.50, tar:5.2,  cpx:10.0, om:0.025, cyr:5, life:35, disc:0.10, tx:180, roy:0.02,  aux:0.015, seas:0.16, co2:0.70},
+  {n:"Norway Fjord Hydro",     flag:"🇳🇴", region:"Western Fjords · Norway",                       cur:"EUR m",  q:180, h:450, eff:0.92, cf:0.58, tar:0.08, cpx:2.4,  om:0.018, cyr:5, life:40, disc:0.06, tx:160, roy:0.01,  aux:0.01,  seas:0.08, co2:0.35},
+  {n:"Alpine Hydro",           flag:"🇨🇭", region:"Swiss Alps · Switzerland",                      cur:"CHF m",  q:120, h:520, eff:0.91, cf:0.55, tar:0.10, cpx:2.8,  om:0.02,  cyr:5, life:40, disc:0.05, tx:200, roy:0.012, aux:0.01,  seas:0.10, co2:0.30},
+  {n:"Canadian Mountain Hydro",flag:"🇨🇦", region:"Rocky Mountains · Canada",                      cur:"CAD m",  q:260, h:180, eff:0.90, cf:0.56, tar:0.07, cpx:3.0,  om:0.02,  cyr:5, life:40, disc:0.07, tx:220, roy:0.015, aux:0.01,  seas:0.12, co2:0.45},
+  {n:"Brazil River Hydro",     flag:"🇧🇷", region:"Amazon / Paraná Basin · Brazil",                cur:"BRL m",  q:450, h:70,  eff:0.89, cf:0.60, tar:0.32, cpx:5.5,  om:0.025, cyr:6, life:40, disc:0.09, tx:300, roy:0.02,  aux:0.012, seas:0.18, co2:0.50},
+  {n:"US Small Hydro",         flag:"🇺🇸", region:"Pacific Northwest · USA",                       cur:"USD m",  q:40,  h:80,  eff:0.86, cf:0.42, tar:0.075,cpx:4.0,  om:0.03,  cyr:3, life:30, disc:0.07, tx:35,  roy:0.012, aux:0.01,  seas:0.20, co2:0.40},
+  {n:"Japan Mountain Hydro",   flag:"🇯🇵", region:"Central Highlands · Japan",                     cur:"JPY bn", q:75,  h:300, eff:0.89, cf:0.48, tar:12.0, cpx:0.95, om:0.024, cyr:5, life:35, disc:0.05, tx:18,  roy:0.01,  aux:0.01,  seas:0.14, co2:0.45},
+  {n:"New Zealand Hydro",      flag:"🇳🇿", region:"South Island · New Zealand",                    cur:"NZD m",  q:150, h:160, eff:0.90, cf:0.54, tar:0.09, cpx:3.2,  om:0.02,  cyr:5, life:40, disc:0.07, tx:130, roy:0.012, aux:0.01,  seas:0.10, co2:0.25},
+  {n:"East Africa Rift Hydro", flag:"🌍", region:"Great Rift Valley · East Africa",                cur:"USD m",  q:110, h:250, eff:0.88, cf:0.50, tar:0.085,cpx:3.6,  om:0.03,  cyr:5, life:35, disc:0.09, tx:120, roy:0.02,  aux:0.012, seas:0.20, co2:0.55}
+];
+
+// Hydrology scenarios — multipliers derived from the spreadsheet Live Map sheet
+const SCEN = [
+  {n:"P90 Dry",          m:0.65, d:"Critical firm power only"},
+  {n:"P75 Conservative", m:0.80, d:"Peak support"},
+  {n:"P50 Base",         m:1.00, d:"Normal dispatch"},
+  {n:"P25 Wet",          m:1.15, d:"High export"},
+  {n:"P10 High Flow",    m:1.30, d:"Maximum generation"},
+  {n:"Maintenance",      m:0.55, d:"Reduced dispatch"}
+];
+
+// Core model — reproduces the Excel 'Hydel Energy Model' + 'Financial Model' exactly
+function hydelModel(s, mult) {
+  const Qa   = s.q * mult;
+  const MW   = 9.81 * Qa * s.h * s.eff / 1000;          // installed capacity
+  const firm = MW * (1 - s.seas);                       // risk-adjusted
+  const genGWh = MW * s.cf * 8760 / 1000;               // annual gross generation
+  const netGWh = genGWh * (1 - s.aux);                  // net exported
+  const netMWh = netGWh * 1000;
+  const co2    = netMWh * s.co2;                        // tonnes CO₂ avoided/yr
+  const genCapex = MW * s.cpx;
+  const totCapex = genCapex + s.tx;
+  // Revenue = net MWh × tariff(per kWh), expressed in the site's currency unit.
+  // Scale divisor keeps the figure dimensionally correct for each unit:
+  //   Crore (1e7): /10000 · million (1e6): /1000 · billion (1e9): /1e6
+  // (The 'm' case reproduces the spreadsheet's Canadian benchmark exactly.)
+  const SCALE = {'Cr':10000, 'm':1000, 'bn':1000000};
+  const unit = (s.cur.split(' ')[1]) || 'm';
+  const rev    = netMWh * s.tar / (SCALE[unit] || 1000); // revenue (currency units, year 1)
+  const opex   = totCapex * s.om + rev * s.roy;         // O&M + royalty
+  const surplus= rev - opex;
+  const payback= surplus > 0 ? totCapex / surplus : Infinity;
+  // 30-year discounted cash flow: revenue +2.5%/yr, OPEX +3.5%/yr
+  const flows = [];
+  let cum = -totCapex;
+  flows.push({yr:0, net:-totCapex, cum:cum, dcf:-totCapex});
+  const npvAt = (rate) => {
+    let v = -totCapex;
+    for (let y=1; y<=30; y++) {
+      const r = rev*Math.pow(1.025,y-1), o = opex*Math.pow(1.035,y-1);
+      v += (r-o)/Math.pow(1+rate,y);
+    }
+    return v;
+  };
+  let dcfCum = -totCapex;
+  for (let y=1; y<=30; y++) {
+    const r = rev*Math.pow(1.025,y-1), o = opex*Math.pow(1.035,y-1), net = r-o;
+    const dcf = net/Math.pow(1+s.disc,y);
+    dcfCum += dcf;
+    flows.push({yr:y, net:net, cum:dcfCum, dcf:dcf});
+  }
+  const NPV = npvAt(s.disc);
+  // IRR via bisection
+  let lo=-0.5, hi=1.0;
+  for (let i=0;i<200;i++){ const mid=(lo+hi)/2; (npvAt(mid)>0)?lo=mid:hi=mid; }
+  const IRR = lo;
+  return {MW,firm,genGWh,netGWh,netMWh,co2,totCapex,rev,opex,surplus,payback,NPV,IRR,flows};
+}
+
+// Chart.js safe wrapper — destroys prior instance to avoid duplicate-canvas errors
+const _charts = {};
+function safeChart(id, cfg){
+  if(_charts[id]){ _charts[id].destroy(); }
+  _charts[id] = new Chart(document.getElementById(id), cfg);
+  return _charts[id];
+}
+
+const fmt = (x,d=0) => x.toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});
+const GTEXT = 'rgba(255,255,255,.65)';
+const GGRID = 'rgba(255,255,255,.07)';
+
+function renderGlobal(){
+  const s = SITES[+document.getElementById('g-site').value];
+  const sc = SCEN[+document.getElementById('g-scen').value];
+  const m = hydelModel(s, sc.m);
+  const cur = s.cur;
+
+  // Parameter panel
+  document.getElementById('g-flag').textContent = s.flag;
+  document.getElementById('g-name').textContent = s.n;
+  document.getElementById('g-region').textContent = s.region;
+  document.getElementById('g-flow').textContent = fmt(s.q*sc.m,0)+' m³/s';
+  document.getElementById('g-head').textContent = fmt(s.h,0)+' m';
+  document.getElementById('g-eff').textContent  = (s.eff*100).toFixed(0)+'%';
+  document.getElementById('g-cf').textContent   = s.cf.toFixed(2);
+  document.getElementById('g-tar').textContent  = s.tar+' '+cur.split(' ')[0]+'/kWh';
+  document.getElementById('g-cpx').textContent  = s.cpx+' '+cur+'/MW';
+  document.getElementById('g-om').textContent   = (s.om*100).toFixed(1)+'%';
+  document.getElementById('g-life').textContent = s.life+' yrs';
+  document.getElementById('g-disc').textContent = (s.disc*100).toFixed(0)+'%';
+  document.getElementById('g-seas').textContent = (s.seas*100).toFixed(0)+'%';
+  document.getElementById('g-aux').textContent  = (s.aux*100).toFixed(1)+'%';
+  document.getElementById('g-co2f').textContent = s.co2+' t/MWh';
+  document.getElementById('g-dispatch').textContent = sc.n+' · '+sc.d;
+
+  // KPI dashboard
+  document.getElementById('k-mw').textContent   = fmt(m.MW,1);
+  document.getElementById('k-firm').textContent = fmt(m.firm,1);
+  document.getElementById('k-gen').textContent  = fmt(m.genGWh,0);
+  document.getElementById('k-net').textContent  = fmt(m.netGWh,0);
+  document.getElementById('k-rev').textContent  = fmt(m.rev,1);
+  document.getElementById('k-rev-u').textContent= cur+'/yr';
+  document.getElementById('k-capex').textContent= fmt(m.totCapex,0);
+  document.getElementById('k-capex-u').textContent= cur;
+  document.getElementById('k-opex').textContent = fmt(m.opex,1);
+  document.getElementById('k-opex-u').textContent= cur+'/yr';
+  document.getElementById('k-surp').textContent = fmt(m.surplus,1);
+  document.getElementById('k-surp-u').textContent= cur+'/yr';
+  document.getElementById('k-pay').textContent  = isFinite(m.payback)? fmt(m.payback,1) : '—';
+  document.getElementById('k-npv').textContent  = fmt(m.NPV,0);
+  document.getElementById('k-npv-u').textContent= cur;
+  document.getElementById('k-irr').textContent  = (m.IRR*100).toFixed(1)+'%';
+  document.getElementById('k-irr-d').textContent= (s.disc*100).toFixed(0)+'%';
+  document.getElementById('k-co2').textContent  = fmt(m.co2,0);
+
+  // NPV/IRR colour by sign vs discount rate
+  const npvEl=document.getElementById('k-npv'), irrEl=document.getElementById('k-irr');
+  npvEl.className='kpi-val '+(m.NPV>0?'g':'a');
+  irrEl.className='kpi-val '+(m.IRR>s.disc?'g':'a');
+
+  // Recommendation logic (mirrors Financial Model B43)
+  const reco=document.getElementById('g-reco');
+  const margin=m.IRR - s.disc;
+  if(m.NPV>0 && margin>=0.015){ reco.className='reco-bar good'; document.getElementById('g-reco-icon').textContent='✅'; document.getElementById('g-reco-txt').textContent='Financially attractive — IRR '+(m.IRR*100).toFixed(1)+'% exceeds the '+(s.disc*100).toFixed(0)+'% discount rate with positive NPV.'; }
+  else if(m.NPV>0){ reco.className='reco-bar mid'; document.getElementById('g-reco-icon').textContent='⚠️'; document.getElementById('g-reco-txt').textContent='Marginal — positive NPV but IRR sits close to the '+(s.disc*100).toFixed(0)+'% discount rate. Tighten CAPEX / tariff assumptions.'; }
+  else { reco.className='reco-bar low'; document.getElementById('g-reco-icon').textContent='⛔'; document.getElementById('g-reco-txt').textContent='Not viable at these assumptions — negative NPV. Revisit head, flow, tariff or CAPEX before proceeding.'; }
+
+  // Chart 1 — 30-year discounted cash flow
+  safeChart('chart-dcf',{
+    type:'bar',
+    data:{ labels:m.flows.map(f=>f.yr),
+      datasets:[
+        {type:'bar', label:'Net cash flow ('+cur+')', data:m.flows.map(f=>f.net), backgroundColor:m.flows.map(f=>f.net<0?'rgba(248,113,113,.6)':'rgba(0,229,255,.55)'), borderRadius:3, order:2},
+        {type:'line', label:'Cumulative discounted ('+cur+')', data:m.flows.map(f=>f.cum), borderColor:'#69F0AE', backgroundColor:'rgba(105,240,174,.1)', borderWidth:2, pointRadius:0, tension:.25, fill:true, order:1}
+      ]},
+    options:{ responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{labels:{color:GTEXT, font:{size:11}, usePointStyle:true}}, tooltip:{callbacks:{label:c=>c.dataset.label+': '+fmt(c.parsed.y,1)}} },
+      scales:{ x:{title:{display:true,text:'Year',color:GTEXT,font:{size:10}}, ticks:{color:GTEXT,maxTicksLimit:16,font:{size:9}}, grid:{color:GGRID}},
+               y:{ticks:{color:GTEXT,font:{size:10},callback:v=>fmt(v,0)}, grid:{color:GGRID}} } }
+  });
+
+  // Chart 2 — hydrology scenario spread for this site
+  const scMW = SCEN.map(x=>hydelModel(s,x.m).MW);
+  const scGen= SCEN.map(x=>hydelModel(s,x.m).genGWh);
+  safeChart('chart-scen',{
+    type:'bar',
+    data:{ labels:SCEN.map(x=>x.n),
+      datasets:[
+        {type:'bar', label:'Installed MW', data:scMW, backgroundColor:'rgba(0,188,212,.55)', borderRadius:4, yAxisID:'y', order:2},
+        {type:'line', label:'Annual GWh', data:scGen, borderColor:'#FFB300', backgroundColor:'rgba(255,179,0,.1)', borderWidth:2, pointRadius:3, pointBackgroundColor:'#FFB300', tension:.25, yAxisID:'y1', order:1}
+      ]},
+    options:{ responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{labels:{color:GTEXT, font:{size:11}, usePointStyle:true}}, tooltip:{callbacks:{label:c=>c.dataset.label+': '+fmt(c.parsed.y,0)}} },
+      scales:{ x:{ticks:{color:GTEXT,font:{size:9},maxRotation:30,minRotation:30}, grid:{color:GGRID}},
+               y:{position:'left', title:{display:true,text:'MW',color:GTEXT,font:{size:10}}, ticks:{color:GTEXT,font:{size:10}}, grid:{color:GGRID}},
+               y1:{position:'right', title:{display:true,text:'GWh',color:GTEXT,font:{size:10}}, ticks:{color:GTEXT,font:{size:10}}, grid:{drawOnChartArea:false}} } }
+  });
+}
+
+// Populate selectors
+(function initGlobal(){
+  const siteSel=document.getElementById('g-site');
+  SITES.forEach((s,i)=>{ const o=document.createElement('option'); o.value=i; o.textContent=s.flag+'  '+s.n; siteSel.appendChild(o); });
+  const scenSel=document.getElementById('g-scen');
+  SCEN.forEach((x,i)=>{ const o=document.createElement('option'); o.value=i; o.textContent=x.n+' — '+x.d; if(x.n==='P50 Base') o.selected=true; scenSel.appendChild(o); });
+  renderGlobal();
+})();
 </script>
 </body>
 </html>
