@@ -314,8 +314,8 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:var(--gray-50);c
 
   <!-- User / Logout -->
   <div class="login-topbtn" id="user-display">
-    <div class="topbar-avatar" id="user-avatar">WM</div>
-    <span id="user-name-display">Wellington Marketers</span>
+    <div class="topbar-avatar" id="user-avatar">EA</div>
+    <span id="user-name-display">Even Arena</span>
     <button class="logout-btn" onclick="doLogout()">Sign out</button>
   </div>
 </nav>
@@ -940,10 +940,10 @@ function doLogin() {
   const val = document.getElementById('login-user').value.trim().toLowerCase();
   const err = document.getElementById('login-err');
   if (!val) { err.textContent = 'Please enter your username.'; return; }
-  if (val !== 'wellingtonai') { err.textContent = 'Username not recognised. Please try again.'; return; }
+  if (val !== 'evenarenaai') { err.textContent = 'Username not recognised. Please try again.'; return; }
   document.getElementById('login-overlay').style.display = 'none';
-  document.getElementById('user-name-display').textContent = 'Wellington AI';
-  document.getElementById('user-avatar').textContent = 'WA';
+  document.getElementById('user-name-display').textContent = 'Even Arena';
+  document.getElementById('user-avatar').textContent = 'EA';
   initCharts('command');
 }
 function doLogout() {

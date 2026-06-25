@@ -32,6 +32,27 @@
     .logo-byline a:hover { color: #a5b4fc; }
     .tagline { color: #a5b4fc; font-size: 13px; border-left: 1px solid rgba(255,255,255,0.25); padding-left: 20px; }
 
+    /* ─── LOGIN OVERLAY ─── */
+    #login-overlay{ position:fixed; inset:0; background:linear-gradient(135deg,#1e1b4b 0%,#312e81 55%,#1e3a5f 100%); display:flex; align-items:center; justify-content:center; z-index:9999; }
+    .login-box{ background:rgba(255,255,255,0.06); border:1px solid rgba(165,180,252,0.25); border-radius:20px; padding:48px 44px; width:380px; text-align:center; backdrop-filter:blur(10px); }
+    .login-logo{ font-size:36px; font-weight:800; color:#fff; margin-bottom:6px; }
+    .login-logo span{ color:#a5b4fc; }
+    .login-by{ font-size:12px; color:rgba(255,255,255,0.45); margin-bottom:32px; }
+    .login-label{ font-size:12px; font-weight:600; color:rgba(255,255,255,0.6); text-align:left; margin-bottom:8px; display:block; }
+    .login-input{ width:100%; padding:12px 16px; border-radius:10px; border:1.5px solid rgba(255,255,255,0.15); background:rgba(255,255,255,0.08); color:#fff; font-family:inherit; font-size:15px; outline:none; transition:border-color 0.2s; margin-bottom:6px; }
+    .login-input::placeholder{ color:rgba(255,255,255,0.3); }
+    .login-input:focus{ border-color:#818cf8; }
+    .login-error{ font-size:12px; color:#f87171; margin-bottom:12px; min-height:18px; text-align:left; }
+    .login-btn{ width:100%; padding:14px; border-radius:10px; border:none; cursor:pointer; background:linear-gradient(135deg,#4338ca,#6366f1); color:#fff; font-family:inherit; font-size:15px; font-weight:700; transition:opacity 0.2s; margin-top:4px; }
+    .login-btn:hover{ opacity:0.9; }
+    .login-hint{ font-size:11px; color:rgba(255,255,255,0.3); margin-top:16px; }
+    /* header user chip */
+    .user-chip{ margin-left:auto; display:flex; align-items:center; gap:10px; }
+    .user-avatar{ width:34px; height:34px; border-radius:50%; background:rgba(255,255,255,0.15); color:#fff; font-weight:700; font-size:13px; display:flex; align-items:center; justify-content:center; }
+    .user-name{ color:#fff; font-size:13px; font-weight:600; }
+    .logout-btn{ background:rgba(255,255,255,0.1); color:#fff; border:none; border-radius:8px; padding:7px 12px; font-family:inherit; font-size:12px; font-weight:600; cursor:pointer; transition:background 0.2s; }
+    .logout-btn:hover{ background:rgba(255,255,255,0.2); }
+
     .container { max-width: 1200px; margin: 0 auto; padding: 36px 20px; }
 
     .card {
@@ -191,11 +212,30 @@
 </head>
 <body>
 
+<!-- ═══ LOGIN OVERLAY ═══ -->
+<div id="login-overlay">
+  <div class="login-box">
+    <div class="login-logo">Employ<span>AI</span></div>
+    <div class="login-by">by Even Arena</div>
+    <label class="login-label">Username</label>
+    <input class="login-input" id="login-user" type="text" placeholder="Enter your username" autocomplete="off"
+      onkeydown="if(event.key==='Enter')doLogin()">
+    <div class="login-error" id="login-err"></div>
+    <button class="login-btn" onclick="doLogin()">Sign In &rarr;</button>
+    <div class="login-hint">Contact Even Arena for access credentials</div>
+  </div>
+</div>
+
 <header>
   <div class="logo-group">
     <div class="logo">Employ<span>AI</span></div>
   </div>
   <div class="tagline">AI-Era Employability Index · Industry &amp; Business Model Matrix</div>
+  <div class="user-chip" id="user-display" style="display:none">
+    <div class="user-avatar" id="user-avatar">EA</div>
+    <span class="user-name" id="user-name-display">Even Arena</span>
+    <button class="logout-btn" onclick="doLogout()">Sign out</button>
+  </div>
 </header>
 
 <div class="container">
@@ -401,6 +441,22 @@
 </div>
 
 <script>
+// ── Login gate ──────────────────────────────────────────────────
+function doLogin() {
+  const val = document.getElementById('login-user').value.trim().toLowerCase();
+  const err = document.getElementById('login-err');
+  if (!val) { err.textContent = 'Please enter your username.'; return; }
+  if (val !== 'evenarenaai') { err.textContent = 'Username not recognised. Please try again.'; return; }
+  document.getElementById('login-overlay').style.display = 'none';
+  document.getElementById('user-display').style.display = 'flex';
+}
+function doLogout() {
+  document.getElementById('login-overlay').style.display = 'flex';
+  document.getElementById('user-display').style.display = 'none';
+  document.getElementById('login-user').value = '';
+  document.getElementById('login-err').textContent = '';
+}
+
 // ================================================================
 //  === RUBRIC CONFIG — EDIT HERE ===
 //  Source: RiskMatrix.numbers / ei-rubric.json (EI-Index folder)
